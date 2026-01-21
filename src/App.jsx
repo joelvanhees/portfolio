@@ -2056,7 +2056,7 @@ const AboutView = ({ darkMode }) => (
            </div>
            <div className="flex justify-between items-center border-b border-current pb-2">
              <span className="font-mono text-xs opacity-50">EMAIL</span>
-             <span className="font-syne font-bold">CONTACT@JOELVANHEES.DE</span>
+             <span className="font-syne font-bold">kontakt@joelvanhees.de</span>
            </div>
         </div>
       </div>
@@ -2083,7 +2083,7 @@ const ContactView = ({ darkMode }) => {
             const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`);
             
             // Construct mailto link
-            const mailtoLink = `mailto:contact@joelvanhees.de?subject=${subject}&body=${body}`;
+            const mailtoLink = `mailto:kontakt@joelvanhees.de?subject=${subject}&body=${body}`;
             
             // Trigger mail client
             window.location.href = mailtoLink;
@@ -2461,7 +2461,7 @@ The P50 becomes a platform rather than a product.`,
                         
                         <p className="mt-4">
                             <strong>Kontakt:</strong><br/>
-                            E-Mail: contact@joelvanhees.de
+                            E-Mail: kontakt@joelvanhees.de
                         </p>
 
                         <p className="mt-4">
@@ -2501,7 +2501,7 @@ The P50 becomes a platform rather than a product.`,
                             Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:<br/>
                             Joel van Hees<br/>
                             [Adresse wie im Impressum]<br/>
-                            E-Mail: contact@joelvanhees.de
+                            E-Mail: kontact@joelvanhees.de
                         </p>
                         <p className="mt-2">
                             <strong>Widerruf Ihrer Einwilligung zur Datenverarbeitung:</strong> Viele Datenverarbeitungsvorgänge sind nur mit Ihrer ausdrücklichen Einwilligung möglich. Sie können eine bereits erteilte Einwilligung jederzeit widerrufen. Dazu reicht eine formlose Mitteilung per E-Mail an uns.
@@ -3074,7 +3074,7 @@ The P50 becomes a platform rather than a product.`,
               LET'S <br/> BUILD.
             </h2>
             <button onClick={() => handleNav('contact')} className="text-xl md:text-2xl font-mono underline decoration-2 underline-offset-4 hover:no-underline">
-              contact@joelvanhees.de
+              kontakt@joelvanhees.de
             </button>
           </div>
 

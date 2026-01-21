@@ -29,7 +29,7 @@ import imgRef02 from './assets/images/IMG_REF_02.jpeg';
 
 // Project 03 Images (NASALICA)
 import exhibitionInfImg from './assets/images/exhibitionINF.JPG';
-import monsterImg from './assets/images/monster.PNG';
+import monsterImg from './assets/images/monster.png';
 
 // Branding Systems Assets
 import softBodyProcess from './assets/branding/soft-body-home/brandingSOFTprocess.jpeg';

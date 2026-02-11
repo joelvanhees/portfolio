@@ -4,7 +4,7 @@ import SkillNetwork from '../components/SkillNetwork';
 import HoverVideoPlayer from '../components/visuals/HoverVideoPlayer';
 import SpiralTimeSphere from '../components/visuals/SpiralTimeSphere';
 import { homeCapabilities } from '../content/services';
-import { brandLogos } from '../content/projects';
+import { brandLogos } from '../content/projects.jsx';
 
 const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) => {
   const [terminalLine, setTerminalLine] = useState(0);
@@ -153,7 +153,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
                               <Layers size={64} />
                             </div>
                           ) : (
-                            <SpiralTimeSphere darkMode={darkMode} />
+                            <SpiralTimeSphere />
                           )
                         ) : (
                           <div className="w-full h-full">
@@ -201,8 +201,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
           <h2 className="text-sm font-mono uppercase tracking-widest mb-12">Capabilities</h2>
 
           <div className="flex flex-col">
-            {homeCapabilities.map((service, i) => (
-              <div key={i} className="border-t border-current py-8 group hover:pl-4 transition-all duration-300 cursor-default">
+            {homeCapabilities.map((service) => (
+              <div key={service.title} className="border-t border-current py-8 group hover:pl-4 transition-all duration-300 cursor-default">
                 <div className="flex flex-col md:flex-row justify-between items-baseline">
                   <h3 className="text-3xl md:text-5xl font-rubik font-bold uppercase group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r from-gray-500 to-current">
                     <span className="glitch-hover cursor-default block">{service.title}</span>

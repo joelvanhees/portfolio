@@ -12,6 +12,9 @@ const ContactView = ({ darkMode }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) return;
+
     setStatus('sending');
 
     setTimeout(() => {
@@ -19,15 +22,15 @@ const ContactView = ({ darkMode }) => {
       const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`);
 
       const mailtoLink = `mailto:kontakt@joelvanhees.de?subject=${subject}&body=${body}`;
-      window.location.href = mailtoLink;
 
       setStatus('success');
+      setFormData({ name: '', email: '', message: '' });
 
       setTimeout(() => {
+        window.location.href = mailtoLink;
         setStatus('idle');
-        setFormData({ name: '', email: '', message: '' });
-      }, 3000);
-    }, 1500);
+      }, 1500);
+    }, 1000);
   };
 
   return (

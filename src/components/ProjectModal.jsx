@@ -1,4 +1,4 @@
-import { ArrowUpRight, ChevronRight, FileText, Layers, Maximize2, Play, Video, X } from 'lucide-react';
+import { ArrowUpRight, FileText, Layers, Maximize2, Video, X } from 'lucide-react';
 
 import HoverVideoPlayer from './visuals/HoverVideoPlayer';
 import InfiniteMarqueeVisual from './visuals/InfiniteMarqueeVisual';
@@ -96,36 +96,9 @@ const ProjectModal = ({
                     ${selectedProject.id === "01" ? "aspect-[9/16] max-w-sm mx-auto" : "aspect-square"}
                  `}>
               {selectedProject.id === "02" ? (
-                showVideoSequence ? (
-                  <div className="w-full h-full relative bg-black group">
-                    <video
-                      src="/videos/spiral_down_time_sequence.mp4"
-                      className="w-full h-full object-cover"
-                      controls
-                      autoPlay
-                      playsInline
-                    />
-                    <button
-                      onClick={() => setShowVideoSequence(false)}
-                      className="absolute top-4 left-4 z-50 bg-black/50 text-white px-4 py-2 rounded-full border border-white/20 hover:bg-white hover:text-black transition-all flex items-center gap-2 text-xs font-mono"
-                    >
-                      <ChevronRight className="rotate-180" size={14} /> RETURN_TO_SYSTEM
-                    </button>
-                  </div>
-                ) : (
-                  <div className="w-full h-full relative">
-                    <SpiralTimeSphere darkMode={darkMode} />
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setShowVideoSequence(true);
-                      }}
-                      className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#00FF41] text-black px-6 py-3 rounded-full font-bold uppercase tracking-widest hover:bg-[#00cc33] transition-all shadow-[0_0_20px_rgba(0,255,65,0.4)] flex items-center gap-2 text-sm"
-                    >
-                      WATCH FILM SEQUENCE <Play size={16} />
-                    </button>
-                  </div>
-                )
+                <div className="w-full h-full relative">
+                  <SpiralTimeSphere />
+                </div>
               ) : selectedProject.id === "06" ? (
                 <div className="absolute inset-0 w-full h-full">
                   <HoverVideoPlayer src="/videos/peelvid.mp4" />
@@ -172,11 +145,11 @@ const ProjectModal = ({
             {selectedProject.extraVisuals && (
               <>
                 <div className="mt-4 aspect-video w-full rounded-xl overflow-hidden border border-white/10 bg-black relative shadow-2xl">
-                  <TypographicClockVisual darkMode={darkMode} />
+                  <TypographicClockVisual />
                 </div>
 
                 <div className="mt-4 aspect-video w-full rounded-xl overflow-hidden border border-white/10 bg-black relative shadow-2xl">
-                  <BufferOverflowVisual darkMode={darkMode} />
+                  <BufferOverflowVisual />
                   <div className="absolute bottom-2 left-2 text-[10px] font-mono text-white/50 bg-black/50 px-2 py-1 rounded">
                     [BUFFER_OVERFLOW.EXE] RUNNING...
                   </div>
@@ -187,10 +160,10 @@ const ProjectModal = ({
             {selectedProject.id === "02" && (
               <div className="grid grid-cols-2 gap-4 mt-4">
                 <div className={`aspect-[3/2] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                  <img src={imgRef01} alt="Concept Art" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(imgRef01)} />
+                  <img src={imgRef01} alt="Concept Art" loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(imgRef01)} />
                 </div>
                 <div className={`aspect-[3/2] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                  <img src={imgRef02} alt="UI Mockup" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(imgRef02)} />
+                  <img src={imgRef02} alt="UI Mockup" loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(imgRef02)} />
                 </div>
               </div>
             )}
@@ -198,12 +171,12 @@ const ProjectModal = ({
             {selectedProject.id === "03" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div className={`aspect-[2/3] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                  <img src={exhibitionInfImg} alt="Exhibition View" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(exhibitionInfImg)} />
+                  <img src={exhibitionInfImg} alt="Exhibition View" loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(exhibitionInfImg)} />
                 </div>
 
                 <div className="flex flex-col gap-4">
                   <div className={`aspect-[3/2] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                    <img src={monsterImg} alt="Monster Artwork" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(monsterImg)} />
+                    <img src={monsterImg} alt="Monster Artwork" loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(monsterImg)} />
                   </div>
 
                   <div className={`aspect-[3/2] w-full rounded-xl border flex items-center justify-center overflow-hidden relative ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
@@ -220,10 +193,10 @@ const ProjectModal = ({
                 {p50Data.pairs.map((pair, i) => (
                   <div key={i} className="grid grid-cols-2 gap-4">
                     <div className={`aspect-[3/4] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                      <img src={pair.a} alt={`Student Concept ${i + 1}A`} className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(pair.a)} />
+                      <img src={pair.a} alt={`Student Concept ${i + 1}A`} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(pair.a)} />
                     </div>
                     <div className={`aspect-[3/4] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                      <img src={pair.b} alt={`Student Concept ${i + 1}B`} className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(pair.b)} />
+                      <img src={pair.b} alt={`Student Concept ${i + 1}B`} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(pair.b)} />
                     </div>
                   </div>
                 ))}
@@ -233,15 +206,15 @@ const ProjectModal = ({
             {selectedProject.id === "01" && (
               <div className="flex flex-col gap-4 mt-4">
                 <div className={`aspect-[2/3] w-full max-w-sm mx-auto rounded-xl border flex items-center justify-center overflow-hidden relative group ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                  <img src={salatProfileImg} className="w-full h-full object-cover cursor-zoom-in" alt="Profile View" onClick={() => setActiveImage(salatProfileImg)} />
+                  <img src={salatProfileImg} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" alt="Profile View" onClick={() => setActiveImage(salatProfileImg)} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className={`aspect-[2/3] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                    <img src={ikeaMerch1} className="w-full h-full object-cover cursor-zoom-in" alt="Plush Toy Design" onClick={() => setActiveImage(ikeaMerch1)} />
+                    <img src={ikeaMerch1} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" alt="Plush Toy Design" onClick={() => setActiveImage(ikeaMerch1)} />
                   </div>
                   <div className={`aspect-[2/3] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                    <img src={ikeaMerch2} className="w-full h-full object-cover cursor-zoom-in" alt="Plush Toy Final" onClick={() => setActiveImage(ikeaMerch2)} />
+                    <img src={ikeaMerch2} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" alt="Plush Toy Final" onClick={() => setActiveImage(ikeaMerch2)} />
                   </div>
                 </div>
               </div>
@@ -311,10 +284,10 @@ const ProjectModal = ({
                   <div className="flex flex-col gap-4 mb-8">
                     <div className="grid grid-cols-2 gap-4">
                       <div className={`aspect-square w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                        <img src={threedSign1} className="w-full h-full object-cover cursor-zoom-in" alt="3D Signage Process 1" onClick={() => setActiveImage(threedSign1)} />
+                        <img src={threedSign1} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" alt="3D Signage Process 1" onClick={() => setActiveImage(threedSign1)} />
                       </div>
                       <div className={`aspect-square w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                        <img src={threedSign2} className="w-full h-full object-cover cursor-zoom-in" alt="3D Signage Process 2" onClick={() => setActiveImage(threedSign2)} />
+                        <img src={threedSign2} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" alt="3D Signage Process 2" onClick={() => setActiveImage(threedSign2)} />
                       </div>
                     </div>
                     <p className="font-mono text-xs opacity-60 leading-relaxed">
@@ -349,9 +322,9 @@ const ProjectModal = ({
                   <h3 className="text-xl font-rubik font-bold mb-4 uppercase">Yerba Mate</h3>
                   <p className="mb-4 text-sm opacity-80">Packaging design in team context. Responsible for illustration system and visual language.</p>
                   <div className="grid grid-cols-3 gap-2">
-                    <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={mate1} className="w-full h-auto object-contain" /></div>
-                    <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={mate2} className="w-full h-auto object-contain" /></div>
-                    <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={mate3} className="w-full h-auto object-contain" /></div>
+                    <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={mate1} alt="Yerba Mate Design 1" loading="lazy" className="w-full h-auto object-contain" /></div>
+                    <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={mate2} alt="Yerba Mate Design 2" loading="lazy" className="w-full h-auto object-contain" /></div>
+                    <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={mate3} alt="Yerba Mate Design 3" loading="lazy" className="w-full h-auto object-contain" /></div>
                   </div>
                 </div>
 
@@ -360,8 +333,8 @@ const ProjectModal = ({
                   <p className="mb-4 text-sm opacity-80">Visual identity for pop band Sugar Damage. Logo, album artwork and animated streaming canvas.</p>
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={sugarLogo} className="w-full h-auto object-contain" /></div>
-                      <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={sugarCover} className="w-full h-auto object-contain" /></div>
+                      <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={sugarLogo} alt="Sugar Damage Logo" loading="lazy" className="w-full h-auto object-contain" /></div>
+                      <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={sugarCover} alt="Sugar Damage Cover" loading="lazy" className="w-full h-auto object-contain" /></div>
                     </div>
                     <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5">
                       <video src={sugarSpotifyVideo} className="w-full h-auto" autoPlay loop muted playsInline />
@@ -373,17 +346,17 @@ const ProjectModal = ({
                   <h3 className="text-xl font-rubik font-bold mb-4 uppercase">Selected Logos</h3>
                   <p className="mb-4 text-sm opacity-80">Selected logo designs for artists and creatives.</p>
                   <div className="grid grid-cols-3 gap-4">
-                    <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={logoJoel} className="w-full h-auto object-contain" /></div>
+                    <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={logoJoel} loading="lazy" className="w-full h-auto object-contain" /></div>
 
                     <div className="flex flex-col items-end">
                       <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5 w-full">
-                        <img src={logoVNC} className="w-full h-auto object-contain" />
+                        <img src={logoVNC} loading="lazy" className="w-full h-auto object-contain" />
                       </div>
                       <span className="font-mono text-[10px] opacity-50 mt-1 uppercase">VNC_SYSTEM</span>
                     </div>
 
                     <div className="rounded-xl overflow-hidden border border-white/10 bg-black flex items-center justify-center">
-                      <img src={logoMichael} className="w-full h-auto object-contain" />
+                      <img src={logoMichael} loading="lazy" className="w-full h-auto object-contain" />
                     </div>
                   </div>
                 </div>
@@ -446,7 +419,7 @@ const ProjectModal = ({
                       <div className="grid grid-cols-2 gap-4">
                         {p50Data.blanks.map((img, idx) => (
                           <div key={idx} className={`aspect-[3/4] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                            <img src={img} alt={`Blank Poster ${idx + 1}`} className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(img)} />
+                            <img src={img} alt={`Blank Poster ${idx + 1}`} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(img)} />
                           </div>
                         ))}
                       </div>
@@ -458,7 +431,7 @@ const ProjectModal = ({
                       <div className="grid grid-cols-3 gap-2">
                         {p50Data.outdoor.map((img, idx) => (
                           <div key={idx} className={`aspect-[9/16] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                            <img src={img} alt={`Outdoor Context ${idx + 1}`} className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(img)} />
+                            <img src={img} alt={`Outdoor Context ${idx + 1}`} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(img)} />
                           </div>
                         ))}
                       </div>
@@ -482,19 +455,16 @@ const ProjectModal = ({
             )}
 
             <div className="mt-auto pt-8 border-t border-white/10">
-              <a
-                href={selectedProject.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest transition-all hover:scale-[1.02] flex items-center justify-center gap-2 ${darkMode ? 'bg-[#00FF41] text-black hover:bg-[#00cc33]' : 'bg-[#0055FF] text-white hover:bg-[#0044cc]'}`}
-                style={{ display: selectedProject.id === "02" ? 'none' : 'flex' }}
-              >
-                {selectedProject.id === "02" ? (
-                  <>WATCH FILM SEQUENCE <Play size={18} /></>
-                ) : (
-                  <>Launch Project <ArrowUpRight size={18} /></>
-                )}
-              </a>
+              {selectedProject.id !== "02" && (
+                <a
+                  href={selectedProject.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest transition-all hover:scale-[1.02] flex items-center justify-center gap-2 ${darkMode ? 'bg-[#00FF41] text-black hover:bg-[#00cc33]' : 'bg-[#0055FF] text-white hover:bg-[#0044cc]'}`}
+                >
+                  Launch Project <ArrowUpRight size={18} />
+                </a>
+              )}
             </div>
           </div>
         </div>

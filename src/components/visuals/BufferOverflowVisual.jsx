@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-const BufferOverflowVisual = ({ darkMode }) => {
+const BufferOverflowVisual = () => {
   const mountRef = useRef(null);
   const overlayRef = useRef(null);
 

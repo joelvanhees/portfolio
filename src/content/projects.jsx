@@ -7,12 +7,6 @@ import carImg from '../assets/images/car_preview.jpg';
 import previewWebImg from '../assets/images/previewWEB.png';
 import pdfFile from '../assets/pdf/feinkonzept_joelvanhees.pdf';
 
-import ikeaLogo from '../assets/logos/ikea.png';
-import britaLogo from '../assets/logos/brita.png';
-import goveeLogo from '../assets/logos/govee.png';
-
-export const brandLogos = { ikeaLogo, britaLogo, goveeLogo };
-
 export const buildProjects = ({ setActiveImage }) => [
   {
     id: "02",

@@ -19,9 +19,6 @@ import ikeaMerch2 from '../assets/images/ikea_merch_2.jpg';
 import salatProfileImg from '../assets/images/salat_profile.png';
 import threedSign1 from '../assets/images/threed_sign1.png';
 import threedSign2 from '../assets/images/threed_sign2.png';
-import ikeaLogo from '../assets/logos/ikea.png';
-import britaLogo from '../assets/logos/brita.png';
-import goveeLogo from '../assets/logos/govee.png';
 
 import softBodyProcess from '../assets/branding/soft-body-home/brandingSOFTprocess.jpeg';
 import softBodyLogo from '../assets/branding/soft-body-home/brandingSOFT.png';
@@ -248,12 +245,6 @@ const ProjectModal = ({
             {selectedProject.id === "01" ? (
               <div className="space-y-12 mt-4">
                 <div>
-                  <div className="flex gap-6 mb-8 items-center border-b border-white/10 pb-8">
-                    <img src={ikeaLogo} alt="IKEA" className="h-8 w-auto object-contain" />
-                    <img src={britaLogo} alt="Brita" className="h-8 w-auto object-contain" />
-                    <img src={goveeLogo} alt="Govee" className="h-8 w-auto object-contain" />
-                  </div>
-
                   <h3 className="text-xl font-rubik font-bold mb-4 uppercase text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">Social Media</h3>
                   <p className="text-lg font-light leading-relaxed">
                     Created artistic, experimental video content centered around the 'Salatschüssel' persona. This strategic content creation grew the channel to ~400k followers and generated over 10 million likes, establishing a massive organic reach.

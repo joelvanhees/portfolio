@@ -45,6 +45,7 @@ const App = () => {
   const handleNav = (page) => {
     setActivePage(page);
     setMenuOpen(false);
+    window.scrollTo(0, 0);
   };
 
   return (

@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, Layers, Video } from 'lucide-react';
 import SkillNetwork from '../components/SkillNetwork';
-import HoverVideoPlayer from '../components/visuals/HoverVideoPlayer';
 import SpiralTimeSphere from '../components/visuals/SpiralTimeSphere';
 import { homeCapabilities } from '../content/services';
-import { brandLogos } from '../content/projects.jsx';
 
 const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) => {
   const [terminalLine, setTerminalLine] = useState(0);
@@ -146,7 +144,13 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
                     {(project.visualComponent || project.id === "02" || project.id === "01") ? (
                       <div className="w-full h-full opacity-100 transition-opacity">
                         {project.id === "01" ? (
-                          <HoverVideoPlayer src="/videos/ikea_reel.mp4" />
+                          <video
+                            src="/videos/ikea_reel.mp4"
+                            className="w-full h-full object-cover"
+                            muted
+                            playsInline
+                            preload="metadata"
+                          />
                         ) : project.id === "02" ? (
                           (selectedProject?.id === "02") ? (
                             <div className="w-full h-full flex items-center justify-center opacity-20">
@@ -178,13 +182,6 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 border-t border-current pt-4 opacity-70 group-hover:opacity-100 transition-opacity">
                   <div className="md:col-span-2">
                     <p>{project.description}</p>
-                    {project.id === "01" && (
-                      <div className="flex gap-6 mt-6 items-center">
-                        <img src={brandLogos.ikeaLogo} alt="IKEA" className="h-6 w-auto object-contain" />
-                        <img src={brandLogos.britaLogo} alt="Brita" className="h-6 w-auto object-contain" />
-                        <img src={brandLogos.goveeLogo} alt="Govee" className="h-6 w-auto object-contain" />
-                      </div>
-                    )}
                   </div>
                   <div className="md:col-span-2 flex justify-start md:justify-end gap-4 font-mono text-xs uppercase flex-wrap">
                     {project.tech.map(t => <span key={t}>[{t}]</span>)}

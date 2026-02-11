@@ -1,8 +1,56 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, Layers, Video } from 'lucide-react';
 import SkillNetwork from '../components/SkillNetwork';
 import SpiralTimeSphere from '../components/visuals/SpiralTimeSphere';
 import { homeCapabilities } from '../content/services';
+import salatProfileImg from '../assets/images/salat_profile.png';
+
+const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*!?<>[]{}=/\\|~^';
+
+function ScrambleText({ text, delay = 0, darkMode }) {
+  const [displayed, setDisplayed] = useState(text.split('').map(() => GLYPHS[Math.floor(Math.random() * GLYPHS.length)]));
+  const [resolved, setResolved] = useState(false);
+  const frameRef = useRef(null);
+
+  useEffect(() => {
+    let started = false;
+    const startTimeout = setTimeout(() => {
+      started = true;
+      let iteration = 0;
+      const chars = text.split('');
+      const totalIterations = chars.length * 3;
+
+      function tick() {
+        setDisplayed(
+          chars.map((char, i) => {
+            if (char === ' ') return ' ';
+            const revealAt = i * 3;
+            if (iteration >= revealAt) return char;
+            return GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+          })
+        );
+        iteration++;
+        if (iteration <= totalIterations) {
+          frameRef.current = requestAnimationFrame(tick);
+        } else {
+          setResolved(true);
+        }
+      }
+      tick();
+    }, delay);
+
+    return () => {
+      clearTimeout(startTimeout);
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    };
+  }, [text, delay]);
+
+  return (
+    <span className={`transition-colors duration-500 ${resolved ? '' : (darkMode ? 'text-[#00FF41]' : 'text-[#0055FF]')}`}>
+      {displayed.join('')}
+    </span>
+  );
+}
 
 const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) => {
   const [terminalLine, setTerminalLine] = useState(0);
@@ -43,10 +91,10 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
               <span className="animate-pulse">●</span> System Online
             </p>
 
-            <h1 className="font-rubik text-[13vw] md:text-[11.5vw] leading-[0.8] tracking-tighter uppercase select-none w-full">
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-left">Visual</div>
-              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center">Story</div>
-              <div className="glitch-hover cursor-default transition-colors text-right block whitespace-nowrap">Teller</div>
+            <h1 className="font-rubik text-[17vw] md:text-[15vw] leading-[0.78] tracking-tighter uppercase select-none w-full">
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-left"><ScrambleText text="Visual" delay={300} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center"><ScrambleText text="Story" delay={600} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors text-right block whitespace-nowrap"><ScrambleText text="Teller" delay={900} darkMode={darkMode} /></div>
             </h1>
           </div>
 
@@ -144,12 +192,10 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
                     {(project.visualComponent || project.id === "02" || project.id === "01") ? (
                       <div className="w-full h-full opacity-100 transition-opacity">
                         {project.id === "01" ? (
-                          <video
-                            src="/videos/ikea_reel.mp4"
+                          <img
+                            src={salatProfileImg}
                             className="w-full h-full object-cover"
-                            muted
-                            playsInline
-                            preload="metadata"
+                            alt="Brand Collaboration Preview"
                           />
                         ) : project.id === "02" ? (
                           (selectedProject?.id === "02") ? (

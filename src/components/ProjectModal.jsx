@@ -220,21 +220,6 @@ const ProjectModal = ({
               </div>
             )}
 
-            {selectedProject.id === "00" && selectedProject.hasPdf && (
-              <button
-                onClick={() => setActivePdf(selectedProject.pdfUrl)}
-                className={`group flex items-center gap-4 text-left p-4 rounded-xl transition-all w-full border ${darkMode ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-black/5 border-black/10 hover:bg-black/10'}`}
-              >
-                <div className="p-3 bg-red-500/10 text-red-500 rounded-lg group-hover:bg-red-500 group-hover:text-white transition-colors">
-                  <FileText size={24} />
-                </div>
-                <div>
-                  <div className="font-bold uppercase text-sm">Designing a Website</div>
-                  <div className="text-xs opacity-60 font-mono">Concept & Documentation</div>
-                </div>
-                <ArrowUpRight className="ml-auto opacity-50 group-hover:opacity-100" size={16} />
-              </button>
-            )}
           </div>
 
           <div className="flex flex-col gap-8">

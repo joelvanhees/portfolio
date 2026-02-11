@@ -5,7 +5,7 @@ const HoverVideoPlayer = ({ src }) => {
   const videoRef = useRef(null);
   const handleMouseEnter = () => {
     if (videoRef.current) {
-      videoRef.current.play().catch((e) => console.log("Video play failed:", e));
+      videoRef.current.play().catch(() => {});
     }
   };
 

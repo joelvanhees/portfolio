@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-const TypographicClockVisual = ({ darkMode }) => {
+const TypographicClockVisual = () => {
   const mountRef = useRef(null);
   const timeRef = useRef(null);
   const hourRef = useRef(null);

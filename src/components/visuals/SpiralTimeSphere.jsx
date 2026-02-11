@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-const SpiralTimeSphere = ({ darkMode }) => {
+const SpiralTimeSphere = () => {
   const mountRef = useRef(null);
   const timeRef = useRef(null);
   const hourRef = useRef(null);
@@ -229,7 +229,7 @@ const SpiralTimeSphere = ({ darkMode }) => {
     const colorWhite = new THREE.Color(0xffffff);
     const colorGray = new THREE.Color(0xaaaaaa);
     const colorMinute = CONFIG.colors.minute;
-    const colorSecond = CONFIG.colors.second;
+    const _ColorSecond = CONFIG.colors.second;
 
     let animationFrameId;
 
@@ -329,7 +329,6 @@ const SpiralTimeSphere = ({ darkMode }) => {
       secondOrb.position.copy(secondInterpolated).multiplyScalar(1.05);
 
       if (FRAME % 2 === 0) {
-        const shift = 1;
         for (let i = CONFIG.trailLength - 1; i > 0; i--) {
           trailPositionsArr[i * 3] = trailPositionsArr[(i - 1) * 3];
           trailPositionsArr[i * 3 + 1] = trailPositionsArr[(i - 1) * 3 + 1];
@@ -405,7 +404,7 @@ const SpiralTimeSphere = ({ darkMode }) => {
       if (mountRef.current && renderer && renderer.domElement) {
         try {
           mountRef.current.removeChild(renderer.domElement);
-        } catch (e) {
+        } catch {
           // Ignore if already removed
         }
       }

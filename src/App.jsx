@@ -8,7 +8,7 @@ import AboutView from './views/AboutView';
 import ContactView from './views/ContactView';
 import ProjectModal from './components/ProjectModal';
 
-import { buildProjects } from './content/projects';
+import { buildProjects } from './content/projects.jsx';
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(true);
@@ -90,12 +90,12 @@ const App = () => {
       />
 
       <nav className="fixed w-full z-40 px-6 py-6 flex justify-between items-center mix-blend-difference text-white">
-        <div
+        <button
           onClick={() => handleNav('home')}
-          className="text-xl font-bold tracking-tighter hover:opacity-70 cursor-pointer"
+          className="text-xl font-bold tracking-tighter hover:opacity-70 cursor-pointer bg-transparent border-none p-0 text-inherit"
         >
           JOEL VAN HEES <span className="text-xs opacity-50 ml-2 hidden md:inline-block">[ARCHITECT_NODE]</span>
-        </div>
+        </button>
 
         <div className="flex items-center gap-6">
           <button
@@ -156,8 +156,7 @@ const App = () => {
                 <p className="mb-2">Angaben gemäß § 5 TMG</p>
                 <p>
                   Joel van Hees<br />
-                  [Musterstraße 1] (HIER ADRESSE EINFÜGEN)<br />
-                  [509] [Musterstadt] (HIER PLZ/ORT EINFÜGEN)<br />
+                  Köln<br />
                   Deutschland
                 </p>
 
@@ -169,7 +168,7 @@ const App = () => {
                 <p className="mt-4">
                   <strong>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:</strong><br />
                   Joel van Hees<br />
-                  [Adresse wie oben]
+                  Köln, Deutschland
                 </p>
 
                 <p className="mt-4">
@@ -202,8 +201,8 @@ const App = () => {
                   <strong>Hinweis zur verantwortlichen Stelle:</strong><br />
                   Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:<br />
                   Joel van Hees<br />
-                  [Adresse wie im Impressum]<br />
-                  E-Mail: kontact@joelvanhees.de
+                  Köln, Deutschland<br />
+                  E-Mail: kontakt@joelvanhees.de
                 </p>
                 <p className="mt-2">
                   <strong>Widerruf Ihrer Einwilligung zur Datenverarbeitung:</strong> Viele Datenverarbeitungsvorgänge sind nur mit Ihrer ausdrücklichen Einwilligung möglich. Sie können eine bereits erteilte Einwilligung jederzeit widerrufen. Dazu reicht eine formlose Mitteilung per E-Mail an uns.

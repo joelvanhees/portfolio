@@ -8,8 +8,8 @@ const WorkView = ({ darkMode }) => {
       </h1>
 
       <div className="relative border-l border-current ml-4 md:ml-12 pl-12 md:pl-24 space-y-24 pb-24">
-        {timeline.map((item, i) => (
-          <div key={i} className="relative group">
+        {timeline.map((item) => (
+          <div key={item.year} className="relative group">
             <div className={`absolute -left-[53px] md:-left-[101px] top-2 w-4 h-4 rounded-full border-2 border-current bg-transparent transition-all duration-300 group-hover:bg-current ${darkMode ? 'group-hover:shadow-[0_0_20px_rgba(0,255,65,0.5)]' : 'group-hover:shadow-[0_0_20px_rgba(0,85,255,0.5)]'}`}></div>
             <span className="font-mono text-sm opacity-50 mb-2 block">{item.year}</span>
             <h3 className="text-3xl md:text-5xl font-rubik font-bold uppercase mb-4">

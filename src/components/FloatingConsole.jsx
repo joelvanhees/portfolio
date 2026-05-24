@@ -4,51 +4,51 @@ import ShellBlob from './ShellBlob';
 
 // TypewriterText component to emulate realistic human typing with variable speeds and pauses
 const TypewriterText = ({ text }) => {
-  const [displayed, setDisplayed] = useState('');
-  
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   useEffect(() => {
-    setDisplayed(''); // Reset text when content changes
+    setCurrentIndex(0); // Reset index on text change
     
     let index = 0;
     let timer;
-    // Choose a random base speed per message to make it feel natural (12ms to 28ms)
-    const baseSpeed = 10 + Math.random() * 16;
-    
+    const baseSpeed = 10 + Math.random() * 14; // 10ms - 24ms base speed
+
     const type = () => {
       if (index < text.length) {
-        setDisplayed((prev) => prev + text.charAt(index));
         index++;
+        setCurrentIndex(index);
         
-        // Variable delay pauses for natural breathing
         let nextDelay = baseSpeed;
         const char = text.charAt(index - 1);
         if (char === '.' || char === '!' || char === '?') {
-          nextDelay += 180 + Math.random() * 80; // Long pause at punctuation
+          nextDelay += 180 + Math.random() * 60;
         } else if (char === '\n') {
-          nextDelay += 220 + Math.random() * 100; // Medium pause at line breaks
+          nextDelay += 200 + Math.random() * 80;
         } else if (char === ' ') {
-          nextDelay += Math.random() * 10; // Micro pause at word boundaries
+          nextDelay += Math.random() * 8;
         }
         
         timer = setTimeout(type, nextDelay);
       }
     };
-    
-    type();
-    
+
+    // Slight initial delay to feel more organic
+    timer = setTimeout(type, 60);
+
     return () => clearTimeout(timer);
   }, [text]);
 
-  // Keep output screen scrolled to the bottom as new characters type out
+  // Keep screen scrolled down as index increases
   useEffect(() => {
     const screen = document.getElementById('console-scroll-screen');
     if (screen) {
       screen.scrollTop = screen.scrollHeight;
     }
-  }, [displayed]);
+  }, [currentIndex]);
 
-  return <span className="whitespace-pre-wrap">{displayed}</span>;
+  return <span className="whitespace-pre-wrap">{text.slice(0, currentIndex)}</span>;
 };
+
 
 const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTriggerCooldown }) => {
   const [input, setInput] = useState('');

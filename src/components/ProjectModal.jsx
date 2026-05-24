@@ -1,10 +1,12 @@
+import { lazy, Suspense } from 'react';
 import { ArrowUpRight, FileText, Layers, Maximize2, Video, X } from 'lucide-react';
 
 import HoverVideoPlayer from './visuals/HoverVideoPlayer';
 import InfiniteMarqueeVisual from './visuals/InfiniteMarqueeVisual';
-import SpiralTimeSphere from './visuals/SpiralTimeSphere';
-import TypographicClockVisual from './visuals/TypographicClockVisual';
-import BufferOverflowVisual from './visuals/BufferOverflowVisual';
+
+const SpiralTimeSphere = lazy(() => import('./visuals/SpiralTimeSphere'));
+const TypographicClockVisual = lazy(() => import('./visuals/TypographicClockVisual'));
+const BufferOverflowVisual = lazy(() => import('./visuals/BufferOverflowVisual'));
 
 import previewWebImg from '../assets/images/previewWEB.png';
 
@@ -93,7 +95,9 @@ const ProjectModal = ({
                  `}>
               {selectedProject.id === "02" ? (
                 <div className="w-full h-full relative">
-                  <SpiralTimeSphere />
+                  <Suspense fallback={<div className="flex items-center justify-center w-full h-full text-xs font-mono opacity-50">[LOADING_3D_ORB...]</div>}>
+                    <SpiralTimeSphere />
+                  </Suspense>
                 </div>
               ) : selectedProject.id === "06" ? (
                 <div className="absolute inset-0 w-full h-full">
@@ -139,7 +143,7 @@ const ProjectModal = ({
             </div>
 
             {selectedProject.extraVisuals && (
-              <>
+              <Suspense fallback={<div className="flex items-center justify-center w-full min-h-[200px] text-xs font-mono opacity-50">[LOADING_3D_TUNNEL...]</div>}>
                 <div className="mt-4 aspect-video w-full rounded-xl overflow-hidden border border-white/10 bg-black relative shadow-2xl">
                   <TypographicClockVisual />
                 </div>
@@ -150,7 +154,7 @@ const ProjectModal = ({
                     [BUFFER_OVERFLOW.EXE] RUNNING...
                   </div>
                 </div>
-              </>
+              </Suspense>
             )}
 
             {selectedProject.id === "02" && (

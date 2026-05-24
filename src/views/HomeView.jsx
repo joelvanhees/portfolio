@@ -1,7 +1,8 @@
+import { lazy, Suspense } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, Layers, Video } from 'lucide-react';
 import SkillNetwork from '../components/SkillNetwork';
-import SpiralTimeSphere from '../components/visuals/SpiralTimeSphere';
+const SpiralTimeSphere = lazy(() => import('../components/visuals/SpiralTimeSphere'));
 import { homeCapabilities } from '../content/services';
 import salatProfileImg from '../assets/images/salat_profile.png';
 
@@ -203,7 +204,9 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
                               <Layers size={64} />
                             </div>
                           ) : (
-                            <SpiralTimeSphere />
+                            <Suspense fallback={<div className="flex items-center justify-center w-full h-full text-xs font-mono opacity-30">[LAUNCHING_SPHERE...]</div>}>
+                              <SpiralTimeSphere />
+                            </Suspense>
                           )
                         ) : (
                           <div className="w-full h-full">

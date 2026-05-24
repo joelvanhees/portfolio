@@ -42,10 +42,15 @@ const App = () => {
     }
   }, [darkMode]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTo(0, 0);
+    document.body.scrollTo(0, 0);
+  }, [activePage]);
+
   const handleNav = (page) => {
     setActivePage(page);
     setMenuOpen(false);
-    window.scrollTo(0, 0);
   };
 
   return (

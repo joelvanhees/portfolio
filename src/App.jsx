@@ -163,25 +163,29 @@ const App = () => {
         style={{ width: `${scrollProgress * 100}%` }}
       />
 
-      <nav className="fixed w-full z-40 px-6 py-6 flex justify-between items-center mix-blend-difference text-white">
+      <nav className="fixed w-full z-40 px-6 py-6 flex justify-between items-center text-white">
         <button
           onClick={() => handleNav('home')}
           className="text-lg md:text-xl font-bold tracking-tighter cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-2 bg-transparent border-none p-0"
           style={{
             background: darkMode
-              ? 'linear-gradient(135deg, #ffffff 40%, rgba(255,255,255,0.4) 75%, rgba(255,255,255,0.2) 100%)'
-              : 'linear-gradient(135deg, #111111 40%, rgba(0,0,0,0.55) 75%, rgba(0,0,0,0.3) 100%)',
+              ? 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.3) 45%, rgba(0,0,0,0.3) 50%, rgba(255,255,255,0.2) 55%, rgba(255,255,255,0.7) 100%)'
+              : 'linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 45%, rgba(255,255,255,0.2) 50%, rgba(0,0,0,0.1) 55%, rgba(0,0,0,0.6) 100%)',
             WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            filter: darkMode 
-              ? 'drop-shadow(0px 1px 1px rgba(255,255,255,0.45)) drop-shadow(0px -1px 1px rgba(0,0,0,0.65)) drop-shadow(0px 8px 16px rgba(0,0,0,0.35))' 
-              : 'drop-shadow(0px 1px 1px rgba(255,255,255,0.85)) drop-shadow(0px -1px 1px rgba(0,0,0,0.2)) drop-shadow(0px 4px 10px rgba(0,0,0,0.12))',
+            textShadow: darkMode
+              ? '-0.8px -0.8px 0px rgba(255,255,255,0.5), 0.8px 0.8px 0px rgba(0,0,0,0.85), 0px 4px 10px rgba(0,0,0,0.45)'
+              : '-0.8px -0.8px 0px rgba(255,255,255,0.95), 0.8px 0.8px 0px rgba(0,0,0,0.25), 0px 3px 8px rgba(0,0,0,0.18)',
+            filter: darkMode
+              ? 'drop-shadow(0px 8px 16px rgba(0,0,0,0.35))'
+              : 'drop-shadow(0px 4px 10px rgba(0,0,0,0.12))',
           }}
         >
-          JOEL VAN HEES <span className={`text-[9px] px-1.5 py-0.5 rounded uppercase font-mono tracking-widest ${darkMode ? 'bg-[#00FF41]/10 text-[#00FF41]' : 'bg-[#0055FF]/10 text-[#0055FF]'}`}>[ARCHITECT]</span>
+          JOEL VAN HEES <span className={`text-[9px] px-1.5 py-0.5 rounded uppercase font-mono tracking-widest ${darkMode ? 'bg-[#00FF41]/15 text-[#00FF41] border border-[#00FF41]/25' : 'bg-[#0055FF]/10 text-[#0055FF] border border-[#0055FF]/20'}`}>[ARCHITECT]</span>
         </button>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-6 mix-blend-difference">
           <button
             onClick={() => {
               if (consoleOpen) {

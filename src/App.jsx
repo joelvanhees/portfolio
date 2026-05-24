@@ -8,6 +8,7 @@ import AboutView from './views/AboutView';
 import ContactView from './views/ContactView';
 import ProjectModal from './components/ProjectModal';
 import FloatingConsole from './components/FloatingConsole';
+import CooldownPool from './components/CooldownPool';
 
 import { buildProjects } from './content/projects.jsx';
 
@@ -22,6 +23,8 @@ const App = () => {
   const [activeImage, setActiveImage] = useState(null);
   const [activePdf, setActivePdf] = useState(null);
   const [consoleOpen, setConsoleOpen] = useState(false);
+  const [consoleMinimized, setConsoleMinimized] = useState(false);
+  const [cooldownActive, setCooldownActive] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [trailPos, setTrailPos] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(true);
@@ -164,11 +167,23 @@ const App = () => {
 
         <div className="flex items-center gap-6">
           <button
-            onClick={() => setConsoleOpen(!consoleOpen)}
+            onClick={() => {
+              if (consoleOpen) {
+                if (consoleMinimized) {
+                  setConsoleMinimized(false);
+                } else {
+                  setConsoleOpen(false);
+                  setConsoleMinimized(false);
+                }
+              } else {
+                setConsoleOpen(true);
+                setConsoleMinimized(false);
+              }
+            }}
             className="flex items-center gap-1.5 text-xs border border-white/20 px-3 py-1 rounded-full hover:bg-white hover:text-black transition-all"
           >
             <Terminal size={12} />
-            {consoleOpen ? 'SHELL: CLOSE' : 'SHELL: OPEN'}
+            {consoleOpen && !consoleMinimized ? 'SHELL: CLOSE' : 'SHELL: OPEN'}
           </button>
 
           <button
@@ -372,11 +387,34 @@ const App = () => {
           </div>
         </div>
       </footer>
-      {consoleOpen && (
+      {consoleOpen && !consoleMinimized && (
         <FloatingConsole 
           darkMode={darkMode} 
           toggleDarkMode={() => setDarkMode(!darkMode)} 
-          onClose={() => setConsoleOpen(false)} 
+          onClose={() => {
+            setConsoleOpen(false);
+            setConsoleMinimized(false);
+          }} 
+          onMinimize={() => setConsoleMinimized(true)}
+          onTriggerCooldown={() => setCooldownActive(true)}
+        />
+      )}
+      {consoleOpen && consoleMinimized && (
+        <button
+          onClick={() => setConsoleMinimized(false)}
+          title="Restore System Shell"
+          className={`fixed bottom-6 right-6 p-4 rounded-full border shadow-2xl z-[90] cursor-pointer transition-all duration-300 hover:scale-110 flex items-center justify-center animate-bounce
+            ${darkMode 
+              ? 'bg-black border-[#00FF41]/40 text-[#00FF41] hover:shadow-[0_0_20px_rgba(0,255,65,0.4)] shadow-[0_0_10px_rgba(0,255,65,0.2)]' 
+              : 'bg-white border-[#0055FF]/40 text-[#0055FF] hover:shadow-[0_0_20px_rgba(0,85,255,0.4)] shadow-[0_0_10px_rgba(0,85,255,0.2)]'}`}
+        >
+          <Terminal size={22} className="animate-pulse" />
+        </button>
+      )}
+      {cooldownActive && (
+        <CooldownPool 
+          darkMode={darkMode} 
+          onClose={() => setCooldownActive(false)} 
         />
       )}
       {!isMobile && (

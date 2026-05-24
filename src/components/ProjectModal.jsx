@@ -55,6 +55,7 @@ const ProjectModal = ({
   setSelectedProject,
   setActiveImage,
   setActivePdf,
+  onStartProject,
 }) => {
   if (!selectedProject) return null;
 
@@ -644,16 +645,14 @@ const ProjectModal = ({
               </div>
             )}
 
-            <div className="mt-auto pt-8 border-t border-white/10">
+            <div className="mt-auto pt-8 border-t border-white/10 font-mono">
               {selectedProject.id !== "02" && selectedProject.id !== "07" && (
-                <a
-                  href={selectedProject.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest transition-all hover:scale-[1.02] flex items-center justify-center gap-2 ${darkMode ? 'bg-[#00FF41] text-black hover:bg-[#00cc33]' : 'bg-[#0055FF] text-white hover:bg-[#0044cc]'}`}
+                <button
+                  onClick={onStartProject}
+                  className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest transition-all hover:scale-[1.02] flex items-center justify-center gap-2 cursor-pointer ${darkMode ? 'bg-[#00FF41] text-black hover:bg-[#00cc33]' : 'bg-[#0055FF] text-white hover:bg-[#0044cc]'}`}
                 >
-                  Launch Project <ArrowUpRight size={18} />
-                </a>
+                  Launch Your Project <ArrowUpRight size={18} />
+                </button>
               )}
             </div>
           </div>

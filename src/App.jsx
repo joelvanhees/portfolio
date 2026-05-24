@@ -53,18 +53,14 @@ const App = () => {
     setMenuOpen(false);
   };
 
+  const handleStartProject = () => {
+    setSelectedProject(null);
+    handleNav('contact');
+  };
+
   return (
     <div className={`min-h-screen w-full relative transition-colors duration-700 ease-in-out font-mono selection:bg-green-500 selection:text-black overflow-x-hidden ${darkMode ? 'bg-[#050505] text-[#E0E0E0]' : 'bg-[#F0F0F0] text-[#111]'}`}>
       <style>{`
-        @font-face {
-          font-family: 'Rubik80sFade';
-          src: url('/fonts/Rubik80sFade-Regular.ttf') format('truetype');
-          font-weight: normal;
-          font-style: normal;
-        }
-
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap');
-
         .font-syne { font-family: 'Syne', sans-serif; }
         .font-rubik { font-family: 'Rubik80sFade', 'Syne', sans-serif; }
         .font-mono { font-family: 'Space Mono', monospace; }
@@ -238,6 +234,7 @@ const App = () => {
         setSelectedProject={setSelectedProject}
         setActiveImage={setActiveImage}
         setActivePdf={setActivePdf}
+        onStartProject={handleStartProject}
       />
 
       {activeImage && (

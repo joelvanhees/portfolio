@@ -290,7 +290,7 @@ const App = () => {
 
           <div className="flex flex-col md:flex-row justify-between items-end gap-8 font-mono text-sm uppercase">
             <div className="flex gap-4">
-              <a href="https://www.instagram.com/joelvanhees?igsh=cG91ZjEzYnh5azAx&utm_source=qr" target="_blank" rel="noopener noreferrer" className="hover:line-through">Instagram</a>
+              <a href="https://www.instagram.com/joelvn20?igsh=cG91ZjEzYnh5azAx&utm_source=qr" target="_blank" rel="noopener noreferrer" className="hover:line-through">Instagram</a>
             </div>
             <div className="text-right">
               <p>© {new Date().getFullYear()} Joel van Hees</p>

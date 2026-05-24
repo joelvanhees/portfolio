@@ -1,17 +1,25 @@
 import { useEffect, useRef, useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Code, Shield, Eye, Layers } from 'lucide-react';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
 const CooldownPool = ({ darkMode, onClose }) => {
   const canvasRef = useRef(null);
+  const glCanvasRef = useRef(null);
   const requestRef = useRef(null);
+  const glRequestRef = useRef(null);
   const mouseRef = useRef({ x: 0, y: 0, active: false, px: 0, py: 0 });
+  const mouseCoords = useRef(new THREE.Vector2());
+  const raycaster = useRef(new THREE.Raycaster());
 
-  // Grid / Simulation Dimensions
+  const [loading, setLoading] = useState(true);
+  const [isHoveringPool, setIsHoveringPool] = useState(false);
+
+  // --- 1. 2D VECTOR WAVE HEIGHTMAP ARRAYS ---
   const simWidth = 128;
   const simHeight = 128;
   const size = simWidth * simHeight;
-
-  // Buffer 1 and Buffer 2 for wave heights
   const buffer1Ref = useRef(new Float32Array(size));
   const buffer2Ref = useRef(new Float32Array(size));
 
@@ -30,7 +38,6 @@ const CooldownPool = ({ darkMode, onClose }) => {
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < r) {
             const idx = sx + sy * simWidth;
-            // Inject wave height (attenuated by distance)
             buffer[idx] += (1 - dist / r) * force;
           }
         }
@@ -38,12 +45,12 @@ const CooldownPool = ({ darkMode, onClose }) => {
     }
   };
 
+  // --- 2. 2D BACKGROUND GRID ANIMATION EFFECT ---
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    // Handle high DPI screens
     const resize = () => {
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
@@ -55,11 +62,11 @@ const CooldownPool = ({ darkMode, onClose }) => {
     window.addEventListener('resize', resize);
     resize();
 
-    // Spawn initial random drops to create ripples
-    for (let i = 0; i < 8; i++) {
+    // Initial drops
+    for (let i = 0; i < 6; i++) {
       const rx = Math.random() * (simWidth - 20) + 10;
       const ry = Math.random() * (simHeight - 20) + 10;
-      splash(rx, ry, 4, 300 + Math.random() * 400);
+      splash(rx, ry, 4, 300 + Math.random() * 300);
     }
 
     const damping = 0.985;
@@ -72,62 +79,51 @@ const CooldownPool = ({ darkMode, onClose }) => {
 
       ctx.clearRect(0, 0, width, height);
 
-      // Deep water gradient background
+      // Gradient backdrop
       const grad = ctx.createLinearGradient(0, 0, 0, height);
       if (darkMode) {
-        grad.addColorStop(0, '#020514');
-        grad.addColorStop(1, '#05180f');
+        grad.addColorStop(0, '#020308');
+        grad.addColorStop(1, '#050c18');
       } else {
-        grad.addColorStop(0, '#eaf2ff');
-        grad.addColorStop(1, '#d8e5ff');
+        grad.addColorStop(0, '#f2f6ff');
+        grad.addColorStop(1, '#e2ecff');
       }
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, width, height);
 
-      // Step 1: Wave equation step
       const b1 = buffer1Ref.current;
       const b2 = buffer2Ref.current;
 
+      // Wave simulation step
       for (let y = 1; y < simHeight - 1; y++) {
         for (let x = 1; x < simWidth - 1; x++) {
           const idx = x + y * simWidth;
-          // Standard wave equation
-          b2[idx] = (
-            (b1[idx - 1] +
-             b1[idx + 1] +
-             b1[idx - simWidth] +
-             b1[idx + simWidth]) / 2
-          ) - b2[idx];
-          // Damping
+          b2[idx] = ((b1[idx - 1] + b1[idx + 1] + b1[idx - simWidth] + b1[idx + simWidth]) / 2) - b2[idx];
           b2[idx] *= damping;
         }
       }
 
-      // Swap buffers
       buffer1Ref.current = b2;
       buffer2Ref.current = b1;
 
-      // Mouse drag splash effect
+      // Mouse interactive ripple injection
       const mouse = mouseRef.current;
       if (mouse.active) {
-        // Map screen space to heightmap space
         const hx = (mouse.x / width) * simWidth;
         const hy = (mouse.y / height) * simHeight;
-        // Inject splash
-        splash(hx, hy, 3, 220);
+        splash(hx, hy, 3, 200);
       }
 
-      // Automatically drop tiny drops randomly to keep the pool alive
-      if (Math.random() < 0.03) {
+      // Auto drops
+      if (Math.random() < 0.02) {
         const rx = Math.random() * (simWidth - 10) + 5;
         const ry = Math.random() * (simHeight - 10) + 5;
         splash(rx, ry, 2, 100 + Math.random() * 200);
       }
 
-      // Step 2: Draw futuristic 3D wireframe mesh deformed by ripples
-      const gridCols = 44;
-      const gridRows = 30;
-
+      // Render wireframe vector grid
+      const gridCols = 36;
+      const gridRows = 24;
       ctx.lineWidth = 1;
 
       // Horizontal Lines
@@ -140,28 +136,19 @@ const CooldownPool = ({ darkMode, onClose }) => {
           const gx = (c / (gridCols - 1)) * width;
           const hmx = (c / (gridCols - 1)) * (simWidth - 1);
 
-          // Bilinear sample wave height at heightmap coordinate (hmx, hmy)
           const idx = Math.floor(hmx) + Math.floor(hmy) * simWidth;
           const waveHeight = b1[idx] || 0;
-
-          // Calculate displacement and 3D skew
-          const dx = 0;
-          const dy = waveHeight * 0.18; // Ripple vertical displacement
-
-          const drawX = gx + dx;
-          const drawY = gy + dy;
+          const dy = waveHeight * 0.14;
 
           if (c === 0) {
-            ctx.moveTo(drawX, drawY);
+            ctx.moveTo(gx, gy + dy);
           } else {
-            ctx.lineTo(drawX, drawY);
+            ctx.lineTo(gx, gy + dy);
           }
         }
-        
-        // Color matching active theme
         ctx.strokeStyle = darkMode 
-          ? `rgba(0, 255, 65, ${0.12 + Math.abs(Math.sin(time + r)) * 0.08})`
-          : `rgba(0, 85, 255, ${0.15 + Math.abs(Math.sin(time + r)) * 0.08})`;
+          ? `rgba(0, 255, 65, ${0.06 + Math.abs(Math.sin(time + r * 0.2)) * 0.04})`
+          : `rgba(0, 85, 255, ${0.08 + Math.abs(Math.sin(time + r * 0.2)) * 0.04})`;
         ctx.stroke();
       }
 
@@ -177,47 +164,19 @@ const CooldownPool = ({ darkMode, onClose }) => {
 
           const idx = Math.floor(hmx) + Math.floor(hmy) * simWidth;
           const waveHeight = b1[idx] || 0;
-
-          const dx = 0;
-          const dy = waveHeight * 0.18;
-
-          const drawX = gx + dx;
-          const drawY = gy + dy;
+          const dy = waveHeight * 0.14;
 
           if (r === 0) {
-            ctx.moveTo(drawX, drawY);
+            ctx.moveTo(gx, gy + dy);
           } else {
-            ctx.lineTo(drawX, drawY);
+            ctx.lineTo(gx, gy + dy);
           }
         }
-
         ctx.strokeStyle = darkMode 
-          ? `rgba(0, 255, 65, ${0.12 + Math.abs(Math.sin(time + c)) * 0.08})`
-          : `rgba(0, 85, 255, ${0.15 + Math.abs(Math.sin(time + c)) * 0.08})`;
+          ? `rgba(0, 255, 65, ${0.06 + Math.abs(Math.sin(time + c * 0.2)) * 0.04})`
+          : `rgba(0, 85, 255, ${0.08 + Math.abs(Math.sin(time + c * 0.2)) * 0.04})`;
         ctx.stroke();
       }
-
-      // Render futuristic floating system indicators that warp slightly
-      ctx.font = '9px monospace';
-      ctx.fillStyle = darkMode ? 'rgba(0, 255, 65, 0.45)' : 'rgba(0, 85, 255, 0.55)';
-      ctx.textAlign = 'left';
-
-      const indicators = [
-        { text: '[ COOLDOWN MODE ACTIVE ]', x: 40, y: 50 },
-        { text: `[ WATER LEVEL: 100% ]`, x: 40, y: 70 },
-        { text: `[ OSCILLATIONS: ${Math.sin(time).toFixed(4)} ]`, x: 40, y: 90 },
-        { text: '[ DISTURB THE WATER SURFACE ]', x: width - 240, y: 50 },
-        { text: '[ PRESS ANYKEY OR END COOLDOWN ]', x: width - 240, y: 70 },
-      ];
-
-      indicators.forEach(ind => {
-        // Warp text coordinate based on wave height at position
-        const hmx = (ind.x / width) * simWidth;
-        const hmy = (ind.y / height) * simHeight;
-        const idx = Math.min(size - 1, Math.max(0, Math.floor(hmx) + Math.floor(hmy) * simWidth));
-        const dy = (b1[idx] || 0) * 0.15;
-        ctx.fillText(ind.text, ind.x, ind.y + dy);
-      });
 
       requestRef.current = requestAnimationFrame(render);
     };
@@ -226,13 +185,239 @@ const CooldownPool = ({ darkMode, onClose }) => {
 
     return () => {
       window.removeEventListener('resize', resize);
-      if (requestRef.current) {
-        cancelAnimationFrame(requestRef.current);
-      }
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
   }, [darkMode]);
 
-  // Touch and pointer event listeners
+  // --- 3. THREE.JS 3D GLASS POOL ANIMATION EFFECT ---
+  useEffect(() => {
+    const canvas = glCanvasRef.current;
+    if (!canvas) return;
+
+    // Scene setup
+    const scene = new THREE.Scene();
+    
+    // Adjust camera properties for elite composition
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 7, 13);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.minDistance = 6;
+    controls.maxDistance = 22;
+    controls.target.set(0, 1.2, 0);
+    controls.maxPolarAngle = Math.PI / 2 - 0.05; // Prevent clipping under floor
+
+    // Environment reflections
+    const rgbeLoader = new RGBELoader();
+    rgbeLoader.load(
+      'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr',
+      (texture) => {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        scene.environment = texture;
+        setLoading(false);
+      },
+      undefined,
+      (err) => {
+        console.error('Failed to load HDR environment map', err);
+        setLoading(false);
+      }
+    );
+
+    // Directional lighting
+    const sunLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    sunLight.position.set(6, 12, 6);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    scene.add(sunLight);
+
+    // Ambient light filler
+    const ambientLight = new THREE.AmbientLight(0xffffff, darkMode ? 0.35 : 0.6);
+    scene.add(ambientLight);
+
+    // Loader textures
+    const textureLoader = new THREE.TextureLoader();
+    const normalMap = textureLoader.load(
+      'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/water/Water_1_M_Normal.jpg'
+    );
+    normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping;
+    normalMap.repeat.set(4, 4);
+
+    // Water physical refractive material
+    const waterMaterial = new THREE.MeshPhysicalMaterial({
+      color: darkMode ? 0x88ccff : 0xaaddff,
+      metalness: 0.0,
+      roughness: 0.02,
+      transmission: 1.0,
+      thickness: 1.8,
+      ior: 1.333,
+      attenuationColor: new THREE.Color(0x00cccc),
+      attenuationDistance: 4.0,
+      normalMap: normalMap,
+      clearcoat: 1.0,
+      side: THREE.DoubleSide,
+    });
+
+    // Custom GLSL waves shader injection
+    waterMaterial.onBeforeCompile = (shader) => {
+      shader.uniforms.uTime = { value: 0 };
+      waterMaterial.userData.shader = shader;
+
+      shader.vertexShader = `
+        varying vec3 vLocalPos;
+        uniform float uTime;
+
+        vec3 getWaveOffset(vec3 p) {
+          float time = uTime * 1.8;
+          vec3 finalPos = vec3(0.0);
+          
+          float dist = length(p.xz);
+          float agitation = smoothstep(0.0, 4.0, dist) * 0.7 + 0.3;
+          float w1 = sin(p.x * 2.5 + time) * 0.035 * agitation;
+          float w2 = cos(p.z * 2.0 + time * 1.1) * 0.035 * agitation;
+          finalPos.y += w1 + w2;
+
+          return finalPos;
+        }
+      ` + shader.vertexShader;
+
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <begin_vertex>',
+        `
+        #include <begin_vertex>
+        vLocalPos = position; 
+        
+        bool isTop = position.y > 0.9; 
+
+        if (isTop) {
+          vec3 waveOffset = getWaveOffset(position);
+          transformed.y += waveOffset.y;
+
+          float d = 0.05;
+          vec3 pX = position + vec3(d, 0.0, 0.0);
+          vec3 pZ = position + vec3(0.0, 0.0, d);
+          vec3 wX = getWaveOffset(pX);
+          vec3 wZ = getWaveOffset(pZ);
+          vec3 pOrg = position + vec3(0.0, waveOffset.y, 0.0);
+          vec3 vX = (pX + vec3(0.0, wX.y, 0.0)) - pOrg;
+          vec3 vZ = (pZ + vec3(0.0, wZ.y, 0.0)) - pOrg;
+          objectNormal = normalize(cross(vZ, vX));
+        }
+        `
+      );
+    };
+
+    const waterGeometry = new THREE.CylinderGeometry(3.9, 3.9, 2.0, 128, 64);
+    const waterMesh = new THREE.Mesh(waterGeometry, waterMaterial);
+    waterMesh.position.y = 1.5;
+    waterMesh.castShadow = true;
+    waterMesh.renderOrder = 0;
+    scene.add(waterMesh);
+
+    // Glass material for pool basin and glass floor plate
+    const glassMaterial = new THREE.MeshPhysicalMaterial({
+      color: darkMode ? 0xffffff : 0xeeeeee,
+      metalness: 0.0,
+      roughness: 0.04,
+      transmission: 1.0,
+      transparent: true,
+      opacity: darkMode ? 0.25 : 0.35,
+      depthWrite: false,
+      ior: 1.52,
+      side: THREE.FrontSide,
+      clearcoat: 1.0,
+    });
+
+    // Glass pool basin
+    const points = [];
+    const floorThickness = 0.5;
+    const outerRadius = 4.5;
+    const height = 3.0;
+    points.push(new THREE.Vector2(0.001, 0));
+    points.push(new THREE.Vector2(outerRadius, 0));
+    points.push(new THREE.Vector2(outerRadius, height));
+    points.push(new THREE.Vector2(4.0, height));
+    points.push(new THREE.Vector2(4.0, floorThickness));
+    points.push(new THREE.Vector2(0.001, floorThickness));
+
+    const basinGeometry = new THREE.LatheGeometry(points, 64);
+    const basin = new THREE.Mesh(basinGeometry, glassMaterial);
+    basin.castShadow = true;
+    basin.receiveShadow = true;
+    basin.renderOrder = 1;
+    scene.add(basin);
+
+    // Glass floor plate
+    const glassFloorGeometry = new THREE.CylinderGeometry(40, 40, 0.4, 64);
+    const glassFloor = new THREE.Mesh(glassFloorGeometry, glassMaterial);
+    glassFloor.position.y = -0.2;
+    glassFloor.receiveShadow = true;
+    scene.add(glassFloor);
+
+    // Render loop
+    const clock = new THREE.Clock();
+
+    const animate = () => {
+      const time = clock.getElapsedTime();
+
+      // Update shader uniforms
+      if (waterMaterial.userData.shader) {
+        waterMaterial.userData.shader.uniforms.uTime.value = time;
+      }
+
+      // Normal map offsets
+      if (waterMaterial.normalMap) {
+        waterMaterial.normalMap.offset.x = time * 0.015;
+        waterMaterial.normalMap.offset.y = time * 0.008;
+      }
+
+      // Raycast to check hover
+      raycaster.current.setFromCamera(mouseCoords.current, camera);
+      const intersects = raycaster.current.intersectObjects([basin, waterMesh]);
+      setIsHoveringPool(intersects.length > 0);
+
+      controls.update();
+      renderer.render(scene, camera);
+
+      glRequestRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    const handleResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup resources
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (glRequestRef.current) cancelAnimationFrame(glRequestRef.current);
+      
+      controls.dispose();
+      basinGeometry.dispose();
+      glassFloorGeometry.dispose();
+      waterGeometry.dispose();
+      glassMaterial.dispose();
+      waterMaterial.dispose();
+      if (normalMap) normalMap.dispose();
+      renderer.dispose();
+    };
+  }, [darkMode]);
+
+  // Pointer interactions
   const handlePointerDown = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -244,10 +429,9 @@ const CooldownPool = ({ darkMode, onClose }) => {
     mouseRef.current.x = x;
     mouseRef.current.y = y;
 
-    // Map screen coordinate to simulation
     const hx = (x / rect.width) * simWidth;
     const hy = (y / rect.height) * simHeight;
-    splash(hx, hy, 5, 600); // Big initial impact splash
+    splash(hx, hy, 5, 550);
   };
 
   const handlePointerMove = (e) => {
@@ -259,18 +443,20 @@ const CooldownPool = ({ darkMode, onClose }) => {
 
     mouseRef.current.x = x;
     mouseRef.current.y = y;
+
+    // Raycast normalized coordinates [-1, 1]
+    mouseCoords.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouseCoords.current.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
   };
 
   const handlePointerUp = () => {
     mouseRef.current.active = false;
   };
 
-  // Keyboard shortcut support (ESC exits cooldown)
+  // Keyboard shortcut listener (ESC exits cooldown)
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
+      if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -278,43 +464,106 @@ const CooldownPool = ({ darkMode, onClose }) => {
 
   return (
     <div 
-      className="fixed inset-0 w-full h-full z-[100] overflow-hidden select-none animate-in fade-in zoom-in-95 duration-500"
+      className="fixed inset-0 w-full h-full z-[100] overflow-hidden select-none bg-black animate-in fade-in duration-500"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
     >
+      {/* 2D Background Math Vector Lines Canvas */}
       <canvas 
         ref={canvasRef} 
-        className="absolute inset-0 w-full h-full block cursor-crosshair z-0" 
+        className="absolute inset-0 w-full h-full pointer-events-none z-0" 
       />
 
-      {/* Floating Center Panel */}
-      <div className="absolute inset-0 pointer-events-none flex flex-col justify-center items-center z-10 p-6">
-        <div className={`p-8 md:p-12 rounded-3xl border shadow-[0_0_50px_rgba(0,0,0,0.4)] max-w-lg w-full text-center backdrop-blur-md pointer-events-auto transition-all transform hover:scale-[1.02] duration-500
-          ${darkMode 
-            ? 'bg-black/80 border-[#00FF41]/20 text-[#00FF41] shadow-[0_0_40px_rgba(0,255,65,0.08)]' 
-            : 'bg-white/80 border-[#0055FF]/20 text-[#0055FF] shadow-[0_0_40px_rgba(0,85,255,0.08)]'
-          }`}
-        >
-          <h2 className="text-3xl md:text-4xl font-syne font-bold mb-4 tracking-tighter leading-none uppercase">
-            [ COOLDOWN POOL ]
-          </h2>
-          <p className="font-mono text-[11px] leading-relaxed opacity-75 mb-8">
-            LET YOUR MIND DRIFT. DISTURB THE GRID SURFACE BY DRAGGING OR CLICKING THE MOUSE TO WITNESS CHAOTIC PROPAGATIONS.
-          </p>
+      {/* 3D Foreground Three.js WebGL Glass Pool Canvas */}
+      <canvas 
+        ref={glCanvasRef} 
+        className="absolute inset-0 w-full h-full z-10 cursor-grab active:cursor-grabbing" 
+      />
 
-          <button
-            onClick={onClose}
-            className={`px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-bold border transition-all cursor-pointer hover:shadow-2xl active:scale-95
-              ${darkMode 
-                ? 'border-[#00FF41] text-black bg-[#00FF41] hover:bg-transparent hover:text-[#00FF41] hover:shadow-[0_0_20px_rgba(0,255,65,0.3)]' 
-                : 'border-[#0055FF] text-white bg-[#0055FF] hover:bg-transparent hover:text-[#0055FF] hover:shadow-[0_0_20px_rgba(0,85,255,0.3)]'}`}
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm transition-opacity duration-300">
+          <div className={`p-8 rounded-3xl border flex flex-col items-center gap-4 text-center max-w-xs
+            ${darkMode 
+              ? 'bg-black/90 border-[#00FF41]/20 text-[#00FF41]' 
+              : 'bg-white/95 border-[#0055FF]/20 text-[#0055FF]'}`}
           >
-            END COOLDOWN
-          </button>
+            <div className="w-8 h-8 rounded-full border-2 border-current border-t-transparent animate-spin" />
+            <p className="font-mono text-xs uppercase tracking-widest">[ COOLDOWN_POOL: LOADING_3D_ASSETS ]</p>
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Raycast Hover Info Card */}
+      <div 
+        className={`absolute bottom-32 left-6 right-6 md:left-6 md:right-auto z-40 max-w-sm font-mono text-[10px] md:text-xs transition-all duration-500 ease-out transform pointer-events-none
+          ${isHoveringPool 
+            ? 'opacity-100 translate-y-0 scale-100' 
+            : 'opacity-0 translate-y-4 scale-95'}`}
+      >
+        <div className={`p-5 md:p-6 rounded-2xl border shadow-2xl backdrop-blur-md flex flex-col gap-2.5
+          ${darkMode 
+            ? 'bg-black/85 border-[#00FF41]/35 text-[#00FF41] shadow-[0_0_40px_rgba(0,255,65,0.15)] shadow-black/80' 
+            : 'bg-white/90 border-[#0055FF]/35 text-[#0055FF] shadow-[0_0_30px_rgba(0,85,255,0.15)] shadow-black/10'}`}
+        >
+          <div className="flex items-center gap-2 border-b border-current pb-2 font-bold uppercase tracking-wider text-[11px] md:text-xs">
+            <Code size={14} className="animate-pulse" />
+            <span>[ SYSTEM CORE: GLASS LIQUID BASIN ]</span>
+          </div>
+          <p className="leading-relaxed opacity-95 text-[11px]">
+            Designed, developed, and mathematically modeled by <strong className="underline">Joel van Hees</strong>.
+          </p>
+          <div className="space-y-1.5 opacity-80 leading-normal text-[10px] md:text-[10px] pt-1">
+            <p>• <strong>Basin Architecture:</strong> Procedural <span className="underline">LatheGeometry</span> defining 64 structural glass vectors.</p>
+            <p>• <strong>Fluid Physics:</strong> Cylinder volume deforms using a custom GLSL vertex shader inject performing real-time multi-frequency sine wave calculations.</p>
+            <p>• <strong>Optics:</strong> PBR <span className="underline">MeshPhysicalMaterial</span> utilizing dual-refractive layers, glass clearcoat (1.0), water thickness (1.8), and specific index-of-refraction indices (IOR: 1.33 / 1.52).</p>
+            <p>• <strong>Lighting & Environment:</strong> ACES Filmic Tone Mapping and PCF Soft Shadows combined with kloofendal partly cloudy HDR sky mapping.</p>
+          </div>
         </div>
       </div>
+
+      {/* Floating Center / Top Panel HUD (Minimized so user can fully enjoy 3D space) */}
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 pointer-events-none flex flex-col items-center z-30 w-full px-6 text-center">
+        <div className={`px-5 py-2.5 rounded-full border shadow-xl backdrop-blur-md flex items-center gap-3 pointer-events-auto transition-all transform hover:scale-105 duration-300
+          ${darkMode 
+            ? 'bg-black/75 border-[#00FF41]/20 text-[#00FF41] shadow-black/65' 
+            : 'bg-white/80 border-[#0055FF]/20 text-[#0055FF] shadow-black/10'}`}
+        >
+          <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
+          <h2 className="text-[10px] md:text-xs font-mono uppercase tracking-widest font-bold">
+            [ SENSORY COOLDOWN POOL ACTIVE ]
+          </h2>
+          <span className="hidden md:inline text-[9px] opacity-40">|</span>
+          <span className="hidden md:inline text-[9px] font-mono opacity-60 uppercase">ORBIT: LEFT-DRAG  •  PAN: RIGHT-DRAG  •  ZOOM: SCROLL</span>
+        </div>
+      </div>
+
+      {/* Action panel at the bottom */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-3">
+        <button
+          onClick={onClose}
+          className={`px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-bold border transition-all cursor-pointer hover:shadow-2xl active:scale-95 shadow-lg
+            ${darkMode 
+              ? 'border-[#00FF41] text-black bg-[#00FF41] hover:bg-transparent hover:text-[#00FF41] hover:shadow-[0_0_20px_rgba(0,255,65,0.35)] shadow-black/60' 
+              : 'border-[#0055FF] text-white bg-[#0055FF] hover:bg-transparent hover:text-[#0055FF] hover:shadow-[0_0_20px_rgba(0,85,255,0.35)] shadow-black/15'}`}
+        >
+          END COOLDOWN
+        </button>
+      </div>
+
+      {/* Top right close button */}
+      <button 
+        onClick={onClose}
+        title="Exit Cooldown (ESC)"
+        className={`absolute top-6 right-6 p-3 rounded-full border z-40 transition-all hover:scale-110 active:scale-95 shadow-lg cursor-pointer
+          ${darkMode 
+            ? 'bg-black/80 border-white/10 text-white hover:text-[#00FF41] hover:border-[#00FF41]/40' 
+            : 'bg-white/90 border-black/10 text-black hover:text-[#0055FF] hover:border-[#0055FF]/40'}`}
+      >
+        <X size={18} />
+      </button>
     </div>
   );
 };

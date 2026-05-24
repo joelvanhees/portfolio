@@ -82,12 +82,166 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
     return () => timeouts.forEach(clearTimeout);
   }, []);
 
+  const canvasRef = useRef(null);
+  const headerRef = useRef(null);
+  const mouseRef = useRef({ x: 0, y: 0, active: false });
+  const [scrollFade, setScrollFade] = useState(1);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalScroll = window.scrollY;
+      const fade = Math.max(0, 1 - totalScroll / (window.innerHeight || 800));
+      setScrollFade(fade);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleMouseMove = (e) => {
+    if (!headerRef.current) return;
+    const rect = headerRef.current.getBoundingClientRect();
+    mouseRef.current.x = e.clientX - rect.left;
+    mouseRef.current.y = e.clientY - rect.top;
+  };
+
+  useEffect(() => {
+    if (scrollFade <= 0) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animationId;
+    let time = 0;
+
+    const resize = () => {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+    };
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    const render = () => {
+      time += 0.012;
+      const width = canvas.width / (window.devicePixelRatio || 1);
+      const height = canvas.height / (window.devicePixelRatio || 1);
+
+      ctx.clearRect(0, 0, width, height);
+
+      const cols = Math.floor(width / 35) + 2;
+      const rows = Math.floor(height / 35) + 2;
+
+      ctx.lineWidth = 1;
+
+      // Draw horizontal lines
+      for (let r = 0; r < rows; r++) {
+        ctx.beginPath();
+        const gy = (r / (rows - 1)) * height;
+
+        for (let c = 0; c < cols; c++) {
+          const gx = (c / (cols - 1)) * width;
+
+          const wave1 = Math.sin(gx * 0.004 + gy * 0.003 + time * 1.2) * 22;
+          const wave2 = Math.cos(gx * 0.002 - gy * 0.005 + time * 0.8) * 14;
+          const wave3 = Math.sin(-gx * 0.006 + gy * 0.008 + time * 1.5) * 6;
+          
+          let mouseDist = 0;
+          if (mouseRef.current.active) {
+            const dx = gx - mouseRef.current.x;
+            const dy2 = gy - mouseRef.current.y;
+            const dist = Math.sqrt(dx * dx + dy2 * dy2);
+            if (dist < 180) {
+              mouseDist = Math.sin(dist * 0.04 - time * 3.5) * 16 * (1 - dist / 180);
+            }
+          }
+
+          const dy = (wave1 + wave2 + wave3 + mouseDist) * scrollFade;
+          const drawX = gx;
+          const drawY = gy + dy;
+
+          if (c === 0) {
+            ctx.moveTo(drawX, drawY);
+          } else {
+            ctx.lineTo(drawX, drawY);
+          }
+        }
+
+        ctx.strokeStyle = darkMode
+          ? `rgba(0, 255, 65, ${scrollFade * (0.04 + Math.abs(Math.sin(time + r * 0.1)) * 0.04)})`
+          : `rgba(0, 85, 255, ${scrollFade * (0.06 + Math.abs(Math.sin(time + r * 0.1)) * 0.04)})`;
+        ctx.stroke();
+      }
+
+      // Draw vertical lines
+      for (let c = 0; c < cols; c++) {
+        ctx.beginPath();
+        const gx = (c / (cols - 1)) * width;
+
+        for (let r = 0; r < rows; r++) {
+          const gy = (r / (rows - 1)) * height;
+
+          const wave1 = Math.sin(gx * 0.004 + gy * 0.003 + time * 1.2) * 22;
+          const wave2 = Math.cos(gx * 0.002 - gy * 0.005 + time * 0.8) * 14;
+          const wave3 = Math.sin(-gx * 0.006 + gy * 0.008 + time * 1.5) * 6;
+
+          let mouseDist = 0;
+          if (mouseRef.current.active) {
+            const dx = gx - mouseRef.current.x;
+            const dy2 = gy - mouseRef.current.y;
+            const dist = Math.sqrt(dx * dx + dy2 * dy2);
+            if (dist < 180) {
+              mouseDist = Math.sin(dist * 0.04 - time * 3.5) * 16 * (1 - dist / 180);
+            }
+          }
+
+          const dy = (wave1 + wave2 + wave3 + mouseDist) * scrollFade;
+          const drawX = gx;
+          const drawY = gy + dy;
+
+          if (r === 0) {
+            ctx.moveTo(drawX, drawY);
+          } else {
+            ctx.lineTo(drawX, drawY);
+          }
+        }
+
+        ctx.strokeStyle = darkMode
+          ? `rgba(0, 255, 65, ${scrollFade * (0.04 + Math.abs(Math.sin(time + c * 0.1)) * 0.04)})`
+          : `rgba(0, 85, 255, ${scrollFade * (0.06 + Math.abs(Math.sin(time + c * 0.1)) * 0.04)})`;
+        ctx.stroke();
+      }
+
+      animationId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      cancelAnimationFrame(animationId);
+    };
+  }, [darkMode, scrollFade]);
+
   return (
     <>
-      <header className="relative min-h-screen flex flex-col justify-center px-6 pt-20 overflow-hidden">
+      <header 
+        ref={headerRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => { mouseRef.current.active = true; }}
+        onMouseLeave={() => { mouseRef.current.active = false; }}
+        className="relative min-h-screen flex flex-col justify-between md:justify-center px-6 pt-32 pb-16 md:py-20 overflow-hidden"
+      >
+        <canvas 
+          ref={canvasRef} 
+          className="absolute inset-0 w-full h-full z-0 pointer-events-none" 
+          style={{ opacity: scrollFade }}
+        />
         <div className={`absolute inset-0 pointer-events-none opacity-[0.03] ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
 
-        <div className="w-full z-10">
+        <div className="w-full z-10 flex flex-col justify-between min-h-[70vh] md:min-h-0 md:justify-start">
           <div className="flex flex-col gap-0 w-full">
             <p className={`text-sm md:text-base mb-6 md:mb-4 tracking-widest uppercase text-left w-full ${darkMode ? 'text-green-500' : 'text-blue-600'}`}>
               <span className="animate-pulse">●</span> System Online

@@ -160,9 +160,12 @@ const App = () => {
       <nav className="fixed w-full z-40 px-6 py-6 flex justify-between items-center mix-blend-difference text-white">
         <button
           onClick={() => handleNav('home')}
-          className="text-xl font-bold tracking-tighter hover:opacity-70 cursor-pointer bg-transparent border-none p-0 text-inherit"
+          className={`text-sm md:text-base font-bold tracking-tighter cursor-pointer rounded-full px-4 py-2 border transition-all duration-300 hover:scale-105 flex items-center gap-2
+            ${darkMode 
+              ? 'bg-white/5 border-white/20 text-white shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),inset_0_-1px_2px_rgba(0,0,0,0.2),0_4px_20px_rgba(0,0,0,0.4)] backdrop-blur-md hover:bg-white/10 hover:border-white/30' 
+              : 'bg-white/40 border-white/60 text-black shadow-[inset_0_1px_2px_rgba(255,255,255,0.5),inset_0_-1px_2px_rgba(0,0,0,0.1),0_4px_16px_rgba(0,0,0,0.1)] backdrop-blur-md hover:bg-white/60 hover:border-white/80'}`}
         >
-          JOEL VAN HEES <span className="text-xs opacity-50 ml-2 hidden md:inline-block">[ARCHITECT_NODE]</span>
+          JOEL VAN HEES <span className={`text-[9px] px-1.5 py-0.5 rounded uppercase font-mono tracking-widest ${darkMode ? 'bg-white/10 text-[#00FF41]' : 'bg-black/10 text-[#0055FF]'}`}>[ARCHITECT]</span>
         </button>
 
         <div className="flex items-center gap-6">
@@ -419,18 +422,20 @@ const App = () => {
       )}
       {!isMobile && (
         <>
+          {/* Precision center dot */}
           <div 
-            className={`fixed w-2 h-2 rounded-full pointer-events-none z-[100] transition-colors duration-500 -translate-x-1/2 -translate-y-1/2
+            className={`fixed w-1.5 h-1.5 rounded-full pointer-events-none z-[100] transition-colors duration-500 -translate-x-1/2 -translate-y-1/2
               ${darkMode ? 'bg-[#00FF41] shadow-[0_0_8px_#00FF41]' : 'bg-[#0055FF] shadow-[0_0_8px_#0055FF]'}`}
             style={{ left: `${trailPos.x}px`, top: `${trailPos.y}px` }}
           />
+          {/* iOS 26 Liquid Glass Bubble */}
           <div 
-            className={`fixed font-mono text-[9px] pointer-events-none z-[100] tracking-widest transition-colors duration-500 mt-3 ml-3
-              ${darkMode ? 'text-[#00FF41]/60' : 'text-[#0055FF]/60'}`}
-            style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}
-          >
-            [X: {Math.round(mousePos.x)} Y: {Math.round(mousePos.y)}]
-          </div>
+            className={`fixed w-12 h-12 rounded-full pointer-events-none z-[99] -translate-x-1/2 -translate-y-1/2 transition-all duration-300
+              ${darkMode 
+                ? 'bg-white/5 border border-white/25 shadow-[inset_0_2px_4px_rgba(255,255,255,0.2),inset_0_-2px_4px_rgba(0,0,0,0.2),0_10px_30px_rgba(0,0,0,0.3)]' 
+                : 'bg-white/30 border border-white/50 shadow-[inset_0_2px_4px_rgba(255,255,255,0.4),inset_0_-2px_4px_rgba(0,0,0,0.1),0_8px_24px_rgba(0,0,0,0.15)]'} backdrop-blur-[8px]`}
+            style={{ left: `${trailPos.x}px`, top: `${trailPos.y}px` }}
+          />
         </>
       )}
     </div>

@@ -134,10 +134,10 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
   };
 
   return (
-    <div className={`fixed bottom-24 right-6 rounded-2xl border shadow-2xl flex flex-col z-50 overflow-hidden backdrop-blur-md transition-all duration-300 animate-in slide-in-from-bottom-5
+    <div className={`fixed z-50 rounded-2xl border shadow-2xl flex flex-col overflow-hidden backdrop-blur-md transition-all duration-300 animate-in slide-in-from-bottom-5
       ${isMaximized 
-        ? 'w-[90vw] md:w-[720px] h-[60vh] md:h-[500px]' 
-        : 'w-[320px] md:w-[480px] h-[320px]'
+        ? 'bottom-4 left-4 right-4 h-[80vh] md:bottom-24 md:right-6 md:left-auto md:w-[720px] md:h-[500px]' 
+        : 'bottom-20 left-4 right-4 h-[380px] md:bottom-24 md:right-6 md:left-auto md:w-[480px] md:h-[320px]'
       }
       ${darkMode 
         ? 'bg-black/90 border-[#00FF41]/30 text-[#00FF41] shadow-[0_0_30px_rgba(0,255,0,0.15)]' 
@@ -150,27 +150,27 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
       >
         <div className="flex items-center gap-3">
           {/* Apple dots style window controls */}
-          <div className="flex gap-1.5 items-center mr-1">
+          <div className="flex gap-2.5 md:gap-1.5 items-center mr-1">
             <button 
               onClick={onClose}
               title="Close Window"
-              className="w-3 h-3 rounded-full bg-[#FF5F56] hover:bg-[#E0443E] transition-all cursor-pointer border-none p-0 flex items-center justify-center group"
+              className="relative w-3.5 h-3.5 md:w-3 md:h-3 rounded-full bg-[#FF5F56] hover:bg-[#E0443E] transition-all cursor-pointer border-none p-0 flex items-center justify-center group after:absolute after:-inset-2 md:after:inset-0"
             >
-              <span className="text-[6px] font-bold text-black/60 opacity-0 group-hover:opacity-100 transition-opacity">×</span>
+              <span className="text-[7px] md:text-[6px] font-bold text-black/60 opacity-0 group-hover:opacity-100 transition-opacity">×</span>
             </button>
             <button 
               onClick={() => setIsMaximized(!isMaximized)}
               title="Toggle Size"
-              className="w-3 h-3 rounded-full bg-[#FEBC2E] hover:bg-[#DFA020] transition-all cursor-pointer border-none p-0 flex items-center justify-center group"
+              className="relative w-3.5 h-3.5 md:w-3 md:h-3 rounded-full bg-[#FEBC2E] hover:bg-[#DFA020] transition-all cursor-pointer border-none p-0 flex items-center justify-center group after:absolute after:-inset-2 md:after:inset-0"
             >
-              <span className="text-[6px] font-bold text-black/60 opacity-0 group-hover:opacity-100 transition-opacity">↕</span>
+              <span className="text-[7px] md:text-[6px] font-bold text-black/60 opacity-0 group-hover:opacity-100 transition-opacity">↕</span>
             </button>
             <button 
               onClick={onMinimize}
               title="Minimize Window"
-              className="w-3 h-3 rounded-full bg-[#27C93F] hover:bg-[#1AAB29] transition-all cursor-pointer border-none p-0 flex items-center justify-center group"
+              className="relative w-3.5 h-3.5 md:w-3 md:h-3 rounded-full bg-[#27C93F] hover:bg-[#1AAB29] transition-all cursor-pointer border-none p-0 flex items-center justify-center group after:absolute after:-inset-2 md:after:inset-0"
             >
-              <span className="text-[6px] font-bold text-black/60 opacity-0 group-hover:opacity-100 transition-opacity">−</span>
+              <span className="text-[7px] md:text-[6px] font-bold text-black/60 opacity-0 group-hover:opacity-100 transition-opacity">−</span>
             </button>
           </div>
           <span className="opacity-70 flex items-center gap-1.5 font-bold">
@@ -200,14 +200,14 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
       <div className={`p-3 border-t flex items-center gap-2 font-mono text-xs
         ${darkMode ? 'border-[#00FF41]/20 bg-black/40' : 'border-[#0055FF]/20 bg-gray-50/50'}`}
       >
-        <span className="opacity-75">joel@architect:~$</span>
+        <span className="opacity-75 text-base md:text-xs">joel@architect:~$</span>
         <input 
           type="text" 
           value={input} 
           onChange={(e) => setInput(e.target.value)} 
           onKeyDown={handleCommand}
           placeholder="Ask me anything (e.g. 'help')..."
-          className="flex-1 bg-transparent border-none outline-none font-mono text-xs text-current placeholder-current opacity-40 focus:opacity-85 transition-opacity"
+          className="flex-1 bg-transparent border-none outline-none font-mono text-base md:text-xs text-current placeholder-current opacity-40 focus:opacity-85 transition-opacity"
           autoFocus
         />
         <ChevronRight size={14} className="opacity-60" />

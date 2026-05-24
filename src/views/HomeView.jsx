@@ -5,6 +5,7 @@ import SkillNetwork from '../components/SkillNetwork';
 const SpiralTimeSphere = lazy(() => import('../components/visuals/SpiralTimeSphere'));
 import { homeCapabilities } from '../content/services';
 import salatProfileImg from '../assets/images/salat_profile.png';
+import LazyImage from '../components/LazyImage';
 
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*!?<>[]{}=/\\|~^';
 
@@ -193,7 +194,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
                     {(project.visualComponent || project.id === "02" || project.id === "01") ? (
                       <div className="w-full h-full opacity-100 transition-opacity">
                         {project.id === "01" ? (
-                          <img
+                          <LazyImage
                             src={salatProfileImg}
                             className="w-full h-full object-cover"
                             alt="Brand Collaboration Preview"

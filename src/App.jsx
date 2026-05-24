@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Terminal } from 'lucide-react';
 
 import HomeView from './views/HomeView';
 import WorkView from './views/WorkView';
@@ -7,6 +7,7 @@ import ServicesView from './views/ServicesView';
 import AboutView from './views/AboutView';
 import ContactView from './views/ContactView';
 import ProjectModal from './components/ProjectModal';
+import FloatingConsole from './components/FloatingConsole';
 
 import { buildProjects } from './content/projects.jsx';
 
@@ -20,6 +21,10 @@ const App = () => {
   const [showVideoSequence, setShowVideoSequence] = useState(false);
   const [activeImage, setActiveImage] = useState(null);
   const [activePdf, setActivePdf] = useState(null);
+  const [consoleOpen, setConsoleOpen] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [trailPos, setTrailPos] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(true);
 
   const projects = useMemo(() => buildProjects({ setActiveImage }), [setActiveImage]);
 
@@ -35,6 +40,44 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia('(pointer: coarse)').matches);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    const handleMouseMove = (e) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
+    let animationId;
+
+    const updateTrail = () => {
+      setTrailPos((prev) => {
+        const dx = mousePos.x - prev.x;
+        const dy = mousePos.y - prev.y;
+        return {
+          x: prev.x + dx * 0.15,
+          y: prev.y + dy * 0.15,
+        };
+      });
+      animationId = requestAnimationFrame(updateTrail);
+    };
+    updateTrail();
+
+    return () => cancelAnimationFrame(animationId);
+  }, [mousePos, isMobile]);
+
+  useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {
@@ -48,8 +91,28 @@ const App = () => {
     document.body.scrollTo(0, 0);
   }, [activePage]);
 
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      const validPages = ['home', 'work', 'services', 'about', 'contact'];
+      if (validPages.includes(hash)) {
+        setActivePage(hash);
+      } else {
+        setActivePage('home');
+        if (hash === '' || !validPages.includes(hash)) {
+          window.history.replaceState(null, '', '#home');
+        }
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange(); // Run on initial load
+
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   const handleNav = (page) => {
-    setActivePage(page);
+    window.location.hash = page;
     setMenuOpen(false);
   };
 
@@ -100,6 +163,14 @@ const App = () => {
         </button>
 
         <div className="flex items-center gap-6">
+          <button
+            onClick={() => setConsoleOpen(!consoleOpen)}
+            className="flex items-center gap-1.5 text-xs border border-white/20 px-3 py-1 rounded-full hover:bg-white hover:text-black transition-all"
+          >
+            <Terminal size={12} />
+            {consoleOpen ? 'SHELL: CLOSE' : 'SHELL: OPEN'}
+          </button>
+
           <button
             onClick={() => setDarkMode(!darkMode)}
             className="hidden md:flex items-center gap-2 text-xs border border-white/20 px-3 py-1 rounded-full hover:bg-white hover:text-black transition-all"
@@ -301,6 +372,29 @@ const App = () => {
           </div>
         </div>
       </footer>
+      {consoleOpen && (
+        <FloatingConsole 
+          darkMode={darkMode} 
+          toggleDarkMode={() => setDarkMode(!darkMode)} 
+          onClose={() => setConsoleOpen(false)} 
+        />
+      )}
+      {!isMobile && (
+        <>
+          <div 
+            className={`fixed w-2 h-2 rounded-full pointer-events-none z-[100] transition-colors duration-500 -translate-x-1/2 -translate-y-1/2
+              ${darkMode ? 'bg-[#00FF41] shadow-[0_0_8px_#00FF41]' : 'bg-[#0055FF] shadow-[0_0_8px_#0055FF]'}`}
+            style={{ left: `${trailPos.x}px`, top: `${trailPos.y}px` }}
+          />
+          <div 
+            className={`fixed font-mono text-[9px] pointer-events-none z-[100] tracking-widest transition-colors duration-500 mt-3 ml-3
+              ${darkMode ? 'text-[#00FF41]/60' : 'text-[#0055FF]/60'}`}
+            style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}
+          >
+            [X: {Math.round(mousePos.x)} Y: {Math.round(mousePos.y)}]
+          </div>
+        </>
+      )}
     </div>
   );
 };

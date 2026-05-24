@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState, useEffect, useRef } from 'react';
 import { ArrowUpRight, FileText, Layers, Maximize2, Video, X, Volume2, VolumeX } from 'lucide-react';
+import LazyImage from './LazyImage';
 
 import HoverVideoPlayer from './visuals/HoverVideoPlayer';
 import InfiniteMarqueeVisual from './visuals/InfiniteMarqueeVisual';
@@ -168,11 +169,11 @@ const ProjectModal = ({
                 </div>
               ) : selectedProject.id === "04" ? (
                 <div className="w-full h-full bg-black flex items-center justify-center">
-                  <img src={logoVNC} className="w-full h-full object-contain" alt="VNC Identity" />
+                  <LazyImage src={logoVNC} className="w-full h-full object-contain" alt="VNC Identity" />
                 </div>
               ) : selectedProject.id === "00" ? (
                 <div className="w-full h-full bg-black/5 flex items-center justify-center overflow-hidden">
-                  <img src={previewWebImg} className="w-full h-full object-cover" alt="Web Preview" />
+                  <LazyImage src={previewWebImg} className="w-full h-full object-cover" alt="Web Preview" />
                 </div>
               ) : (selectedProject.visualComponent) ? (
                 <div className="w-full h-full">
@@ -215,10 +216,10 @@ const ProjectModal = ({
             {selectedProject.id === "02" && (
               <div className="grid grid-cols-2 gap-4 mt-4">
                 <div className={`aspect-[3/2] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                  <img src={imgRef01} alt="Concept Art" loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(imgRef01)} />
+                  <LazyImage src={imgRef01} alt="Concept Art" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(imgRef01)} />
                 </div>
                 <div className={`aspect-[3/2] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                  <img src={imgRef02} alt="UI Mockup" loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(imgRef02)} />
+                  <LazyImage src={imgRef02} alt="UI Mockup" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(imgRef02)} />
                 </div>
               </div>
             )}
@@ -226,12 +227,12 @@ const ProjectModal = ({
             {selectedProject.id === "03" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div className={`aspect-[2/3] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                  <img src={exhibitionInfImg} alt="Exhibition View" loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(exhibitionInfImg)} />
+                  <LazyImage src={exhibitionInfImg} alt="Exhibition View" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(exhibitionInfImg)} />
                 </div>
 
                 <div className="flex flex-col gap-4">
                   <div className={`aspect-[3/2] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                    <img src={monsterImg} alt="Monster Artwork" loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(monsterImg)} />
+                    <LazyImage src={monsterImg} alt="Monster Artwork" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(monsterImg)} />
                   </div>
 
                   <div className={`aspect-[3/2] w-full rounded-xl border flex items-center justify-center overflow-hidden relative ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
@@ -248,10 +249,10 @@ const ProjectModal = ({
                 {p50Data.pairs.map((pair, i) => (
                   <div key={i} className="grid grid-cols-2 gap-4">
                     <div className={`aspect-[3/4] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                      <img src={pair.a} alt={`Student Concept ${i + 1}A`} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(pair.a)} />
+                      <LazyImage src={pair.a} alt={`Student Concept ${i + 1}A`} className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(pair.a)} />
                     </div>
                     <div className={`aspect-[3/4] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                      <img src={pair.b} alt={`Student Concept ${i + 1}B`} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(pair.b)} />
+                      <LazyImage src={pair.b} alt={`Student Concept ${i + 1}B`} className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(pair.b)} />
                     </div>
                   </div>
                 ))}
@@ -261,15 +262,15 @@ const ProjectModal = ({
             {selectedProject.id === "01" && (
               <div className="flex flex-col gap-4 mt-4">
                 <div className={`aspect-[2/3] w-full max-w-sm mx-auto rounded-xl border flex items-center justify-center overflow-hidden relative group ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                  <img src={salatProfileImg} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" alt="Profile View" onClick={() => setActiveImage(salatProfileImg)} />
+                  <LazyImage src={salatProfileImg} className="w-full h-full object-cover cursor-zoom-in" alt="Profile View" onClick={() => setActiveImage(salatProfileImg)} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className={`aspect-[2/3] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                    <img src={ikeaMerch1} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" alt="Plush Toy Design" onClick={() => setActiveImage(ikeaMerch1)} />
+                    <LazyImage src={ikeaMerch1} className="w-full h-full object-cover cursor-zoom-in" alt="Plush Toy Design" onClick={() => setActiveImage(ikeaMerch1)} />
                   </div>
                   <div className={`aspect-[2/3] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                    <img src={ikeaMerch2} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" alt="Plush Toy Final" onClick={() => setActiveImage(ikeaMerch2)} />
+                    <LazyImage src={ikeaMerch2} className="w-full h-full object-cover cursor-zoom-in" alt="Plush Toy Final" onClick={() => setActiveImage(ikeaMerch2)} />
                   </div>
                 </div>
               </div>
@@ -318,10 +319,10 @@ const ProjectModal = ({
                   <div className="flex flex-col gap-4 mb-8">
                     <div className="grid grid-cols-2 gap-4">
                       <div className={`aspect-square w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                        <img src={threedSign1} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" alt="3D Signage Process 1" onClick={() => setActiveImage(threedSign1)} />
+                        <LazyImage src={threedSign1} className="w-full h-full object-cover cursor-zoom-in" alt="3D Signage Process 1" onClick={() => setActiveImage(threedSign1)} />
                       </div>
                       <div className={`aspect-square w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                        <img src={threedSign2} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" alt="3D Signage Process 2" onClick={() => setActiveImage(threedSign2)} />
+                        <LazyImage src={threedSign2} className="w-full h-full object-cover cursor-zoom-in" alt="3D Signage Process 2" onClick={() => setActiveImage(threedSign2)} />
                       </div>
                     </div>
                     <p className="font-mono text-xs opacity-60 leading-relaxed">
@@ -346,7 +347,7 @@ const ProjectModal = ({
                   <div className="flex flex-col gap-4 mb-4">
                     <div className="grid grid-cols-1 gap-4">
                       <div className={`aspect-video w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                        <img src={checkYourBusImg} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" alt="Check Your Bus Preview" onClick={() => setActiveImage(checkYourBusImg)} />
+                        <LazyImage src={checkYourBusImg} className="w-full h-full object-cover cursor-zoom-in" alt="Check Your Bus Preview" onClick={() => setActiveImage(checkYourBusImg)} />
                       </div>
                     </div>
                     <div className="flex gap-4 mt-2">
@@ -408,9 +409,8 @@ const ProjectModal = ({
                     {/* Top Row: Full-width Image 01 (aspect-square) */}
                     <div className="flex flex-col gap-2">
                       <div className={`aspect-square w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                        <img 
+                        <LazyImage 
                           src={busLanguageImg} 
-                          loading="lazy" 
                           className="w-full h-full object-cover hover:scale-102 transition-transform duration-700" 
                           alt="Bilingual Screen" 
                           onClick={() => setActiveImage(busLanguageImg)} 
@@ -423,9 +423,8 @@ const ProjectModal = ({
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex flex-col gap-2">
                         <div className={`aspect-[9/16] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                          <img 
+                          <LazyImage 
                             src={busPerceptionImg} 
-                            loading="lazy" 
                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" 
                             alt="Perception Check Card" 
                             onClick={() => setActiveImage(busPerceptionImg)} 
@@ -436,9 +435,8 @@ const ProjectModal = ({
 
                       <div className="flex flex-col gap-2">
                         <div className={`aspect-[9/16] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                          <img 
+                          <LazyImage 
                             src={busLiquidImg} 
-                            loading="lazy" 
                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" 
                             alt="Solid Liquid Card" 
                             onClick={() => setActiveImage(busLiquidImg)} 
@@ -451,9 +449,8 @@ const ProjectModal = ({
                     {/* Bottom Row: Full-width Image 04 (aspect-square) */}
                     <div className="flex flex-col gap-2">
                       <div className={`aspect-square w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                        <img 
+                        <LazyImage 
                           src={busAttentionImg} 
-                          loading="lazy" 
                           className="w-full h-full object-cover hover:scale-102 transition-transform duration-700" 
                           alt="Attention Extraction Card" 
                           onClick={() => setActiveImage(busAttentionImg)} 

@@ -1,11 +1,29 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 const SpiralTimeSphere = () => {
   const mountRef = useRef(null);
   const isMountedRef = useRef(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    const container = mountRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.05 }
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
     isMountedRef.current = true;
     const container = mountRef.current;
     if (!container) return;
@@ -560,7 +578,7 @@ const SpiralTimeSphere = () => {
 
       renderer = null;
     };
-  }, []);
+  }, [isVisible]);
 
   return (
     <div ref={mountRef} className="w-full h-full relative bg-black overflow-hidden">

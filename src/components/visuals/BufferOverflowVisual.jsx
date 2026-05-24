@@ -1,11 +1,28 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 const BufferOverflowVisual = () => {
   const mountRef = useRef(null);
   const fadeRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    const container = mountRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.05 }
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
     if (!mountRef.current) return;
     mountRef.current.innerHTML = '';
 
@@ -551,7 +568,7 @@ const BufferOverflowVisual = () => {
       }
       renderer = null;
     };
-  }, []);
+  }, [isVisible]);
 
   return (
     <div ref={mountRef} className="w-full h-full relative bg-black overflow-hidden">

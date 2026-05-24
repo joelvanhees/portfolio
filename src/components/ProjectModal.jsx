@@ -128,10 +128,10 @@ const ProjectModal = ({
       <div className={`relative w-full max-w-6xl max-h-[90vh] overflow-y-auto rounded-3xl border shadow-2xl transition-all duration-500 animate-in fade-in zoom-in-95 duration-300
             ${darkMode
           ? 'bg-white/5 border-white/10 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]'
-          : 'bg-white/40 border-white/40 text-black shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]'
+          : 'bg-white border-black text-black shadow-[0_8px_32px_rgba(0,0,0,0.25)]'
         } backdrop-blur-2xl`}
       >
-        <div className="sticky top-0 z-10 flex justify-between items-center p-6 md:p-8 border-b border-white/10 bg-inherit backdrop-blur-xl rounded-t-3xl">
+        <div className={`sticky top-0 z-10 flex justify-between items-center p-6 md:p-8 border-b bg-inherit backdrop-blur-xl rounded-t-3xl ${darkMode ? 'border-white/10' : 'border-black/10'}`}>
           <div>
             <span className={`text-xs font-bold px-2 py-1 rounded mb-2 inline-block ${darkMode ? 'bg-white text-black' : 'bg-black text-white'}`}>
               {selectedProject.category}
@@ -616,11 +616,11 @@ const ProjectModal = ({
               </div>
             )}
 
-            <div className="mt-auto pt-8 border-t border-white/10 font-mono">
+            <div className={`mt-auto pt-8 border-t font-mono ${darkMode ? 'border-white/10' : 'border-black/10'}`}>
               {selectedProject.id !== "02" && selectedProject.id !== "07" && (
                 <button
                   onClick={onStartProject}
-                  className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest transition-all hover:scale-[1.02] flex items-center justify-center gap-2 cursor-pointer ${darkMode ? 'bg-[#00FF41] text-black hover:bg-[#00cc33]' : 'bg-[#0055FF] text-white hover:bg-[#0044cc]'}`}
+                  className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest transition-all hover:scale-[1.02] flex items-center justify-center gap-2 cursor-pointer ${darkMode ? 'bg-[#00FF41] text-black hover:bg-[#00cc33]' : 'bg-black text-white hover:bg-black/90'}`}
                 >
                   Launch Your Project <ArrowUpRight size={18} />
                 </button>

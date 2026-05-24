@@ -288,13 +288,19 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
               <div className="flex flex-wrap gap-4 justify-start md:justify-end">
                 <button
                   onClick={() => setCooldownActive(true)}
-                  className="text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff] hover:scale-105 transition-all duration-300 cursor-pointer uppercase"
+                  className={`text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer uppercase
+                    ${darkMode 
+                      ? 'border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff]' 
+                      : 'border border-black bg-black text-white hover:bg-black/90 shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
                 >
                   COOL DOWN
                 </button>
                 <button
                   onClick={() => handleNav('game')}
-                  className="text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84] hover:scale-105 transition-all duration-300 cursor-pointer uppercase"
+                  className={`text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer uppercase
+                    ${darkMode 
+                      ? 'border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84]' 
+                      : 'border border-black bg-white text-black hover:bg-black hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
                 >
                   BLOB RUN ⌁
                 </button>

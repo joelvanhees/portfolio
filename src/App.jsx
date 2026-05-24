@@ -103,8 +103,8 @@ const App = () => {
       document.body.style.color = '#E0E0E0';
     } else {
       document.documentElement.classList.remove('dark');
-      document.body.style.backgroundColor = '#F0F0F0';
-      document.body.style.color = '#111';
+      document.body.style.backgroundColor = '#FFFFFF';
+      document.body.style.color = '#000000';
     }
   }, [darkMode]);
 
@@ -180,7 +180,7 @@ const App = () => {
   };
 
   return (
-    <div className={`min-h-screen w-full relative transition-colors duration-700 ease-in-out font-mono selection:bg-green-500 selection:text-black overflow-x-hidden bg-transparent ${darkMode ? 'text-[#E0E0E0]' : 'text-[#111]'}`}>
+    <div className={`min-h-screen w-full relative transition-colors duration-700 ease-in-out font-mono selection:bg-green-500 selection:text-black overflow-x-hidden bg-transparent ${darkMode ? 'text-[#E0E0E0]' : 'text-black'}`}>
       <style>{`
         .font-syne { font-family: 'Syne', sans-serif; }
         .font-rubik { font-family: 'Rubik80sFade', 'Syne', sans-serif; }
@@ -196,13 +196,13 @@ const App = () => {
         }
         .glitch-hover:hover {
           animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
-          color: ${darkMode ? '#00FF41' : '#0055FF'};
+          color: ${darkMode ? '#00FF41' : '#000000'};
         }
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: ${darkMode ? '#111' : '#ddd'}; }
         ::-webkit-scrollbar-thumb { background: ${darkMode ? '#333' : '#999'}; }
-        ::-webkit-scrollbar-thumb:hover { background: ${darkMode ? '#00FF41' : '#0055FF'}; }
+        ::-webkit-scrollbar-thumb:hover { background: ${darkMode ? '#00FF41' : '#000000'}; }
 
 
       `}</style>
@@ -210,7 +210,7 @@ const App = () => {
       <div className={`fixed inset-0 pointer-events-none opacity-[0.03] z-0 ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
 
       <div
-        className={`fixed top-0 left-0 h-1 z-50 transition-all duration-100 ${darkMode ? 'bg-[#00FF41]' : 'bg-[#0055FF]'}`}
+        className={`fixed top-0 left-0 h-1 z-50 transition-all duration-100 ${darkMode ? 'bg-[#00FF41]' : 'bg-black'}`}
         style={{ width: `${scrollProgress * 100}%` }}
       />
 
@@ -224,21 +224,21 @@ const App = () => {
             style={{
               background: darkMode
                 ? 'linear-gradient(180deg, #ffffff 40%, rgba(255,255,255,0.45) 70%, rgba(0,255,65,0.9) 100%)'
-                : 'linear-gradient(180deg, #0a0a0a 40%, rgba(0,0,0,0.5) 70%, rgba(0,85,255,0.9) 100%)',
+                : 'linear-gradient(180deg, #000000 0%, #000000 100%)',
               WebkitBackgroundClip: 'text',
               backgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               textShadow: darkMode
                 ? '0px 1px 1px rgba(255,255,255,0.65), 0px -1px 1px rgba(0,0,0,0.7), 0px 0px 8px rgba(0,255,65,0.45)'
-                : '0px 1px 1px rgba(255,255,255,0.9), 0px -1px 1px rgba(0,0,0,0.25), 0px 0px 8px rgba(0,85,255,0.35)',
+                : 'none',
               filter: darkMode
                 ? 'drop-shadow(0px 8px 16px rgba(0,0,0,0.35))'
-                : 'drop-shadow(0px 4px 10px rgba(0,0,0,0.12))',
+                : 'none',
             }}
           >
             JOEL VAN HEES
           </span>
-          <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded uppercase font-mono tracking-widest ${darkMode ? 'bg-[#00FF41]/15 text-[#00FF41] border border-[#00FF41]/25' : 'bg-[#0055FF]/10 text-[#0055FF] border border-[#0055FF]/20'}`}>[ARCHITECT]</span>
+          <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded uppercase font-mono tracking-widest ${darkMode ? 'bg-[#00FF41]/15 text-[#00FF41] border border-[#00FF41]/25' : 'bg-black/5 text-black border border-black/20'}`}>[ARCHITECT]</span>
         </button>
 
         <div className="flex items-center gap-2 sm:gap-6 mix-blend-difference">
@@ -282,14 +282,14 @@ const App = () => {
         <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)}>
           <div 
             onClick={(e) => e.stopPropagation()}
-            className={`absolute top-24 right-4 md:right-8 w-64 md:w-80 rounded-2xl flex flex-col justify-start items-end p-6 md:p-8 gap-5 text-lg md:text-xl font-syne font-bold border shadow-2xl transition-all duration-500 animate-in slide-in-from-right-8 ${darkMode ? 'bg-black/60 border-[#00FF41]/20 shadow-[0_0_30px_rgba(0,255,65,0.1)]' : 'bg-white/60 border-[#0055FF]/20 shadow-[0_0_30px_rgba(0,85,255,0.1)]'} backdrop-blur-xl`}
+            className={`absolute top-24 right-4 md:right-8 w-64 md:w-80 rounded-2xl flex flex-col justify-start items-end p-6 md:p-8 gap-5 text-lg md:text-xl font-syne font-bold border shadow-2xl transition-all duration-500 animate-in slide-in-from-right-8 ${darkMode ? 'bg-black/60 border-[#00FF41]/20 shadow-[0_0_30px_rgba(0,255,65,0.1)]' : 'bg-white border-black shadow-[0_0_35px_rgba(0,0,0,0.25)]'} backdrop-blur-xl`}
           >
             <TransparentLogo className="w-16 h-16 md:w-20 md:h-20 mb-2 hover:scale-110 transition-all duration-500 cursor-pointer drop-shadow-[0_0_20px_rgba(0,255,65,0.2)]" onClick={() => handleNav('home')} />
             {['HOME', 'WORK', 'SERVICES', 'ABOUT', 'CONTACT'].map((item, i) => (
               <button
                 key={item}
                 onClick={() => handleNav(item.toLowerCase())}
-                className={`hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300 ${activePage === item.toLowerCase() ? (darkMode ? 'text-[#00FF41]' : 'text-[#0055FF]') : ''}`}
+                className={`hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300 ${activePage === item.toLowerCase() ? (darkMode ? 'text-[#00FF41]' : 'text-black underline decoration-2 underline-offset-4') : (darkMode ? '' : 'text-black/50')}`}
               >
                 {`0${i} // ${item}`}
               </button>
@@ -301,7 +301,10 @@ const App = () => {
                   setCooldownActive(true);
                   setMenuOpen(false);
                 }}
-                className="w-full text-right text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff] hover:scale-105 transition-all duration-300 cursor-pointer"
+                className={`w-full text-right text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
+                  ${darkMode 
+                    ? 'border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff]' 
+                    : 'border border-black bg-black text-white hover:bg-black/90 shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
               >
                 COOL DOWN
               </button>
@@ -311,7 +314,10 @@ const App = () => {
                   handleNav('game');
                   setMenuOpen(false);
                 }}
-                className="w-full text-right text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84] hover:scale-105 transition-all duration-300 cursor-pointer"
+                className={`w-full text-right text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
+                  ${darkMode 
+                    ? 'border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84]' 
+                    : 'border border-black bg-white text-black hover:bg-black hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
               >
                 BLOB RUN ⌁
               </button>

@@ -150,7 +150,7 @@ const FloatingConsole = ({
                   window.location.hash = '#contact';
                 }}
                 className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-mono transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
-                  ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-[#0055FF] text-[#0055FF]'}`}
+                  ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-black text-black hover:bg-black hover:text-white'}`}
               >
                 [ GO_TO_CONTACT_FORM ↓ ]
               </button>
@@ -203,7 +203,7 @@ const FloatingConsole = ({
                     window.location.hash = '#contact';
                   }}
                   className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-mono transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
-                    ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-[#0055FF] text-[#0055FF]'}`}
+                    ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-black text-black hover:bg-black hover:text-white'}`}
                 >
                   [ GO_TO_CONTACT_FORM ↓ ]
                 </button>
@@ -277,7 +277,7 @@ const FloatingConsole = ({
                     window.location.hash = '#contact';
                   }}
                   className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-mono transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
-                    ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-[#0055FF] text-[#0055FF]'}`}
+                    ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-black text-black hover:bg-black hover:text-white'}`}
                 >
                   [ GO_TO_CONTACT_FORM ↓ ]
                 </button>
@@ -315,12 +315,12 @@ const FloatingConsole = ({
       }
       ${darkMode 
         ? 'bg-black/90 border-[#00FF41]/30 text-[#00FF41] shadow-[0_0_30px_rgba(0,255,0,0.15)]' 
-        : 'bg-white/90 border-[#0055FF]/30 text-[#0055FF] shadow-[0_0_30px_rgba(0,85,255,0.15)]'
+        : 'bg-white border-black text-black shadow-[0_0_35px_rgba(0,0,0,0.25)]'
       }`}
     >
       {/* Header */}
       <div className={`px-4 py-3 flex justify-between items-center border-b font-mono text-[10px] uppercase tracking-wider
-        ${darkMode ? 'border-[#00FF41]/20 bg-black/40' : 'border-[#0055FF]/20 bg-gray-50/50'}`}
+        ${darkMode ? 'border-[#00FF41]/20 bg-black/40' : 'border-black bg-white'}`}
       >
         <div className="flex items-center gap-3">
           {/* Apple dots style window controls */}
@@ -379,7 +379,7 @@ const FloatingConsole = ({
               <div 
                 key={i} 
                 className={`font-syne tracking-wide text-xs leading-relaxed opacity-95 mb-4 border-l border-current/25 pl-3.5 py-0.5 ${
-                  darkMode ? 'text-white' : 'text-slate-900'
+                  darkMode ? 'text-white' : 'text-black'
                 }`}
               >
                 <TypewriterText text={log.text} />
@@ -397,7 +397,7 @@ const FloatingConsole = ({
 
       {/* Input prompt */}
       <div className={`p-3 border-t flex items-center gap-2 font-mono text-xs
-        ${darkMode ? 'border-[#00FF41]/20 bg-black/40' : 'border-[#0055FF]/20 bg-gray-50/50'}`}
+        ${darkMode ? 'border-[#00FF41]/20 bg-black/40' : 'border-black bg-white'}`}
       >
         <span className="opacity-75 text-base md:text-xs">joel@architect:~$</span>
         <input 
@@ -406,7 +406,7 @@ const FloatingConsole = ({
           onChange={(e) => setInput(e.target.value)} 
           onKeyDown={handleCommand}
           placeholder={awaitingName ? "Type your name..." : "Ask me anything (e.g. 'help')..."}
-          className="flex-1 bg-transparent border-none outline-none font-mono text-base md:text-xs text-current placeholder-current opacity-40 focus:opacity-85 transition-opacity"
+          className={`flex-1 bg-transparent border-none outline-none font-mono text-base md:text-xs text-current placeholder-current transition-opacity ${darkMode ? 'opacity-40 focus:opacity-85' : 'opacity-100'}`}
           autoFocus
         />
         <ChevronRight size={14} className="opacity-60" />

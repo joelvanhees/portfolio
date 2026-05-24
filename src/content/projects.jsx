@@ -5,7 +5,7 @@ import brandingImg from '../assets/images/branding_preview.jpg';
 import posterImg from '../assets/images/poster_preview.jpg';
 import carImg from '../assets/images/car_preview.jpg';
 import previewWebImg from '../assets/images/previewWEB.png';
-import checkYourBusImg from '../assets/images/check_your_bus_preview.png';
+import checkYourBusImg from '../assets/images/check_your_bus_cover.jpg';
 import pdfFile from '../assets/pdf/feinkonzept_joelvanhees.pdf';
 
 export const buildProjects = ({ setActiveImage }) => [
@@ -40,6 +40,17 @@ export const buildProjects = ({ setActiveImage }) => [
       { label: "Instagram: @salatschuessel_", url: "https://www.instagram.com/salatschuessel_?igsh=MWZyNnhicGM2ZWkxdA==" },
     ],
     extraImages: false,
+  },
+  {
+    id: "07",
+    category: "LITERATURE / DIGITAL ESSAY",
+    title: "CHECK YOUR BUS",
+    description: "An interactive digital essay exploring perception, societal fictions, and decolonial critique through Machado de Oliveira's bus methodology.",
+    longDescription: "Check Your Bus is an interactive spatial text that invites the audience to map and critique the 'passengers' steering their worldview.\n\nGrounded in Machado de Oliveira's decolonial bus methodology (Hospicing Modernity) and Zygmunt Bauman's liquid modernity, the work functions as a reflective digital essay merging graphic language, custom sensory canvases, real-time user-input reflection, and interactive checkpoints.\n\nDeveloped as part of the 'Designing in Dark Times' course at KISD, the project translates decolonial theory into a vivid, responsive web experience with a hidden layer of self-critique.",
+    tech: ["HTML5", "CSS3", "JavaScript", "Interaction Design", "Decolonial Theory", "Creative Writing"],
+    visualComponent: <img src={checkYourBusImg} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 cursor-zoom-in" alt="Check Your Bus Preview" onClick={() => setActiveImage(checkYourBusImg)} />,
+    link: "https://checkyourbus.vercel.app",
+    featured: true,
   },
   {
     id: "00",
@@ -112,17 +123,6 @@ The P50 becomes a platform rather than a product.`,
     tech: ["Graphic Design", "Typography", "Layout", "Print"],
     visualComponent: <img src={posterImg} className="w-full h-full object-cover cursor-zoom-in" alt="Poster Preview" onClick={() => setActiveImage(posterImg)} />,
     link: "#",
-    featured: true,
-  },
-  {
-    id: "07",
-    category: "LITERATURE / DIGITAL ESSAY",
-    title: "CHECK YOUR BUS",
-    description: "An interactive digital essay exploring perception, societal fictions, and decolonial critique through Machado de Oliveira's bus methodology.",
-    longDescription: "Check Your Bus is an interactive spatial text that invites the audience to map and critique the 'passengers' steering their worldview.\n\nGrounded in Machado de Oliveira's decolonial bus methodology (Hospicing Modernity) and Zygmunt Bauman's liquid modernity, the work functions as a reflective digital essay merging graphic language, custom sensory canvases, real-time user-input reflection, and interactive checkpoints.\n\nDeveloped as part of the 'Designing in Dark Times' course at KISD, the project translates decolonial theory into a vivid, responsive web experience with a hidden layer of self-critique.",
-    tech: ["HTML5", "CSS3", "JavaScript", "Interaction Design", "Decolonial Theory", "Creative Writing"],
-    visualComponent: <img src={checkYourBusImg} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 cursor-zoom-in" alt="Check Your Bus Preview" onClick={() => setActiveImage(checkYourBusImg)} />,
-    link: "https://checkyourbus.vercel.app",
     featured: true,
   },
 ];

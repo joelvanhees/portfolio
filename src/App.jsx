@@ -95,8 +95,12 @@ const App = () => {
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
+      document.body.style.backgroundColor = '#050505';
+      document.body.style.color = '#E0E0E0';
     } else {
       document.documentElement.classList.remove('dark');
+      document.body.style.backgroundColor = '#F0F0F0';
+      document.body.style.color = '#111';
     }
   }, [darkMode]);
 
@@ -151,7 +155,7 @@ const App = () => {
   };
 
   return (
-    <div className={`min-h-screen w-full relative transition-colors duration-700 ease-in-out font-mono selection:bg-green-500 selection:text-black overflow-x-hidden ${darkMode ? 'bg-[#050505] text-[#E0E0E0]' : 'bg-[#F0F0F0] text-[#111]'}`}>
+    <div className={`min-h-screen w-full relative transition-colors duration-700 ease-in-out font-mono selection:bg-green-500 selection:text-black overflow-x-hidden bg-transparent ${darkMode ? 'text-[#E0E0E0]' : 'text-[#111]'}`}>
       <style>{`
         .font-syne { font-family: 'Syne', sans-serif; }
         .font-rubik { font-family: 'Rubik80sFade', 'Syne', sans-serif; }

@@ -143,7 +143,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
       const cols = Math.floor(width / 35) + 2;
       const rows = Math.floor(height / 35) + 2;
 
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 1.0;
 
       // Draw horizontal lines
       for (let r = 0; r < rows; r++) {
@@ -179,8 +179,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
         }
 
         ctx.strokeStyle = darkMode
-          ? `rgba(0, 255, 65, ${currentFade * (0.45 + Math.abs(Math.sin(time + r * 0.1)) * 0.25)})`
-          : `rgba(0, 85, 255, ${currentFade * (0.50 + Math.abs(Math.sin(time + r * 0.1)) * 0.25)})`;
+          ? `rgba(0, 255, 65, ${currentFade * (0.05 + Math.abs(Math.sin(time + r * 0.1)) * 0.04)})`
+          : `rgba(0, 85, 255, ${currentFade * (0.07 + Math.abs(Math.sin(time + r * 0.1)) * 0.05)})`;
         ctx.stroke();
       }
 
@@ -218,8 +218,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
         }
 
         ctx.strokeStyle = darkMode
-          ? `rgba(0, 255, 65, ${currentFade * (0.45 + Math.abs(Math.sin(time + c * 0.1)) * 0.25)})`
-          : `rgba(0, 85, 255, ${currentFade * (0.50 + Math.abs(Math.sin(time + c * 0.1)) * 0.25)})`;
+          ? `rgba(0, 255, 65, ${currentFade * (0.05 + Math.abs(Math.sin(time + c * 0.1)) * 0.04)})`
+          : `rgba(0, 85, 255, ${currentFade * (0.07 + Math.abs(Math.sin(time + c * 0.1)) * 0.05)})`;
         ctx.stroke();
       }
 
@@ -238,10 +238,9 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
     <>
       <canvas 
         ref={canvasRef} 
-        className="fixed inset-0 w-full h-full pointer-events-none z-10" 
+        className="fixed inset-0 w-full h-full pointer-events-none -z-10" 
         style={{ opacity: scrollFade }}
       />
-      <div className="relative z-20 w-full">
         <header 
           ref={headerRef}
           onMouseMove={handleMouseMove}
@@ -442,7 +441,6 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
           </div>
         </div>
       </section>
-      </div>
     </>
   );
 };

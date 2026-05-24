@@ -1,31 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
-import { X, Trophy, Heart, Shield, RefreshCw, Zap, Play, Lock } from 'lucide-react';
+import { X, Trophy, Zap, Play, Lock, Heart, RefreshCw } from 'lucide-react';
 import * as THREE from 'three';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
-// --- CONFIGURATION ---
+// --- GAME PARAMETERS ---
 const OUTER_RADIUS = 1.4;
-const INNER_RADIUS = 0.55; 
-const FLOOR_LEVEL = -4.0; 
-const SPHERE_Y_POS = FLOOR_LEVEL + OUTER_RADIUS * 0.95;
-
-const OUTER_SMOOTHING = 3.5; 
-const LIQUID_SPRING = 8.0;   
-const LIQUID_DAMPING = 0.88; 
+const INNER_RADIUS = 0.55;
+const LANES = [-3.5, 0, 3.5]; // Left, Center, Right
+const TRACK_Y = -1.6;
+const BLOB_START_Y = TRACK_Y + OUTER_RADIUS; // Standing position
 
 // Physics
-const GRAVITY = -45.0;
-const JUMP_FORCE = 16.0;
-const DOUBLE_JUMP_FORCE = 20.0;
-const PLATFORM_RADIUS = 30; 
-const MOVEMENT_LIMIT = PLATFORM_RADIUS - 2.0; 
-const MAX_OFFSET_RADIUS = (OUTER_RADIUS - INNER_RADIUS) * 0.65;
+const GRAVITY = -48.0;
+const JUMP_FORCE = 16.5;
 
-const GameView = ({ darkMode }) => {
+const GameView = () => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
-  
-  // Game state
+
+  // React Game states
   const [isPlaying, setIsPlaying] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
@@ -36,76 +29,42 @@ const GameView = ({ darkMode }) => {
   const [unlockedYellow, setUnlockedYellow] = useState(false);
   const [unlockedPink, setUnlockedPink] = useState(false);
 
-  // References for game loop
+  // Sync state refs to let High-Performance loop read them immediately
   const stateRef = useRef({
+    isPlaying: false,
+    gameOver: false,
     score: 0,
     level: 1,
     lives: 3,
     invulnerableTime: 0,
+    activeColor: 'green',
+    currentLane: 1, // 0 = Left, 1 = Center, 2 = Right
+    jumpY: 0,
+    verticalVelocity: 0,
+    isJumping: false,
+    speed: 35.0, // Scroll speed
     lastObstacleSpawn: 0,
-    lastCrystalSpawn: 0,
-    activeColor: 'green'
+    lastCrystalSpawn: 0
   });
 
-  // Load High Score
+  // Fetch local High Score on Mount
   useEffect(() => {
-    const saved = localStorage.getItem('vanhees_blob_highscore');
+    const saved = localStorage.getItem('vanhees_runner_highscore');
     if (saved) setHighScore(parseInt(saved, 10));
   }, []);
 
-  // Update unlocked colors based on score
+  // Update unlocked states
   useEffect(() => {
-    if (score >= 500 && !unlockedYellow) {
-      setUnlockedYellow(true);
-    }
-    if (score >= 1500 && !unlockedPink) {
-      setUnlockedPink(true);
-    }
+    if (score >= 500 && !unlockedYellow) setUnlockedYellow(true);
+    if (score >= 1500 && !unlockedPink) setUnlockedPink(true);
   }, [score, unlockedYellow, unlockedPink]);
 
-  // Update inner state ref when React states change
+  // Sync selectedColor and lives to stateRef
   useEffect(() => {
-    stateRef.current.lives = lives;
-    stateRef.current.score = score;
-    stateRef.current.level = level;
     stateRef.current.activeColor = selectedColor;
-  }, [lives, score, level, selectedColor]);
+  }, [selectedColor]);
 
-  // THREE.js References
-  const sceneRef = useRef(null);
-  const cameraRef = useRef(null);
-  const rendererRef = useRef(null);
-  const animationFrameId = useRef(null);
-  
-  // Physics simulation refs
-  const currentPos = useRef(new THREE.Vector3(0, SPHERE_Y_POS, 0));
-  const targetPos = useRef(new THREE.Vector3(0, SPHERE_Y_POS, 0));
-  const lastPos = useRef(new THREE.Vector3(0, SPHERE_Y_POS, 0));
-  const innerPos = useRef(new THREE.Vector3(0, SPHERE_Y_POS - 0.5, 0));
-  const innerVelocity = useRef(new THREE.Vector3());
-  
-  // Jump variables
-  const verticalVelocity = useRef(0);
-  const jumpCount = useRef(0);
-  const lastJumpTime = useRef(0);
-
-  // Keyboard controls state
-  const keysPressed = useRef({
-    ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false,
-    w: false, s: false, a: false, d: false, Space: false
-  });
-
-  // Game objects arrays
-  const obstacles = useRef([]);
-  const crystals = useRef([]);
-  const particleSystems = useRef([]);
-  
-  // THREE Materials references to dynamically update shader values
-  const timeUniform = useRef({ value: 0 });
-  const velocityUniform = useRef({ value: 0 });
-  const innerBlobMaterial = useRef(null);
-
-  // --- AUDIO SYNTH FOR ARCADE SOUND EFFECTS ---
+  // Audio synthesis engine for latency-free chiptunes
   const playSynthSound = (type) => {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -116,60 +75,77 @@ const GameView = ({ darkMode }) => {
 
       if (type === 'jump') {
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(150, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.15);
-        gain.gain.setValueAtTime(0.15, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+        osc.frequency.setValueAtTime(160, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(650, ctx.currentTime + 0.14);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.14);
         osc.start();
-        osc.stop(ctx.currentTime + 0.16);
+        osc.stop(ctx.currentTime + 0.15);
       } else if (type === 'hit') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(300, ctx.currentTime);
-        osc.frequency.linearRampToValueAtTime(80, ctx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.25, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        osc.frequency.setValueAtTime(280, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(60, ctx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
         osc.start();
-        osc.stop(ctx.currentTime + 0.31);
+        osc.stop(ctx.currentTime + 0.26);
       } else if (type === 'collect') {
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
-        osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.08); // E5
-        osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.16); // G5
-        gain.gain.setValueAtTime(0.12, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+        osc.frequency.setValueAtTime(698.46, ctx.currentTime + 0.08); // F5
+        osc.frequency.setValueAtTime(880.00, ctx.currentTime + 0.16); // A5
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.28);
         osc.start();
-        osc.stop(ctx.currentTime + 0.31);
+        osc.stop(ctx.currentTime + 0.29);
       } else if (type === 'gameover') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(180, ctx.currentTime);
-        osc.frequency.linearRampToValueAtTime(50, ctx.currentTime + 0.8);
-        gain.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
+        osc.frequency.setValueAtTime(200, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(40, ctx.currentTime + 0.7);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.7);
         osc.start();
-        osc.stop(ctx.currentTime + 0.81);
+        osc.stop(ctx.currentTime + 0.71);
       }
     } catch (e) {
-      // AudioContext blocked or not supported
+      // Browsers might block AudioContext until user gesture
     }
   };
 
-  // --- INITIALIZE THREE.JS WORLD ---
+  // Three.js instances refs
+  const sceneRef = useRef(null);
+  const cameraRef = useRef(null);
+  const rendererRef = useRef(null);
+  const animationFrameId = useRef(null);
+
+  // Shader Uniforms
+  const timeUniform = useRef({ value: 0 });
+  const velocityUniform = useRef({ value: 1.0 });
+
+  // Game objects lists
+  const obstacles = useRef([]); // { mesh, lane, z }
+  const crystals = useRef([]); // { mesh, lane, z, seed }
+  const obstacleGeom = useRef(null);
+  const obstacleMat = useRef(null);
+  const crystalGeom = useRef(null);
+  const crystalMat = useRef(null);
+
+  // --- INITIALIZE THREE.JS RUNNER WORLD ---
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    // Scene
+    // 1. Setup Scene
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x050505);
-    scene.fog = new THREE.Fog(0x050505, 40, 180);
+    scene.fog = new THREE.Fog(0x050505, 30, 100);
     sceneRef.current = scene;
 
-    // Camera
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 300);
-    camera.position.set(0, 10, 30);
-    camera.layers.enable(1); // Enable Layer 1 (for outer iridescent bubble)
+    // 2. Setup Camera
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 150);
+    camera.position.set(0, 5, 12);
     cameraRef.current = camera;
 
-    // Renderer
+    // 3. Setup Renderer
     const renderer = new THREE.WebGLRenderer({
       canvas: canvasRef.current,
       antialias: true,
@@ -179,205 +155,231 @@ const GameView = ({ darkMode }) => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     rendererRef.current = renderer;
 
-    // Environment Lighting (Polyhaven HDRI fallback to simple directional)
+    // 4. Lights
+    const spotLight = new THREE.SpotLight(0xffffff, 2.5);
+    spotLight.position.set(10, 25, 10);
+    spotLight.angle = Math.PI / 4;
+    spotLight.penumbra = 0.6;
+    scene.add(spotLight);
+
+    const pointLight = new THREE.PointLight(0xaaccff, 1.5, 70);
+    pointLight.position.set(-10, 10, -5);
+    scene.add(pointLight);
+
+    const fillLight = new THREE.PointLight(0x00ff41, 0.8, 40); // Cyan/Green glow from bottom
+    fillLight.position.set(0, -4, 2);
+    scene.add(fillLight);
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x000022, 0.35));
+
+    // 5. HDRI Loader
     const rgbeLoader = new RGBELoader();
     rgbeLoader.load(
       'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/studio_small_09_1k.hdr',
       (texture) => {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         scene.environment = texture;
-        scene.environment.blur = 0.35;
+        scene.environment.blur = 0.5;
       },
       undefined,
-      (err) => console.log("HDRI loading skipped, using procedural lighting defaults.")
+      (err) => console.log("Procedural reflections loaded.")
     );
 
-    // Lights
-    const spotLight = new THREE.SpotLight(0xffffff, 2.5);
-    spotLight.position.set(20, 45, 15);
-    spotLight.angle = Math.PI / 4;
-    spotLight.penumbra = 0.5;
-    spotLight.castShadow = true;
-    spotLight.shadow.mapSize.set(1024, 1024);
-    spotLight.shadow.bias = -0.0004;
-    scene.add(spotLight);
-
-    const pointLight = new THREE.PointLight(0xaaccff, 1.2, 80);
-    pointLight.position.set(-15, 20, -10);
-    scene.add(pointLight);
-
-    const fillLight = new THREE.PointLight(0x00ff41, 0.7, 50); // Glowing green fill
-    fillLight.position.set(0, -6, 0);
-    scene.add(fillLight);
-
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x000022, 0.4));
-
-    // Starfield background
+    // 6. Cyber grid space background
     const starsGeometry = new THREE.BufferGeometry();
-    const starsCount = 1200;
+    const starsCount = 1000;
     const starsPositions = new Float32Array(starsCount * 3);
     const starsColors = new Float32Array(starsCount * 3);
 
     for (let i = 0; i < starsCount * 3; i += 3) {
-      const radius = Math.random() * 120 + 70;
+      const radius = Math.random() * 90 + 40;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(Math.random() * 2 - 1);
 
       starsPositions[i] = radius * Math.sin(phi) * Math.cos(theta);
-      starsPositions[i+1] = radius * Math.sin(phi) * Math.sin(theta);
+      starsPositions[i+1] = radius * Math.sin(phi) * Math.sin(theta) + 10;
       starsPositions[i+2] = radius * Math.cos(phi);
 
       starsColors[i] = 0.0;
-      starsColors[i+1] = 1.0; // Glowing green stars
-      starsColors[i+2] = 0.3;
+      starsColors[i+1] = 1.0; // Cyber green star points
+      starsColors[i+2] = 0.4;
     }
 
     starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
     starsGeometry.setAttribute('color', new THREE.BufferAttribute(starsColors, 3));
 
     const starsMaterial = new THREE.PointsMaterial({
-      size: 0.35,
+      size: 0.32,
       vertexColors: true,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.45,
       blending: THREE.AdditiveBlending
     });
     const starField = new THREE.Points(starsGeometry, starsMaterial);
     scene.add(starField);
 
-    // Floor Platform
-    const floorGeometry = new THREE.CircleGeometry(PLATFORM_RADIUS, 96);
-    const floorMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x07070a,
-      metalness: 0.6,
-      roughness: 0.25,
+    // 7. Translucent Glass Track
+    const trackGeometry = new THREE.PlaneGeometry(12, 140);
+    const trackMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x051a08, // deep emerald green
+      metalness: 0.3,
+      roughness: 0.2,
+      transmission: 0.8,
+      thickness: 1.0,
       side: THREE.DoubleSide,
       clearcoat: 1.0,
-      emissive: 0x001105, // Subtle green edge emission
-      emissiveIntensity: 0.4
+      transparent: true
     });
 
-    // Custom Floor displacement shader
-    floorMaterial.onBeforeCompile = (shader) => {
+    // Inject scrolling grid coordinates directly into track vertex/fragment compilation
+    trackMaterial.onBeforeCompile = (shader) => {
       shader.uniforms.uTime = timeUniform.current;
-      shader.vertexShader = `uniform float uTime;\n` + shader.vertexShader;
+      shader.vertexShader = `uniform float uTime;\nvarying vec2 vScrollUV;\n` + shader.vertexShader;
       shader.vertexShader = shader.vertexShader.replace(
-        '#include <begin_vertex>',
+        '#include <uv_vertex>',
         `
-        #include <begin_vertex>
-        float dist = length(position.xy);
-        float edgeMask = 1.0 - smoothstep(${PLATFORM_RADIUS} * 0.88, ${PLATFORM_RADIUS}, dist);
-        float displacement = sin(position.x * 0.4 + uTime * 0.8) * cos(position.y * 0.4 + uTime * 0.6) * 0.05 * edgeMask;
-        transformed.z += displacement;
+        #include <uv_vertex>
+        vScrollUV = uv;
+        `
+      );
+      shader.fragmentShader = `uniform float uTime;\nvarying vec2 vScrollUV;\n` + shader.fragmentShader;
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <map_fragment>',
+        `
+        #include <map_fragment>
+        // Scroll coordinate offset based on time
+        float scroll = vScrollUV.y * 35.0 - uTime * 7.5;
+        float gridX = step(0.96, sin(vScrollUV.x * 3.1415 * 3.0));
+        float gridY = step(0.96, sin(scroll));
+        float combinedGrid = max(gridX, gridY);
+        diffuseColor.rgb += vec3(0.0, 1.0, 0.25) * combinedGrid * 0.4;
         `
       );
     };
 
-    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    floor.rotation.x = -Math.PI / 2;
-    floor.position.y = FLOOR_LEVEL;
-    floor.receiveShadow = true;
-    scene.add(floor);
+    const track = new THREE.Mesh(trackGeometry, trackMaterial);
+    track.rotation.x = -Math.PI / 2;
+    track.position.set(0, TRACK_Y, -40);
+    scene.add(track);
 
-    // Cyber grid rings
-    const polarGrid = new THREE.PolarGridHelper(PLATFORM_RADIUS, 12, 8, 64, 0x00ff41, 0x004411);
-    polarGrid.position.y = FLOOR_LEVEL + 0.04;
-    polarGrid.material.transparent = true;
-    polarGrid.material.opacity = 0.22;
-    polarGrid.material.depthWrite = false;
-    scene.add(polarGrid);
+    // Lateral lane boundaries (Sleek glass barriers)
+    const barrierGeo = new THREE.BoxGeometry(0.12, 0.4, 140);
+    const barrierMat = new THREE.MeshBasicMaterial({
+      color: 0x00ff41,
+      transparent: true,
+      opacity: 0.28
+    });
 
-    // --- PLAYER NEON BLOB ---
+    const leftBarrier = new THREE.Mesh(barrierGeo, barrierMat);
+    leftBarrier.position.set(-6, TRACK_Y + 0.2, -40);
+    scene.add(leftBarrier);
+
+    const rightBarrier = new THREE.Mesh(barrierGeo, barrierMat);
+    rightBarrier.position.set(6, TRACK_Y + 0.2, -40);
+    scene.add(rightBarrier);
+
+    // 8. --- HIGH-END PHYSICS NEON BLOB ---
     const outerGeometry = new THREE.SphereGeometry(OUTER_RADIUS, 96, 96);
     const glassMaterial = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
-      metalness: 0.1,
-      roughness: 0.06,
+      metalness: 0.05,
+      roughness: 0.12,
       transmission: 1.0,
-      thickness: 1.4,
-      ior: 1.46,
+      thickness: 2.0,
+      ior: 1.5,
+      dispersion: 0.1,
+      side: THREE.DoubleSide,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
       transparent: true,
-      envMapIntensity: 0.25,
-      iridescence: 1.0,
-      iridescenceIOR: 2.1,
-      iridescenceThicknessRange: [150, 750]
+      envMapIntensity: 0.4,
+      iridescence: 0.2,
+      iridescenceIOR: 1.3,
+      iridescenceThicknessRange: [100, 400]
     });
 
-    // Custom vertex deformation shader
+    // Dynamic Shader Deformation Injection
     const injectBlobShader = (shader, intensity, frequency, speed, isInner) => {
       shader.uniforms.uTime = timeUniform.current;
       shader.uniforms.uVel = velocityUniform.current;
       shader.vertexShader = `uniform float uTime; uniform float uVel;\n` + shader.vertexShader;
 
-      const velocityLimit = isInner ? "min(uVel, 1.2)" : "min(uVel, 1.6)";
+      const velocityLimit = isInner ? "min(uVel, 1.0)" : "min(uVel, 1.5)";
 
       shader.vertexShader = shader.vertexShader.replace(
         '#include <begin_vertex>',
         `
         #include <begin_vertex>
-        float vel = ${velocityLimit};
+        float velFactor = ${velocityLimit};
         float breathe = sin(uTime * ${speed.toFixed(1)}) * 0.012;
-        float n1 = sin(position.y * ${frequency.toFixed(1)} + uTime * ${speed.toFixed(1)});
-        float n2 = cos(position.x * ${(frequency * 0.95).toFixed(1)} + uTime * ${(speed * 1.05).toFixed(1)});
-        float n3 = sin(position.z * ${(frequency * 1.05).toFixed(1)} + uTime * ${(speed * 0.95).toFixed(1)});
-        float amp = ${intensity.toFixed(3)} * (1.0 + vel * 0.35);
-        float displacement = (n1 + n2 + n3) * amp;
-        ${!isInner ? 'float groundFlatten = smoothstep(-1.2, -0.6, position.y); displacement *= groundFlatten;' : ''}
+        float noise1 = sin(position.y * ${frequency.toFixed(1)} + uTime * ${speed.toFixed(1)});
+        float noise2 = cos(position.x * ${(frequency * 0.9).toFixed(1)} + uTime * ${(speed * 1.1).toFixed(1)});
+        float noise3 = sin(position.z * ${(frequency * 1.1).toFixed(1)} + uTime * ${(speed * 0.9).toFixed(1)});
+        float amp = ${intensity.toFixed(3)} * (1.0 + velFactor * 0.25);
+        float displacement = (noise1 + noise2 + noise3) * amp;
         transformed += objectNormal * (displacement + breathe);
         `
       );
     };
 
-    glassMaterial.onBeforeCompile = (shader) => injectBlobShader(shader, 0.11, 2.2, 1.4, false);
+    glassMaterial.onBeforeCompile = (shader) => injectBlobShader(shader, 0.12, 2.0, 1.2, false);
 
     const outerSphere = new THREE.Mesh(outerGeometry, glassMaterial);
-    outerSphere.layers.set(1); // Set to layer 1 for specular glass highlights
-    outerSphere.castShadow = true;
-    outerSphere.receiveShadow = true;
 
-    const rollingGroup = new THREE.Group();
-    rollingGroup.position.set(0, SPHERE_Y_POS, 0);
-    rollingGroup.add(outerSphere);
-    scene.add(rollingGroup);
+    const playerGroup = new THREE.Group();
+    playerGroup.position.set(0, BLOB_START_Y, 0);
+    playerGroup.add(outerSphere);
+    scene.add(playerGroup);
 
-    // Inner liquid neon core
+    // Inner Core
     const innerGeometry = new THREE.SphereGeometry(INNER_RADIUS, 96, 96);
-    
-    // Dynamic color setup
-    const liquidColorMap = {
-      green: { color: 0xccffcc, attenuation: 0x00ff41, emissive: 0x004411 },
-      yellow: { color: 0xffffcc, attenuation: 0xffd700, emissive: 0x443300 },
-      pink: { color: 0xffcccc, attenuation: 0xff007f, emissive: 0x440022 }
-    };
-    
-    const initialConfig = liquidColorMap[stateRef.current.activeColor];
-    
     const liquidMaterial = new THREE.MeshPhysicalMaterial({
-      color: initialConfig.color,
-      metalness: 0.15,
-      roughness: 0.05,
-      transmission: 0.92,
-      thickness: 1.1,
-      attenuationColor: new THREE.Color(initialConfig.attenuation),
-      attenuationDistance: 0.7,
-      ior: 1.42,
+      color: 0xccffcc,
+      metalness: 0.2,
+      roughness: 0.04,
+      transmission: 0.9,
+      thickness: 1.2,
+      attenuationColor: new THREE.Color(0x00cc41),
+      attenuationDistance: 0.8,
+      ior: 1.4,
       side: THREE.DoubleSide,
       clearcoat: 1.0,
-      emissive: initialConfig.emissive,
-      emissiveIntensity: 0.35
+      emissive: 0x003311,
+      emissiveIntensity: 0.25
     });
 
-    liquidMaterial.onBeforeCompile = (shader) => injectBlobShader(shader, 0.065, 1.5, 1.7, true);
+    liquidMaterial.onBeforeCompile = (shader) => injectBlobShader(shader, 0.065, 1.4, 1.5, true);
+    const innerCore = new THREE.Mesh(innerGeometry, liquidMaterial);
+    playerGroup.add(innerCore);
+
+    // Save references to dynamically swap core material properties
     innerBlobMaterial.current = liquidMaterial;
 
-    const innerCore = new THREE.Mesh(innerGeometry, liquidMaterial);
-    scene.add(innerCore);
+    // 9. Shared Obstacles & Crystals Templates
+    obstacleGeom.current = new THREE.BoxGeometry(2.0, 1.6, 1.2);
+    obstacleMat.current = new THREE.MeshPhysicalMaterial({
+      color: 0xff003c, // Glowing red warning barriers
+      metalness: 0.1,
+      roughness: 0.15,
+      transmission: 0.75,
+      thickness: 0.8,
+      emissive: 0x550005,
+      emissiveIntensity: 0.4
+    });
 
-    // Handle resizing
+    crystalGeom.current = new THREE.OctahedronGeometry(0.55, 0);
+    crystalMat.current = new THREE.MeshPhysicalMaterial({
+      color: 0xffd700, // Shiny gold crystals
+      metalness: 0.9,
+      roughness: 0.08,
+      clearcoat: 1.0,
+      emissive: 0x775500,
+      emissiveIntensity: 0.5
+    });
+
+    // 10. Handle window resizing
     const handleResize = () => {
       if (!cameraRef.current || !rendererRef.current) return;
       cameraRef.current.aspect = window.innerWidth / window.innerHeight;
@@ -386,567 +388,505 @@ const GameView = ({ darkMode }) => {
     };
     window.addEventListener('resize', handleResize);
 
-    // --- GAME ACTIONS & KEYBOARD LISTENERS ---
+    // Keyboard handlers
     const handleKeyDown = (e) => {
-      const k = e.key;
-      if (keysPressed.current[k] !== undefined) {
-        keysPressed.current[k] = true;
+      const state = stateRef.current;
+      if (!state.isPlaying || state.gameOver) return;
+
+      if (e.key === 'ArrowLeft' || e.key === 'a') {
+        state.currentLane = Math.max(0, state.currentLane - 1);
       }
-      if (k === ' ') {
-        keysPressed.current.Space = true;
+      if (e.key === 'ArrowRight' || e.key === 'd') {
+        state.currentLane = Math.min(2, state.currentLane + 1);
+      }
+      if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w') {
         triggerJump();
       }
-      if (k === 'w' || k === 'ArrowUp') triggerJump();
     };
-
-    const handleKeyUp = (e) => {
-      const k = e.key;
-      if (keysPressed.current[k] !== undefined) {
-        keysPressed.current[k] = false;
-      }
-      if (k === ' ') {
-        keysPressed.current.Space = false;
-      }
-    };
-
     window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
 
-    // High-fidelity unified pointer & touch tracking
+    // Mobile gesture tracking
     let touchStartX = 0;
     let touchStartY = 0;
     let touchStartTime = 0;
-    let lastSwipeY = 0;
-    let lastSwipeTime = 0;
 
     const handlePointerDown = (e) => {
-      if (!isPlaying || gameOver) return;
-      
       touchStartX = e.clientX;
       touchStartY = e.clientY;
       touchStartTime = performance.now();
-      
-      lastSwipeY = e.clientY;
-      lastSwipeTime = performance.now();
-      
-      // Desktop mouse click triggers immediate jump
-      if (e.pointerType === 'mouse') {
-        triggerJump();
-      }
-    };
-
-    const handlePointerMove = (e) => {
-      if (!isPlaying || gameOver) return;
-      
-      // Update target coordinate for blob tracking
-      const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-      const mouseZ = -(e.clientY / window.innerHeight) * 2 + 1;
-      targetPos.current.x = mouseX * (MOVEMENT_LIMIT * 0.9);
-      targetPos.current.z = -mouseZ * (MOVEMENT_LIMIT * 0.9);
-      
-      // Mobile touch swipe-up jump physics
-      if (e.pointerType === 'touch' || e.pointerType === 'pen') {
-        const now = performance.now();
-        const timeDiff = now - lastSwipeTime;
-        
-        if (timeDiff > 0) {
-          const dy = e.clientY - lastSwipeY;
-          const speedY = dy / timeDiff; // speed in px/ms
-          
-          // Speed is negative for upwards movements.
-          // Trigger jump if swiping up quickly (speedY < -0.7)
-          if (speedY < -0.7 && (now - lastJumpTime.current > 250)) {
-            triggerJump();
-          }
-        }
-        lastSwipeY = e.clientY;
-        lastSwipeTime = now;
-      }
     };
 
     const handlePointerUp = (e) => {
-      if (!isPlaying || gameOver) return;
-      
-      // Touch tap-to-jump detection
-      if (e.pointerType === 'touch') {
-        const now = performance.now();
-        const duration = now - touchStartTime;
-        const dx = e.clientX - touchStartX;
-        const dy = e.clientY - touchStartY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        
-        // If touch was quick (< 250ms) and didn't move much (< 15px), it's a Tap!
-        if (duration < 250 && dist < 15) {
-          triggerJump();
+      const state = stateRef.current;
+      if (!state.isPlaying || state.gameOver) return;
+
+      const deltaX = e.clientX - touchStartX;
+      const deltaY = e.clientY - touchStartY;
+      const duration = performance.now() - touchStartTime;
+
+      if (duration < 280) {
+        // Swipe Detection
+        if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+          if (deltaX < 0) {
+            state.currentLane = Math.max(0, state.currentLane - 1); // Swipe left
+          } else {
+            state.currentLane = Math.min(2, state.currentLane + 1); // Swipe right
+          }
+        } else if (deltaY < -40 && Math.abs(deltaY) > Math.abs(deltaX)) {
+          triggerJump(); // Swipe up
+        } else if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
+          triggerJump(); // Quick tap anywhere
         }
       }
     };
 
-    window.addEventListener('pointermove', handlePointerMove);
     window.addEventListener('pointerdown', handlePointerDown);
     window.addEventListener('pointerup', handlePointerUp);
 
-    // Cleanup resources
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerdown', handlePointerDown);
-      window.removeEventListener('pointerup', handlePointerUp);
-      
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
-      
-      starsGeometry.dispose();
-      starsMaterial.dispose();
-      floorGeometry.dispose();
-      floorMaterial.dispose();
-      outerGeometry.dispose();
-      glassMaterial.dispose();
-      innerGeometry.dispose();
-      liquidMaterial.dispose();
-      
-      if (rendererRef.current) {
-        rendererRef.current.dispose();
-      }
-    };
-  }, [isPlaying, gameOver]);
-
-  // Jump Action trigger
-  const triggerJump = () => {
-    const now = performance.now();
-    if (now - lastJumpTime.current > 240 && jumpCount.current < 2) {
-      const force = (jumpCount.current === 0) ? JUMP_FORCE : DOUBLE_JUMP_FORCE;
-      verticalVelocity.current = force;
-      jumpCount.current++;
-      lastJumpTime.current = now;
-      innerVelocity.current.y -= 4.5; // Squash deformation trigger
-      playSynthSound('jump');
-    }
-  };
-
-  // --- GAME START & LOOP CONTROLLER ---
-  const startGame = () => {
-    setIsPlaying(true);
-    setGameOver(false);
-    setScore(0);
-    setLevel(1);
-    setLives(3);
-    
-    // Reset positions
-    currentPos.current.set(0, SPHERE_Y_POS, 0);
-    targetPos.current.set(0, SPHERE_Y_POS, 0);
-    lastPos.current.set(0, SPHERE_Y_POS, 0);
-    innerPos.current.set(0, SPHERE_Y_POS - 0.5, 0);
-    innerVelocity.current.set(0, 0, 0);
-    verticalVelocity.current = 0;
-    jumpCount.current = 0;
-
-    // Reset arrays
-    obstacles.current.forEach(obs => sceneRef.current.remove(obs.mesh));
-    obstacles.current = [];
-    crystals.current.forEach(cry => sceneRef.current.remove(cry.mesh));
-    crystals.current = [];
-    
-    stateRef.current = {
-      score: 0,
-      level: 1,
-      lives: 3,
-      invulnerableTime: 0,
-      lastObstacleSpawn: performance.now(),
-      lastCrystalSpawn: performance.now(),
-      activeColor: selectedColor
-    };
-
-    // Spawn first crystal
-    spawnCrystal();
-
-    // Start Game Loop
+    // --- CONTINUOUS GAMEPLAY AND preview LOOP ---
     const clock = new THREE.Clock();
-    
-    const gameLoop = () => {
+
+    const animate = () => {
       const dt = Math.min(clock.getDelta(), 0.05);
       const time = clock.getElapsedTime();
       timeUniform.current.value = time;
 
-      // Update shader liquid core colors dynamically if modified
+      // Update shader deformation speed parameter dynamically
+      velocityUniform.current.value = 1.0 + Math.sin(time * 2.0) * 0.4;
+
+      // Twinkle background stars
+      if (starField) {
+        starField.rotation.y += 0.0001;
+        starField.rotation.x += 0.00004;
+      }
+
+      // Live swap core color configs
       if (innerBlobMaterial.current) {
         const liquidColorMap = {
           green: { color: 0xccffcc, attenuation: 0x00ff41, emissive: 0x004411 },
           yellow: { color: 0xffffcc, attenuation: 0xffd700, emissive: 0x443300 },
           pink: { color: 0xffcccc, attenuation: 0xff007f, emissive: 0x440022 }
         };
-        const config = liquidColorMap[stateRef.current.activeColor];
+        const config = liquidColorMap[stateRef.current.activeColor] || liquidColorMap.green;
         innerBlobMaterial.current.color.setHex(config.color);
         innerBlobMaterial.current.attenuationColor.setHex(config.attenuation);
         innerBlobMaterial.current.emissive.setHex(config.emissive);
       }
 
-      // 1. Invulnerability blinking animation
-      if (stateRef.current.invulnerableTime > 0) {
-        stateRef.current.invulnerableTime -= dt;
-        const outerMesh = sceneRef.current.getObjectByProperty('type', 'Mesh'); // Fallback check
-        if (outerMesh) {
-          outerMesh.visible = Math.floor(time * 15) % 2 === 0;
-        }
-      } else {
-        const outerMesh = sceneRef.current.getObjectByProperty('type', 'Mesh');
-        if (outerMesh) outerMesh.visible = true;
-      }
+      const state = stateRef.current;
 
-      // 2. Desktop Keyboard movement controls
-      const speed = 25.0;
-      const keys = keysPressed.current;
-      let dx = 0;
-      let dz = 0;
-      
-      if (keys.ArrowLeft || keys.a) dx = -speed * dt;
-      if (keys.ArrowRight || keys.d) dx = speed * dt;
-      if (keys.ArrowUp || keys.w) dz = -speed * dt;
-      if (keys.ArrowDown || keys.s) dz = speed * dt;
+      if (state.isPlaying && !state.gameOver) {
+        // --- 1. ACTIVE RUNNER LOGIC ---
 
-      if (dx !== 0 || dz !== 0) {
-        targetPos.current.x = THREE.MathUtils.clamp(targetPos.current.x + dx, -MOVEMENT_LIMIT, MOVEMENT_LIMIT);
-        targetPos.current.z = THREE.MathUtils.clamp(targetPos.current.z + dz, -MOVEMENT_LIMIT, MOVEMENT_LIMIT);
-      }
-
-      // Smoothly interpolate outer blob position
-      const lerp = 1.0 - Math.exp(-OUTER_SMOOTHING * dt);
-      currentPos.current.x += (targetPos.current.x - currentPos.current.x) * lerp;
-      currentPos.current.z += (targetPos.current.z - currentPos.current.z) * lerp;
-
-      // 3. Vertical jump physics
-      verticalVelocity.current += GRAVITY * dt;
-      currentPos.current.y += verticalVelocity.current * dt;
-
-      // Floor boundary collision
-      if (currentPos.current.y < SPHERE_Y_POS) {
-        currentPos.current.y = SPHERE_Y_POS;
-        if (verticalVelocity.current < -6) {
-          verticalVelocity.current = -verticalVelocity.current * 0.25; // bouncy landing
+        // Invulnerable timer blink
+        if (state.invulnerableTime > 0) {
+          state.invulnerableTime -= dt;
+          outerSphere.visible = Math.floor(time * 15) % 2 === 0;
+          innerCore.visible = Math.floor(time * 15) % 2 === 0;
         } else {
-          verticalVelocity.current = 0;
+          outerSphere.visible = true;
+          innerCore.visible = true;
         }
-        jumpCount.current = 0; 
-      }
 
-      // Platform boundaries limit check
-      const rad = currentPos.current.length();
-      if (rad > MOVEMENT_LIMIT) {
-        const factor = MOVEMENT_LIMIT / rad;
-        currentPos.current.x *= factor;
-        currentPos.current.z *= factor;
-      }
+        // Horizontal lane target sliding
+        const targetX = LANES[state.currentLane];
+        playerGroup.position.x = THREE.MathUtils.lerp(playerGroup.position.x, targetX, 10.0 * dt);
 
-      // Roll animation calculations
-      const frameMove = new THREE.Vector3().subVectors(currentPos.current, lastPos.current);
-      frameMove.y = 0;
-      const movDist = frameMove.length();
-      const rawSpeed = movDist / dt;
-      velocityUniform.current.value = THREE.MathUtils.lerp(velocityUniform.current.value, Math.min(rawSpeed * 0.5, 3.0), 0.1);
+        // Vertical jump physics
+        if (state.isJumping) {
+          state.verticalVelocity += GRAVITY * dt;
+          state.jumpY += state.verticalVelocity * dt;
 
-      const blobGroup = sceneRef.current.children.find(c => c.type === 'Group');
-      if (blobGroup && movDist > 0.0001) {
-        blobGroup.position.copy(currentPos.current);
-        const rollingAxis = new THREE.Vector3(frameMove.z, 0, -frameMove.x).normalize();
-        const angle = movDist / OUTER_RADIUS;
-        const q = new THREE.Quaternion().setFromAxisAngle(rollingAxis, angle);
-        blobGroup.quaternion.premultiply(q);
-      } else if (blobGroup) {
-        blobGroup.position.copy(currentPos.current);
-      }
-
-      // 4. Liquid interior gel physics
-      const offset = new THREE.Vector3(0, -(OUTER_RADIUS - INNER_RADIUS - 0.25), 0);
-      const desiredPos = new THREE.Vector3().copy(currentPos.current).add(offset);
-      const force = new THREE.Vector3().subVectors(desiredPos, innerPos.current).multiplyScalar(LIQUID_SPRING);
-      
-      innerVelocity.current.add(force.multiplyScalar(dt));
-      innerVelocity.current.multiplyScalar(Math.pow(LIQUID_DAMPING, dt * 60));
-      
-      const nextInner = innerPos.current.clone().add(innerVelocity.current.clone().multiplyScalar(dt));
-
-      // Prevent inner gel from clipping outer boundaries
-      const offsetCenter = new THREE.Vector3().subVectors(nextInner, currentPos.current);
-      const distCenter = offsetCenter.length();
-      if (distCenter > MAX_OFFSET_RADIUS) {
-        offsetCenter.normalize().multiplyScalar(MAX_OFFSET_RADIUS);
-        nextInner.copy(currentPos.current).add(offsetCenter);
-        const normal = offsetCenter.clone().normalize();
-        const velD = innerVelocity.current.dot(normal);
-        if (velD > 0) {
-          innerVelocity.current.sub(normal.multiplyScalar(velD));
+          if (state.jumpY <= 0) {
+            state.jumpY = 0;
+            state.verticalVelocity = 0;
+            state.isJumping = false;
+          }
         }
-      }
-      
-      innerPos.current.copy(nextInner);
-      
-      const innerCoreMesh = sceneRef.current.children.find(c => c.geometry && c.geometry.type === 'SphereGeometry' && c.layers.mask === 1); // Select inside core
-      if (innerCoreMesh) {
-        innerCoreMesh.position.copy(innerPos.current);
-        innerCoreMesh.rotation.x = innerVelocity.current.z * 0.18;
-        innerCoreMesh.rotation.z = -innerVelocity.current.x * 0.18;
-      }
+        playerGroup.position.y = BLOB_START_Y + state.jumpY;
 
-      lastPos.current.copy(currentPos.current);
+        // Smooth squash scale deformation when jumping
+        const squashScale = 1.0 - Math.min(0.25, Math.abs(state.verticalVelocity) * 0.015);
+        playerGroup.scale.set(1.0, squashScale, 1.0);
 
-      // Camera Tracking
-      const idealCam = new THREE.Vector3().copy(currentPos.current).add(new THREE.Vector3(0, 8.5, 17));
-      cameraRef.current.position.lerp(idealCam, 1.0 - Math.exp(-3.0 * dt));
-      if (cameraRef.current.position.y < FLOOR_LEVEL + 1.2) cameraRef.current.position.y = FLOOR_LEVEL + 1.2;
-      cameraRef.current.lookAt(currentPos.current.x, currentPos.current.y, currentPos.current.z);
+        // Core visual counteract counter-rotation
+        innerCore.rotation.x = -time * 0.45;
+        innerCore.rotation.y = time * 0.15;
+        outerSphere.rotation.y = time * 0.25;
 
-      // --- OBSTACLES SPAWNING & UPDATE (Expanding red neon rings) ---
-      const spawnInterval = Math.max(1200, 3000 - stateRef.current.level * 280);
-      if (performance.now() - stateRef.current.lastObstacleSpawn > spawnInterval) {
-        spawnObstacle();
-        stateRef.current.lastObstacleSpawn = performance.now();
-      }
+        // Procedural Spawning logic (speed depends on level)
+        const spawnDelay = Math.max(700, 1600 - state.level * 180);
+        if (performance.now() - state.lastObstacleSpawn > spawnDelay) {
+          spawnGameObstacle(scene);
+          state.lastObstacleSpawn = performance.now();
+        }
 
-      // Update obstacles
-      for (let i = obstacles.current.length - 1; i >= 0; i--) {
-        const obs = obstacles.current[i];
-        obs.radius += obs.speed * dt;
+        if (performance.now() - state.lastCrystalSpawn > spawnDelay * 0.8) {
+          spawnGameCrystal(scene);
+          state.lastCrystalSpawn = performance.now();
+        }
+
+        // Speed increases with level
+        const currentSpeed = 30.0 + state.level * 4.5;
+
+        // Move Obstacles
+        for (let i = obstacles.current.length - 1; i >= 0; i--) {
+          const obs = obstacles.current[i];
+          obs.z += currentSpeed * dt;
+          obs.mesh.position.z = obs.z;
+
+          // Collision Check
+          const onSameLane = state.currentLane === obs.lane;
+          const underJumpHeight = state.jumpY < 0.7; // Low obstacle height bounding box
+          const isZInRange = Math.abs(obs.z - 0.2) < 1.1;
+
+          if (onSameLane && underJumpHeight && isZInRange && state.invulnerableTime <= 0) {
+            triggerObstacleHit(scene, i);
+            continue;
+          }
+
+          // Remove out-of-bounds obstacles
+          if (obs.z > 12) {
+            scene.remove(obs.mesh);
+            obstacles.current.splice(i, 1);
+          }
+        }
+
+        // Move Crystals
+        for (let i = crystals.current.length - 1; i >= 0; i--) {
+          const cry = crystals.current[i];
+          cry.z += currentSpeed * dt;
+          cry.mesh.position.z = cry.z;
+          cry.mesh.position.y = BLOB_START_Y + 0.45 + Math.sin(time * 4 + cry.seed) * 0.22;
+          cry.mesh.rotation.y += 2.0 * dt;
+
+          // Collection Check
+          const onSameLane = state.currentLane === cry.lane;
+          const isZInRange = Math.abs(cry.z - 0.2) < 1.3;
+
+          if (onSameLane && isZInRange) {
+            triggerCollectCrystal(scene, i);
+            continue;
+          }
+
+          // Remove out-of-bounds crystals
+          if (cry.z > 12) {
+            scene.remove(cry.mesh);
+            crystals.current.splice(i, 1);
+          }
+        }
+
+        // Increment score gradually
+        setScore(prev => {
+          const next = prev + 1;
+          state.score = next;
+          const nextLevel = Math.floor(next / 200) + 1;
+          if (nextLevel > state.level) {
+            setLevel(nextLevel);
+            state.level = nextLevel;
+          }
+          return next;
+        });
+
+        // Elegant Dynamic Camera Tracking
+        const targetCamPos = new THREE.Vector3(playerGroup.position.x * 0.45, 4.5 + state.jumpY * 0.22, 10.5);
+        camera.position.lerp(targetCamPos, 8.0 * dt);
+        camera.lookAt(playerGroup.position.x * 0.5, BLOB_START_Y + 0.4, 0);
+
+      } else {
+        // --- 2. MENU FLOAT SHOWCASE ---
+        outerSphere.visible = true;
+        innerCore.visible = true;
         
-        // Resize ring mesh
-        obs.mesh.scale.set(obs.radius, obs.radius, 1);
-        
-        // Check collision
-        const playerDist = currentPos.current.length();
-        const heightCheck = currentPos.current.y < FLOOR_LEVEL + 2.0;
-        
-        if (
-          Math.abs(playerDist - obs.radius) < 1.1 && 
-          heightCheck && 
-          stateRef.current.invulnerableTime <= 0
-        ) {
-          triggerDamage();
-        }
+        playerGroup.position.set(0, BLOB_START_Y + Math.sin(time * 1.5) * 0.15, 0);
+        playerGroup.scale.set(1, 1, 1);
+        playerGroup.rotation.y += 0.006;
+        playerGroup.rotation.z = Math.sin(time * 0.4) * 0.08;
 
-        // Remove out-of-bounds obstacles
-        if (obs.radius > PLATFORM_RADIUS * 1.1) {
-          sceneRef.current.remove(obs.mesh);
-          obs.mesh.geometry.dispose();
-          obs.mesh.material.dispose();
-          obstacles.current.splice(i, 1);
-        }
+        innerCore.rotation.x = -time * 0.3;
+        innerCore.rotation.y = time * 0.1;
+
+        camera.position.lerp(new THREE.Vector3(0, 3.8, 8.0), 4.0 * dt);
+        camera.lookAt(0, BLOB_START_Y + 0.1, 0);
       }
 
-      // --- UPDATE COLLECTIBLE CRYSTALS ---
-      crystals.current.forEach(cry => {
-        cry.mesh.rotation.y += 1.8 * dt;
-        cry.mesh.rotation.x += 0.8 * dt;
-        cry.mesh.position.y = FLOOR_LEVEL + 1.2 + Math.sin(time * 3 + cry.seed) * 0.35;
-
-        // Check collection collision
-        const distToPlayer = currentPos.current.distanceTo(cry.mesh.position);
-        if (distToPlayer < 2.3) {
-          triggerCollect(cry);
-        }
-      });
-
-      // Gradually increase score
-      setScore(prev => {
-        const next = prev + 1;
-        // Level up every 250 points
-        const nextLevel = Math.floor(next / 250) + 1;
-        if (nextLevel > stateRef.current.level) {
-          setLevel(nextLevel);
-        }
-        return next;
-      });
-
-      rendererRef.current.render(sceneRef.current, cameraRef.current);
-      animationFrameId.current = requestAnimationFrame(gameLoop);
+      renderer.render(scene, camera);
+      animationFrameId.current = requestAnimationFrame(animate);
     };
 
-    clock.start();
-    gameLoop();
+    animate();
+
+    // Resources Teardown
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('pointerup', handlePointerUp);
+
+      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
+
+      starsGeometry.dispose();
+      starsMaterial.dispose();
+      trackGeometry.dispose();
+      trackMaterial.dispose();
+      barrierGeo.dispose();
+      barrierMat.dispose();
+      outerGeometry.dispose();
+      glassMaterial.dispose();
+      innerGeometry.dispose();
+      liquidMaterial.dispose();
+
+      if (obstacleGeom.current) obstacleGeom.current.dispose();
+      if (obstacleMat.current) obstacleMat.current.dispose();
+      if (crystalGeom.current) crystalGeom.current.dispose();
+      if (crystalMat.current) crystalMat.current.dispose();
+
+      if (rendererRef.current) rendererRef.current.dispose();
+    };
+  }, []);
+
+  // Trigger Jump Mechanics
+  const triggerJump = () => {
+    const state = stateRef.current;
+    if (state.isJumping) return;
+    state.isJumping = true;
+    state.verticalVelocity = JUMP_FORCE;
+    playSynthSound('jump');
   };
 
-  // --- GAMEPLAY MECHANICS ---
-  
-  // Spawns a glowing neon red expansion energy ring
-  const spawnObstacle = () => {
-    const ringGeo = new THREE.RingGeometry(0.9, 1.0, 48);
-    const ringMat = new THREE.MeshBasicMaterial({
-      color: 0xff0033, // Hot neon red
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0.75,
-      blending: THREE.AdditiveBlending
-    });
-    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-    ringMesh.rotation.x = -Math.PI / 2;
-    ringMesh.position.y = FLOOR_LEVEL + 0.15;
-    sceneRef.current.add(ringMesh);
+  // Spawns a red bar obstacle on a random lane
+  const spawnGameObstacle = (scene) => {
+    const lane = Math.floor(Math.random() * 3);
+    const mesh = new THREE.Mesh(obstacleGeom.current, obstacleMat.current);
+    mesh.position.set(LANES[lane], TRACK_Y + 0.8, -80);
+    scene.add(mesh);
 
-    const speedBase = 8.5 + level * 1.8;
     obstacles.current.push({
-      mesh: ringMesh,
-      radius: 0.1,
-      speed: speedBase,
-      maxRadius: PLATFORM_RADIUS
+      mesh,
+      lane,
+      z: -80
     });
   };
 
-  // Spawns a floating golden crystal
-  const spawnCrystal = () => {
-    const cryGeo = new THREE.OctahedronGeometry(0.65, 0);
-    const cryMat = new THREE.MeshPhysicalMaterial({
-      color: 0xffd700, // Shiny gold
-      metalness: 0.9,
-      roughness: 0.1,
-      emissive: 0xaa6600,
-      emissiveIntensity: 0.8,
-      clearcoat: 1.0
-    });
-    const cryMesh = new THREE.Mesh(cryGeo, cryMat);
-    
-    // Random position on the platform
-    const angle = Math.random() * Math.PI * 2;
-    const distance = 5.0 + Math.random() * (MOVEMENT_LIMIT - 6.0);
-    
-    cryMesh.position.set(
-      Math.cos(angle) * distance,
-      FLOOR_LEVEL + 1.2,
-      Math.sin(angle) * distance
-    );
-    cryMesh.castShadow = true;
-    sceneRef.current.add(cryMesh);
+  // Spawns a floating golden crystal on a random lane
+  const spawnGameCrystal = (scene) => {
+    const lane = Math.floor(Math.random() * 3);
+    const mesh = new THREE.Mesh(crystalGeom.current, crystalMat.current);
+    mesh.position.set(LANES[lane], BLOB_START_Y + 0.4, -80);
+    scene.add(mesh);
 
     crystals.current.push({
-      mesh: cryMesh,
+      mesh,
+      lane,
+      z: -80,
       seed: Math.random() * 100
     });
   };
 
-  // Triggers damage when hit
-  const triggerDamage = () => {
+  // Handle obstacle hits
+  const triggerObstacleHit = (scene, index) => {
+    const state = stateRef.current;
+    const obs = obstacles.current[index];
+
+    // Simple red ring blast animation
+    const blastGeo = new THREE.RingGeometry(0.1, 1.2, 16);
+    const blastMat = new THREE.MeshBasicMaterial({
+      color: 0xff003c,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide
+    });
+    const blastMesh = new THREE.Mesh(blastGeo, blastMat);
+    blastMesh.position.set(obs.mesh.position.x, obs.mesh.position.y, 0.2);
+    scene.add(blastMesh);
+
+    const start = performance.now();
+    const animateBlast = () => {
+      const elapsed = (performance.now() - start) / 250; // 250ms burst
+      if (elapsed >= 1) {
+        scene.remove(blastMesh);
+        blastGeo.dispose();
+        blastMat.dispose();
+      } else {
+        blastMesh.scale.set(1 + elapsed * 3, 1 + elapsed * 3, 1);
+        blastMat.opacity = 0.8 * (1 - elapsed);
+        requestAnimationFrame(animateBlast);
+      }
+    };
+    animateBlast();
+
+    // Clean hit obstacle from scene
+    scene.remove(obs.mesh);
+    obstacles.current.splice(index, 1);
+
+    // Damage logic
     setLives(prev => {
       const next = prev - 1;
+      state.lives = next;
       if (next <= 0) {
         triggerGameOver();
       } else {
-        stateRef.current.invulnerableTime = 2.0; // 2 seconds invulnerability
+        state.invulnerableTime = 2.0; // 2 seconds invulnerability blink
         playSynthSound('hit');
       }
       return next;
     });
   };
 
-  // Triggers collectible crystal claim
-  const triggerCollect = (crystal) => {
-    playSynthSound('collect');
-    
-    // Spawn simple collection explosion
-    const splashGeo = new THREE.RingGeometry(0.1, 0.7, 16);
-    const splashMat = new THREE.MeshBasicMaterial({
+  // Handle crystal collection
+  const triggerCollectCrystal = (scene, index) => {
+    const cry = crystals.current[index];
+
+    // Golden blast ring burst
+    const blastGeo = new THREE.RingGeometry(0.1, 0.9, 16);
+    const blastMat = new THREE.MeshBasicMaterial({
       color: 0xffd700,
       transparent: true,
       opacity: 0.9,
       blending: THREE.AdditiveBlending,
       side: THREE.DoubleSide
     });
-    const splashMesh = new THREE.Mesh(splashGeo, splashMat);
-    splashMesh.position.copy(crystal.mesh.position);
-    splashMesh.rotation.x = -Math.PI / 2;
-    sceneRef.current.add(splashMesh);
+    const blastMesh = new THREE.Mesh(blastGeo, blastMat);
+    blastMesh.position.set(cry.mesh.position.x, cry.mesh.position.y, 0.2);
+    scene.add(blastMesh);
 
-    // Simple scale-out fade animation for collection splash
     const start = performance.now();
-    const animateSplash = () => {
-      const elapsed = (performance.now() - start) / 300; // 300ms animation
+    const animateBlast = () => {
+      const elapsed = (performance.now() - start) / 250;
       if (elapsed >= 1) {
-        sceneRef.current.remove(splashMesh);
-        splashGeo.dispose();
-        splashMat.dispose();
+        scene.remove(blastMesh);
+        blastGeo.dispose();
+        blastMat.dispose();
       } else {
-        splashMesh.scale.set(1 + elapsed * 3, 1 + elapsed * 3, 1);
-        splashMat.opacity = 0.9 * (1 - elapsed);
-        requestAnimationFrame(animateSplash);
+        blastMesh.scale.set(1 + elapsed * 2.5, 1 + elapsed * 2.5, 1);
+        blastMat.opacity = 0.9 * (1 - elapsed);
+        requestAnimationFrame(animateBlast);
       }
     };
-    animateSplash();
+    animateBlast();
 
-    // Remove crystal from scene
-    sceneRef.current.remove(crystal.mesh);
-    crystal.mesh.geometry.dispose();
-    crystal.mesh.material.dispose();
-    crystals.current = crystals.current.filter(c => c !== crystal);
+    // Clean crystal
+    scene.remove(cry.mesh);
+    crystals.current.splice(index, 1);
 
-    // Add score +50 and spawn next
-    setScore(prev => prev + 50);
-    spawnCrystal();
+    // Collect logic
+    playSynthSound('collect');
+    setScore(prev => {
+      const next = prev + 50;
+      stateRef.current.score = next;
+      return next;
+    });
   };
 
-  // Triggers Game Over sequence
+  // Game over state handler
   const triggerGameOver = () => {
+    const state = stateRef.current;
+    state.gameOver = true;
     setIsPlaying(false);
     setGameOver(true);
     playSynthSound('gameover');
 
-    // Remove loop frame callback
-    if (animationFrameId.current) {
-      cancelAnimationFrame(animationFrameId.current);
-    }
-
-    // Save high score
-    const finalScore = stateRef.current.score;
-    const currentHigh = parseInt(localStorage.getItem('vanhees_blob_highscore') || '0', 10);
+    // Save local records
+    const finalScore = state.score;
+    const currentHigh = parseInt(localStorage.getItem('vanhees_runner_highscore') || '0', 10);
     if (finalScore > currentHigh) {
-      localStorage.setItem('vanhees_blob_highscore', finalScore.toString());
+      localStorage.setItem('vanhees_runner_highscore', finalScore.toString());
       setHighScore(finalScore);
     }
   };
 
-  // Exit game and clean up back to main menu
+  // Launches game and resets variables
+  const startGame = () => {
+    const state = stateRef.current;
+    
+    setIsPlaying(true);
+    setGameOver(false);
+    setScore(0);
+    setLevel(1);
+    setLives(3);
+
+    state.score = 0;
+    state.level = 1;
+    state.lives = 3;
+    state.currentLane = 1;
+    state.jumpY = 0;
+    state.verticalVelocity = 0;
+    state.isJumping = false;
+    state.invulnerableTime = 0;
+    state.lastObstacleSpawn = performance.now();
+    state.lastCrystalSpawn = performance.now();
+    state.gameOver = false;
+    state.isPlaying = true;
+
+    // Clear active obstacles/crystals
+    obstacles.current.forEach(obs => {
+      if (sceneRef.current) sceneRef.current.remove(obs.mesh);
+    });
+    obstacles.current = [];
+
+    crystals.current.forEach(cry => {
+      if (sceneRef.current) sceneRef.current.remove(cry.mesh);
+    });
+    crystals.current = [];
+  };
+
+  // Return to home
   const handleExit = () => {
+    const state = stateRef.current;
+    state.isPlaying = false;
+    state.gameOver = false;
+    
     setIsPlaying(false);
     setGameOver(false);
+
+    // Clear active obstacles/crystals
+    obstacles.current.forEach(obs => {
+      if (sceneRef.current) sceneRef.current.remove(obs.mesh);
+    });
+    obstacles.current = [];
+    crystals.current.forEach(cry => {
+      if (sceneRef.current) sceneRef.current.remove(cry.mesh);
+    });
+    crystals.current = [];
+
     window.location.hash = '#home';
   };
 
   return (
     <div ref={containerRef} className="fixed inset-0 w-full h-full z-40 bg-black overflow-hidden select-none font-mono touch-none">
-      {/* 3D WebGL game screen */}
+      {/* 3D WebGL screen */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block z-10 touch-none" />
 
-      {/* Glossy translucent HUD overlay */}
+      {/* iOS 26 Liquid Glass Minimal HUD */}
       {isPlaying && !gameOver && (
-        <div className="absolute top-6 inset-x-6 z-20 flex justify-between items-start pointer-events-none">
-          {/* Top Left: Score & Highscore */}
-          <div className="p-4 rounded-2xl border border-white/10 bg-black/60 backdrop-blur-md flex flex-col gap-1 text-white shadow-2xl pointer-events-auto">
-            <span className="text-[10px] uppercase opacity-50 tracking-widest flex items-center gap-1.5 font-bold">
-              <Trophy size={11} className="text-yellow-400" /> Score
-            </span>
-            <span className="text-2xl font-bold tracking-tight text-white">{score}</span>
-            <span className="text-[9px] opacity-40 uppercase tracking-wider pt-0.5 border-t border-white/5">
-              Best: {highScore}
-            </span>
+        <div className="absolute inset-x-6 top-6 z-20 flex justify-between items-start pointer-events-none">
+          {/* Top Left: Sleek Score Card */}
+          <div className="px-5 py-3 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl flex flex-col gap-0.5 text-white shadow-2xl pointer-events-auto">
+            <span className="text-[9px] uppercase opacity-40 tracking-widest font-bold">SCORE</span>
+            <span className="text-xl font-bold tracking-tight">{score}</span>
+            <span className="text-[8px] opacity-30 uppercase tracking-widest pt-0.5 border-t border-white/5">BEST: {highScore}</span>
           </div>
 
-          {/* Top Center: Current Level */}
-          <div className="px-5 py-2.5 rounded-full border border-white/10 bg-black/60 backdrop-blur-md flex items-center gap-3 text-[#00ff41] shadow-2xl pointer-events-auto">
-            <Zap size={13} className="animate-pulse" />
-            <span className="text-xs font-bold tracking-widest uppercase">LEVEL {level}</span>
+          {/* Top Center: Minimal Level Indicator */}
+          <div className="px-5 py-2 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl flex items-center gap-2 text-[#00ff41] shadow-2xl pointer-events-auto">
+            <Zap size={11} className="animate-pulse" />
+            <span className="text-[9px] font-bold tracking-widest uppercase">LEVEL {level}</span>
           </div>
 
-          {/* Top Right: Lives Indicator & Exit */}
+          {/* Top Right: Lives and Exit */}
           <div className="flex flex-col items-end gap-3 pointer-events-auto">
-            <div className="p-4 rounded-2xl border border-white/10 bg-black/60 backdrop-blur-md flex flex-col gap-2.5 shadow-2xl">
-              <span className="text-[10px] uppercase opacity-50 tracking-widest font-bold text-right">LIVES</span>
-              <div className="flex gap-2">
+            <div className="px-5 py-3 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl flex flex-col gap-1.5 shadow-2xl">
+              <span className="text-[9px] uppercase opacity-40 tracking-widest font-bold text-right">LIVES</span>
+              <div className="flex gap-1.5">
                 {[...Array(3)].map((_, i) => (
                   <Heart
                     key={i}
-                    size={16}
+                    size={13}
                     className={`transition-all duration-300 ${
                       i < lives 
-                        ? 'text-red-500 fill-red-500 filter drop-shadow-[0_0_4px_rgba(239,68,68,0.5)] scale-100' 
-                        : 'text-white/20 fill-none scale-90'
+                        ? 'text-red-500 fill-red-500 filter drop-shadow-[0_0_4px_rgba(239,68,68,0.4)] scale-100' 
+                        : 'text-white/10 fill-none scale-90'
                     }`}
                   />
                 ))}
@@ -955,157 +895,155 @@ const GameView = ({ darkMode }) => {
             
             <button
               onClick={handleExit}
-              className="p-3 rounded-full border border-white/10 bg-black/60 backdrop-blur-md text-white hover:text-red-500 hover:border-red-500/40 transition-all shadow-xl cursor-pointer"
-              title="Beenden"
+              className="p-2.5 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl text-white/60 hover:text-red-500 hover:border-red-500/30 transition-all shadow-xl cursor-pointer"
+              title="Close Runner"
             >
-              <X size={16} />
+              <X size={14} />
             </button>
           </div>
         </div>
       )}
 
-      {/* Floating Side Panel HUD: Skin Color Selector (Only visible during gameplay) */}
+      {/* HUD Skin Color Selector (Floating Glass Cylinder on Right) */}
       {isPlaying && !gameOver && (
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-3 p-3.5 rounded-3xl border border-white/10 bg-black/60 backdrop-blur-md text-white shadow-2xl pointer-events-auto">
-          <span className="text-[9px] uppercase opacity-40 tracking-wider text-center font-bold pb-2 border-b border-white/5 mb-1">
-            CORE COLOR
-          </span>
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2.5 p-3 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl text-white shadow-2xl pointer-events-auto">
+          <span className="text-[7px] uppercase opacity-35 tracking-wider text-center font-bold pb-1.5 border-b border-white/5 mb-0.5">COLOR</span>
 
-          {/* Skin 1: Neon Green (Default) */}
+          {/* Green */}
           <button
             onClick={() => setSelectedColor('green')}
-            className={`w-10 h-10 rounded-full border-2 transition-all flex items-center justify-center cursor-pointer shadow-lg active:scale-90
+            className={`w-8 h-8 rounded-full border transition-all flex items-center justify-center cursor-pointer shadow active:scale-90
               ${selectedColor === 'green' 
-                ? 'border-[#00ff41] bg-[#00ff41]/20 scale-105 shadow-[0_0_12px_rgba(0,255,65,0.4)]' 
-                : 'border-white/20 hover:border-white/50 bg-[#00ff41]/5'}`}
+                ? 'border-[#00ff41] bg-[#00ff41]/10 scale-105 shadow-[0_0_8px_rgba(0,255,65,0.3)]' 
+                : 'border-white/10 hover:border-white/30 bg-[#00ff41]/5'}`}
             title="Neon Green"
           >
-            <div className="w-4 h-4 rounded-full bg-[#00ff41]" />
+            <div className="w-3.5 h-3.5 rounded-full bg-[#00ff41]" />
           </button>
 
-          {/* Skin 2: Neon Yellow (Unlocked at 500) */}
+          {/* Yellow */}
           <button
             onClick={() => unlockedYellow && setSelectedColor('yellow')}
-            className={`w-10 h-10 rounded-full border-2 transition-all flex items-center justify-center shadow-lg relative active:scale-90
-              ${!unlockedYellow ? 'opacity-40 cursor-not-allowed bg-black/40 border-white/10' : 'cursor-pointer'}
+            className={`w-8 h-8 rounded-full border transition-all flex items-center justify-center shadow relative active:scale-90
+              ${!unlockedYellow ? 'opacity-30 cursor-not-allowed bg-black/40 border-white/5' : 'cursor-pointer'}
               ${selectedColor === 'yellow' && unlockedYellow 
-                ? 'border-[#ffd700] bg-[#ffd700]/20 scale-105 shadow-[0_0_12px_rgba(255,215,0,0.4)]' 
+                ? 'border-[#ffd700] bg-[#ffd700]/10 scale-105 shadow-[0_0_8px_rgba(255,215,0,0.3)]' 
                 : unlockedYellow 
-                  ? 'border-white/20 hover:border-white/50 bg-[#ffd700]/5' 
+                  ? 'border-white/10 hover:border-white/30 bg-[#ffd700]/5' 
                   : ''}`}
             title={unlockedYellow ? "Neon Yellow" : "Locked (500 pts)"}
           >
             {unlockedYellow ? (
-              <div className="w-4 h-4 rounded-full bg-[#ffd700]" />
+              <div className="w-3.5 h-3.5 rounded-full bg-[#ffd700]" />
             ) : (
-              <Lock size={12} className="text-white/55" />
+              <Lock size={10} className="text-white/40" />
             )}
           </button>
 
-          {/* Skin 3: Neon Pink (Unlocked at 1500) */}
+          {/* Pink */}
           <button
             onClick={() => unlockedPink && setSelectedColor('pink')}
-            className={`w-10 h-10 rounded-full border-2 transition-all flex items-center justify-center shadow-lg relative active:scale-90
-              ${!unlockedPink ? 'opacity-40 cursor-not-allowed bg-black/40 border-white/10' : 'cursor-pointer'}
+            className={`w-8 h-8 rounded-full border transition-all flex items-center justify-center shadow relative active:scale-90
+              ${!unlockedPink ? 'opacity-30 cursor-not-allowed bg-black/40 border-white/5' : 'cursor-pointer'}
               ${selectedColor === 'pink' && unlockedPink 
-                ? 'border-[#ff007f] bg-[#ff007f]/20 scale-105 shadow-[0_0_12px_rgba(255,0,127,0.4)]' 
+                ? 'border-[#ff007f] bg-[#ff007f]/10 scale-105 shadow-[0_0_8px_rgba(255,0,127,0.3)]' 
                 : unlockedPink 
-                  ? 'border-white/20 hover:border-white/50 bg-[#ff007f]/5' 
+                  ? 'border-white/10 hover:border-white/30 bg-[#ff007f]/5' 
                   : ''}`}
             title={unlockedPink ? "Neon Pink" : "Locked (1500 pts)"}
           >
             {unlockedPink ? (
-              <div className="w-4 h-4 rounded-full bg-[#ff007f]" />
+              <div className="w-3.5 h-3.5 rounded-full bg-[#ff007f]" />
             ) : (
-              <Lock size={12} className="text-white/55" />
+              <Lock size={10} className="text-white/40" />
             )}
           </button>
         </div>
       )}
 
-      {/* Main Start Menu / Game Over Screen Overlay */}
-      {(!isPlaying) && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center p-6 bg-black/75 backdrop-blur-md">
-          <div className="relative w-full max-w-md p-8 rounded-3xl border border-white/10 bg-[#050505]/95 text-white shadow-[0_0_50px_rgba(0,255,65,0.1)] flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-300">
-            {/* Logo Motif inside Menu */}
-            <div className="w-20 h-20 rounded-full flex items-center justify-center bg-[#00ff41]/5 border border-[#00ff41]/20 shadow-[0_0_20px_rgba(0,255,65,0.12)] mb-6 animate-pulse">
-              <Zap size={36} className="text-[#00ff41]" />
+      {/* Main Start / Game Over Frosted Glass overlay */}
+      {!isPlaying && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center p-6 bg-black/85 backdrop-blur-md">
+          <div className="relative w-full max-w-sm p-8 rounded-3xl border border-white/10 bg-white/[0.01] text-white shadow-[0_0_40px_rgba(0,255,65,0.08)] flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-300">
+            {/* Glowing menu orb */}
+            <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#00ff41]/5 border border-[#00ff41]/20 shadow-[0_0_20px_rgba(0,255,65,0.1)] mb-6 animate-pulse">
+              <Zap size={28} className="text-[#00ff41]" />
             </div>
 
-            <h1 className="text-3xl font-syne font-extrabold tracking-tighter uppercase mb-2">
-              NEON BLOB RUN
+            <h1 className="text-2xl font-syne font-extrabold tracking-tighter uppercase mb-1">
+              NEON BLOB RUNNER
             </h1>
             
-            <p className="text-xs text-white/55 tracking-widest uppercase mb-8">
-              Generative Jump & Physics Arcade
+            <p className="text-[8px] text-white/40 tracking-widest uppercase mb-6">
+              iOS 26 Liquid Glass Generative Space
             </p>
 
-            {/* HIGH SCORE display */}
-            <div className="w-full flex justify-around border border-white/5 py-4 rounded-2xl bg-white/[0.02] mb-8 font-mono">
-              <div className="flex flex-col gap-1">
-                <span className="text-[10px] uppercase opacity-40">Personal Best</span>
-                <span className="text-lg font-bold text-[#00ff41]">{highScore}</span>
+            {/* Highscore pill */}
+            <div className="w-full flex justify-around border border-white/5 py-3 rounded-xl bg-white/[0.01] mb-6 font-mono text-xs">
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[8px] uppercase opacity-35">High Score</span>
+                <span className="text-sm font-bold text-[#00ff41]">{highScore}</span>
               </div>
               <div className="w-px bg-white/10" />
-              <div className="flex flex-col gap-1">
-                <span className="text-[10px] uppercase opacity-40">Difficulty</span>
-                <span className="text-lg font-bold text-yellow-400">Dynamic</span>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[8px] uppercase opacity-35">Engine</span>
+                <span className="text-sm font-bold text-[#00ff41]">WebGL 3D</span>
               </div>
             </div>
 
-            {/* Instruction manual */}
-            <div className="w-full text-left text-[10px] space-y-2 opacity-60 leading-relaxed border-t border-white/5 pt-4 mb-8 font-mono">
-              <p>• <strong>DESKTOP:</strong> Mouse Pointer moves. <span className="underline">Up-Arrow</span> or <span className="underline">Spacebar</span> jumps. Press twice to Double Jump!</p>
-              <p>• <strong>MOBILE:</strong> Drag anywhere to guide the blob. <span className="underline">Tap / Swipe Up</span> to jump!</p>
-              <p>• <strong>GOAL:</strong> Avoid expanding red energy rings & collect golden crystal shards to unlock neon gel cores.</p>
+            {/* User instructions */}
+            <div className="w-full text-left text-[9px] space-y-1.5 opacity-55 leading-relaxed border-t border-white/5 pt-4 mb-6 font-mono">
+              <p>• <strong>KEYBOARD:</strong> <span className="underline">Left/Right Arrows (or A/D)</span> to change lanes. <span className="underline">Spacebar (or Up Arrow)</span> to jump over obstacles.</p>
+              <p>• <strong>TOUCH SCREEN:</strong> <span className="underline">Swipe Left/Right</span> to slide. <span className="underline">Swipe Up / Tap</span> anywhere to jump.</p>
+              <p>• <strong>GOAL:</strong> Avoid red warning walls & collect golden crystal shards to unlock neon gel cores.</p>
             </div>
 
-            {/* Actions */}
-            <div className="w-full flex flex-col gap-3">
+            {/* CTA Glass buttons */}
+            <div className="w-full flex flex-col gap-2.5">
               <button
                 onClick={startGame}
-                className="w-full py-4 rounded-xl bg-[#00ff41] text-black font-syne font-bold uppercase tracking-wider text-sm transition-all hover:scale-[1.02] hover:bg-[#00cc33] active:scale-95 shadow-[0_0_20px_rgba(0,255,65,0.3)] cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3 px-6 rounded-xl bg-[#00ff41] text-black font-syne font-bold uppercase tracking-wider text-xs transition-all hover:scale-[1.01] hover:bg-[#00cc33] active:scale-95 shadow-[0_0_15px_rgba(0,255,65,0.22)] cursor-pointer flex items-center justify-center gap-1.5"
               >
-                <Play size={16} fill="black" /> {gameOver ? 'AGAIN / PLAY' : 'LAUNCH GAME'}
+                <Play size={12} fill="black" /> {gameOver ? 'RUN AGAIN' : 'START RUNNER'}
               </button>
 
               <button
                 onClick={handleExit}
-                className="w-full py-4 rounded-xl border border-white/15 bg-transparent text-white/70 font-syne font-bold uppercase tracking-wider text-xs transition-all hover:bg-white/5 cursor-pointer"
+                className="w-full py-3 px-6 rounded-xl border border-white/10 bg-transparent text-white/50 font-syne font-bold uppercase tracking-wider text-[10px] transition-all hover:bg-white/5 cursor-pointer"
               >
                 RETURN TO HOME
               </button>
             </div>
 
-            {/* GAME OVER CARD ADDITION */}
+            {/* GAME OVER CARD OVERLAY */}
             {gameOver && (
-              <div className="absolute inset-x-6 top-6 bottom-6 rounded-2xl bg-black/95 border border-red-500/20 flex flex-col items-center justify-center p-6 text-center animate-in fade-in zoom-in-95 duration-200">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center bg-red-500/10 border border-red-500/30 text-red-500 mb-4 animate-bounce">
-                  <Heart size={22} />
+              <div className="absolute inset-x-5 top-5 bottom-5 rounded-2xl bg-black/98 border border-red-500/20 flex flex-col items-center justify-center p-6 text-center animate-in fade-in zoom-in-95 duration-200">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-red-500/10 border border-red-500/25 text-red-500 mb-4 animate-bounce">
+                  <Heart size={18} />
                 </div>
-                <h2 className="text-2xl font-syne font-extrabold uppercase text-red-500 mb-1">GAME OVER</h2>
-                <p className="text-[10px] text-white/55 tracking-wider uppercase mb-6">Capacitive core depleted</p>
+                <h2 className="text-xl font-syne font-extrabold uppercase text-red-500 mb-0.5">GAME OVER</h2>
+                <p className="text-[8px] text-white/40 tracking-wider uppercase mb-5">Capsule core depleted</p>
                 
-                <div className="p-4 rounded-xl border border-white/5 bg-white/[0.01] w-full mb-6 font-mono text-center space-y-1">
-                  <div className="text-[10px] opacity-40 uppercase">FINAL SCORE</div>
-                  <div className="text-3xl font-extrabold text-white">{score}</div>
+                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.01] w-full mb-5 font-mono text-center space-y-0.5">
+                  <div className="text-[8px] opacity-35 uppercase">FINAL SCORE</div>
+                  <div className="text-2xl font-extrabold text-white">{score}</div>
                   {score >= highScore && score > 0 && (
-                    <div className="text-[9px] text-[#00ff41] uppercase tracking-widest font-bold pt-1">
-                      ★ NEW RECORD! ★
+                    <div className="text-[8px] text-[#00ff41] uppercase tracking-widest font-bold pt-0.5">
+                      ★ NEW RECORD ★
                     </div>
                   )}
                 </div>
 
-                <div className="w-full flex flex-col gap-3">
+                <div className="w-full flex flex-col gap-2.5">
                   <button
                     onClick={startGame}
-                    className="w-full py-4 rounded-xl bg-red-500 text-white font-syne font-bold uppercase tracking-wider text-sm transition-all hover:scale-[1.02] hover:bg-red-600 active:scale-95 shadow-[0_0_20px_rgba(239,68,68,0.3)] cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full py-3 px-6 rounded-xl bg-red-500 text-white font-syne font-bold uppercase tracking-wider text-xs transition-all hover:scale-[1.01] hover:bg-red-600 active:scale-95 shadow-[0_0_15px_rgba(239,68,68,0.25)] cursor-pointer flex items-center justify-center gap-1.5"
                   >
-                    <RefreshCw size={14} className="animate-spin-slow" /> RETRY MISSION
+                    <RefreshCw size={11} className="animate-spin-slow" /> RETRY RUN
                   </button>
                   <button
                     onClick={handleExit}
-                    className="w-full py-4 rounded-xl border border-white/10 bg-transparent text-white/60 font-syne font-bold uppercase tracking-wider text-xs transition-all hover:bg-white/5 cursor-pointer"
+                    className="w-full py-3 px-6 rounded-xl border border-white/10 bg-transparent text-white/50 font-syne font-bold uppercase tracking-wider text-[10px] transition-all hover:bg-white/5 cursor-pointer"
                   >
                     EXIT
                   </button>

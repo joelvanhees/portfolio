@@ -277,29 +277,31 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             </h1>
           </div>
 
-          <div className="w-full flex flex-wrap gap-4 mt-6 md:mt-10 mb-2 md:mb-6">
-            <button
-              onClick={() => setCooldownActive(true)}
-              className="text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff] hover:scale-105 transition-all duration-300 cursor-pointer uppercase"
-            >
-              COOL DOWN
-            </button>
-            <button
-              onClick={() => handleNav('game')}
-              className="text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84] hover:scale-105 transition-all duration-300 cursor-pointer uppercase"
-            >
-              BLOB RUN ⌁
-            </button>
-          </div>
-
-          <div className="max-w-7xl mx-auto w-full flex flex-col md:flex-row justify-between items-end border-t border-current pt-6 opacity-80">
-            <div className="max-w-md">
+          <div className="max-w-7xl mx-auto w-full mt-8 md:mt-16 flex flex-col md:flex-row justify-between items-start border-t border-current pt-6 opacity-80 gap-8">
+            <div className="max-w-md w-full">
               <p className="text-lg md:text-xl leading-relaxed">
                 Visual systems for brands, interfaces and narrative experiences.
               </p>
             </div>
-            <div className="mt-6 md:mt-0 text-right font-mono text-xs md:text-sm">
-              SCROLL TO INITIALIZE <br /> ↓
+            
+            <div className="flex flex-col items-start md:items-end gap-6 w-full md:w-auto">
+              <div className="flex flex-wrap gap-4 justify-start md:justify-end">
+                <button
+                  onClick={() => setCooldownActive(true)}
+                  className="text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff] hover:scale-105 transition-all duration-300 cursor-pointer uppercase"
+                >
+                  COOL DOWN
+                </button>
+                <button
+                  onClick={() => handleNav('game')}
+                  className="text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84] hover:scale-105 transition-all duration-300 cursor-pointer uppercase"
+                >
+                  BLOB RUN ⌁
+                </button>
+              </div>
+              <div className="text-left md:text-right font-mono text-xs md:text-sm">
+                SCROLL TO INITIALIZE <br /> ↓
+              </div>
             </div>
           </div>
         </div>

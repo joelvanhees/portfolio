@@ -47,17 +47,39 @@ const GameView = () => {
     lastCrystalSpawn: 0
   });
 
+  const scoreRef = useRef(null);
+  const levelRef = useRef(null);
+  const bgMusicRef = useRef(null);
+  const audioCtxRef = useRef(null);
+
   // Fetch local High Score on Mount
   useEffect(() => {
     const saved = localStorage.getItem('vanhees_runner_highscore');
     if (saved) setHighScore(parseInt(saved, 10));
+    
+    bgMusicRef.current = new Audio('/Orbital Drift Run.mp3');
+    bgMusicRef.current.loop = true;
+    bgMusicRef.current.volume = 0.4;
+    
+    return () => {
+      if (bgMusicRef.current) {
+        bgMusicRef.current.pause();
+      }
+      if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
+        audioCtxRef.current.close().catch(() => {});
+      }
+    };
   }, []);
 
-  // Update unlocked states
   useEffect(() => {
-    if (score >= 500 && !unlockedYellow) setUnlockedYellow(true);
-    if (score >= 1500 && !unlockedPink) setUnlockedPink(true);
-  }, [score, unlockedYellow, unlockedPink]);
+    if (bgMusicRef.current) {
+      if (isPlaying && !gameOver) {
+        bgMusicRef.current.play().catch(e => console.log('Audio play failed', e));
+      } else {
+        bgMusicRef.current.pause();
+      }
+    }
+  }, [isPlaying, gameOver]);
 
   // Sync selectedColor and lives to stateRef
   useEffect(() => {
@@ -67,7 +89,12 @@ const GameView = () => {
   // Audio synthesis engine for latency-free chiptunes
   const playSynthSound = (type) => {
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === 'suspended') ctx.resume();
+
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
@@ -91,9 +118,9 @@ const GameView = () => {
         osc.stop(ctx.currentTime + 0.26);
       } else if (type === 'collect') {
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-        osc.frequency.setValueAtTime(698.46, ctx.currentTime + 0.08); // F5
-        osc.frequency.setValueAtTime(880.00, ctx.currentTime + 0.16); // A5
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.setValueAtTime(698.46, ctx.currentTime + 0.08);
+        osc.frequency.setValueAtTime(880.00, ctx.currentTime + 0.16);
         gain.gain.setValueAtTime(0.1, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.28);
         osc.start();
@@ -596,17 +623,22 @@ const GameView = () => {
           }
         }
 
-        // Increment score gradually
-        setScore(prev => {
-          const next = prev + 1;
-          state.score = next;
-          const nextLevel = Math.floor(next / 200) + 1;
-          if (nextLevel > state.level) {
-            setLevel(nextLevel);
-            state.level = nextLevel;
-          }
-          return next;
-        });
+        // Increment score gradually using DOM refs to avoid React re-renders
+        state.score += Math.max(1, 60 * dt);
+        
+        if (scoreRef.current) {
+          scoreRef.current.innerText = Math.floor(state.score).toString().padStart(5, '0');
+        }
+
+        const nextLevel = Math.floor(state.score / 200) + 1;
+        if (nextLevel > state.level) {
+          state.level = nextLevel;
+          if (levelRef.current) levelRef.current.innerText = `LEVEL ${nextLevel}`;
+        }
+
+        // Handle Unlocks silently
+        if (state.score >= 500 && !unlockedYellow) setUnlockedYellow(true);
+        if (state.score >= 1500 && !unlockedPink) setUnlockedPink(true);
 
         // Elegant Dynamic Camera Tracking
         const targetCamPos = new THREE.Vector3(playerGroup.position.x * 0.45, 4.5 + state.jumpY * 0.22, 10.5);
@@ -792,11 +824,10 @@ const GameView = () => {
 
     // Collect logic
     playSynthSound('collect');
-    setScore(prev => {
-      const next = prev + 50;
-      stateRef.current.score = next;
-      return next;
-    });
+    state.score += 50;
+    if (scoreRef.current) {
+      scoreRef.current.innerText = Math.floor(state.score).toString().padStart(5, '0');
+    }
   };
 
   // Game over state handler
@@ -893,7 +924,7 @@ const GameView = () => {
             <div className="flex flex-col gap-2 pointer-events-auto">
               <div className="px-4 py-2 md:px-5 md:py-3 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl flex flex-col gap-0.5 text-white shadow-2xl">
                 <span className="text-[7px] md:text-[9px] uppercase opacity-40 tracking-widest font-bold">SCORE</span>
-                <span className="text-lg md:text-xl font-bold tracking-tight">{score.toString().padStart(5, '0')}</span>
+                <span ref={scoreRef} className="text-lg md:text-xl font-bold tracking-tight">{Math.floor(stateRef.current.score).toString().padStart(5, '0')}</span>
                 <span className="text-[6px] md:text-[8px] opacity-30 uppercase tracking-widest pt-0.5 border-t border-white/5">BEST: {highScore}</span>
               </div>
               <div className="text-[8px] md:text-[10px] opacity-60 uppercase tracking-widest pl-2">
@@ -906,7 +937,7 @@ const GameView = () => {
             {/* Top Center: Minimal Level Indicator */}
             <div className="hidden md:flex px-5 py-2 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl items-center gap-2 text-[#00ff41] shadow-2xl pointer-events-auto mt-2">
               <Zap size={11} className="animate-pulse" />
-              <span className="text-[9px] font-bold tracking-widest uppercase">LEVEL {level}</span>
+              <span ref={levelRef} className="text-[9px] font-bold tracking-widest uppercase">LEVEL {stateRef.current.level}</span>
             </div>
 
             {/* Top Right: Lives and Exit */}

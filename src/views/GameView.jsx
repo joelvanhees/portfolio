@@ -42,9 +42,11 @@ const GameView = () => {
     jumpY: 0,
     verticalVelocity: 0,
     isJumping: false,
-    speed: 35.0, // Scroll speed
+    speed: 35.0,
     lastObstacleSpawn: 0,
-    lastCrystalSpawn: 0
+    lastCrystalSpawn: 0,
+    unlockedYellow: false,
+    unlockedPink: false
   });
 
   const scoreRef = useRef(null);
@@ -57,7 +59,7 @@ const GameView = () => {
     const saved = localStorage.getItem('vanhees_runner_highscore');
     if (saved) setHighScore(parseInt(saved, 10));
     
-    bgMusicRef.current = new Audio('/Orbital Drift Run.mp3');
+    bgMusicRef.current = new Audio('/sound.mp3');
     bgMusicRef.current.loop = true;
     bgMusicRef.current.volume = 0.4;
     
@@ -636,9 +638,15 @@ const GameView = () => {
           if (levelRef.current) levelRef.current.innerText = `LEVEL ${nextLevel}`;
         }
 
-        // Handle Unlocks silently
-        if (state.score >= 500 && !unlockedYellow) setUnlockedYellow(true);
-        if (state.score >= 1500 && !unlockedPink) setUnlockedPink(true);
+        // Handle Unlocks silently without spamming React state
+        if (state.score >= 500 && !state.unlockedYellow) {
+          state.unlockedYellow = true;
+          setUnlockedYellow(true);
+        }
+        if (state.score >= 1500 && !state.unlockedPink) {
+          state.unlockedPink = true;
+          setUnlockedPink(true);
+        }
 
         // Elegant Dynamic Camera Tracking
         const targetCamPos = new THREE.Vector3(playerGroup.position.x * 0.45, 4.5 + state.jumpY * 0.22, 10.5);
@@ -670,12 +678,11 @@ const GameView = () => {
 
     // Resources Teardown
     return () => {
+      cancelAnimationFrame(animationFrameId.current);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('pointerdown', handlePointerDown);
       window.removeEventListener('pointerup', handlePointerUp);
-
-      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
 
       starsGeometry.dispose();
       starsMaterial.dispose();

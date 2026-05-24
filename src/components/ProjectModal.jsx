@@ -33,7 +33,6 @@ import mate3 from '../assets/branding/yerba-mate/mate3.jpeg';
 
 import sugarLogo from '../assets/branding/sugar-damage/SUGARdamage.logo.jpeg';
 import sugarCover from '../assets/branding/sugar-damage/SUGARdamage.cover.jpeg';
-import sugarSpotifyVideo from '../assets/branding/sugar-damage/spotify.mp4';
 
 import logoJoel from '../assets/branding/logos/logoJOEL.PNG';
 import logoVNC from '../assets/branding/logos/logoVNC.GIF';
@@ -311,9 +310,6 @@ const ProjectModal = ({
                     <div className="grid grid-cols-2 gap-4">
                       <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={sugarLogo} alt="Sugar Damage Logo" loading="lazy" className="w-full h-auto object-contain" /></div>
                       <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5"><img src={sugarCover} alt="Sugar Damage Cover" loading="lazy" className="w-full h-auto object-contain" /></div>
-                    </div>
-                    <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5">
-                      <video src={sugarSpotifyVideo} className="w-full h-auto" autoPlay loop muted playsInline />
                     </div>
                   </div>
                 </div>

@@ -21,6 +21,7 @@ const App = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [selectedProject, setSelectedProject] = useState(null);
   const [activePage, setActivePage] = useState('home');
+  const [gameOpen, setGameOpen] = useState(false);
   const [legalOpen, setLegalOpen] = useState(false);
   const [showVideoSequence, setShowVideoSequence] = useState(false);
   const [activeImage, setActiveImage] = useState(null);
@@ -130,7 +131,16 @@ const App = () => {
       const hash = window.location.hash.replace('#', '').toLowerCase();
       const validPages = ['home', 'work', 'services', 'about', 'contact', 'game'];
       if (validPages.includes(hash)) {
-        setActivePage(hash);
+        if (hash === 'game') {
+          setGameOpen(true);
+          setActivePage((prev) => {
+            const pageToSet = prev === 'game' ? 'home' : prev;
+            window.history.replaceState(null, '', `#${pageToSet}`);
+            return pageToSet;
+          });
+        } else {
+          setActivePage(hash);
+        }
       } else {
         setActivePage('home');
         if (hash === '' || !validPages.includes(hash)) {
@@ -301,7 +311,12 @@ const App = () => {
       {activePage === 'services' && <ServicesView darkMode={darkMode} />}
       {activePage === 'about' && <AboutView darkMode={darkMode} />}
       {activePage === 'contact' && <ContactView darkMode={darkMode} />}
-      {activePage === 'game' && <GameView darkMode={darkMode} />}
+      {gameOpen && (
+        <GameView 
+          darkMode={darkMode} 
+          onClose={() => setGameOpen(false)} 
+        />
+      )}
 
       {legalOpen && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 md:p-12">
@@ -490,7 +505,7 @@ const App = () => {
           title="Restore System Shell"
           className="fixed bottom-6 right-6 z-[90] cursor-pointer transition-all duration-300 hover:scale-110 hover:-translate-y-2 flex items-center justify-center border-none bg-transparent outline-none drop-shadow-2xl"
         >
-          <ShellBlob isThinking={false} darkMode={darkMode} className="w-20 h-20 md:w-24 md:h-24 pointer-events-none" />
+          <ShellBlob isThinking={false} darkMode={darkMode} className="w-32 h-32 md:w-44 md:h-44 pointer-events-none" />
         </button>
       )}
       {cooldownActive && (

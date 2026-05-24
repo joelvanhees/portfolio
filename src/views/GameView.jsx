@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { X, Trophy, Zap, Play, Lock, Heart, RefreshCw } from 'lucide-react';
 import * as THREE from 'three';
-import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
 // --- GAME PARAMETERS ---
 const OUTER_RADIUS = 1.4;
@@ -14,7 +13,47 @@ const BLOB_START_Y = TRACK_Y + OUTER_RADIUS; // Standing position
 const GRAVITY = -48.0;
 const JUMP_FORCE = 16.5;
 
-const GameView = () => {
+// Procedural environment map helper (Instant loading, 100% robust, zero network requests!)
+const createProceduralEnvMap = () => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 128;
+  const ctx = canvas.getContext('2d');
+  
+  // Base dark cyber gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, 128);
+  grad.addColorStop(0, '#001a08'); // Dark emerald top
+  grad.addColorStop(0.5, '#02020a'); // Dark indigo middle
+  grad.addColorStop(1, '#000000'); // Pure black bottom
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 256, 128);
+  
+  // Neon cyber reflection lights
+  ctx.fillStyle = '#00ff41'; // Cyan-green neon tube
+  ctx.fillRect(30, 20, 20, 88);
+  
+  ctx.fillStyle = '#0055ff'; // Electric blue neon tube
+  ctx.fillRect(170, 30, 28, 68);
+  
+  ctx.fillStyle = '#ff007f'; // Hot pink cyber core
+  ctx.beginPath();
+  ctx.arc(100, 50, 14, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Subtle grid lines in reflection
+  ctx.strokeStyle = 'rgba(0, 255, 65, 0.1)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < 256; x += 32) {
+    ctx.strokeRect(x, 0, 1, 128);
+  }
+  
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+};
+
+const GameView = ({ darkMode, onClose }) => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -59,7 +98,8 @@ const GameView = () => {
     const saved = localStorage.getItem('vanhees_runner_highscore');
     if (saved) setHighScore(parseInt(saved, 10));
     
-    bgMusicRef.current = new Audio('/sound.mp3');
+    // Play custom uploaded loop music "Orbital Drift Run.mp3"
+    bgMusicRef.current = new Audio('/Orbital Drift Run.mp3');
     bgMusicRef.current.loop = true;
     bgMusicRef.current.volume = 0.4;
     
@@ -83,7 +123,7 @@ const GameView = () => {
     }
   }, [isPlaying, gameOver]);
 
-  // Sync selectedColor and lives to stateRef
+  // Sync selectedColor
   useEffect(() => {
     stateRef.current.activeColor = selectedColor;
   }, [selectedColor]);
@@ -137,7 +177,7 @@ const GameView = () => {
         osc.stop(ctx.currentTime + 0.71);
       }
     } catch (e) {
-      // Browsers might block AudioContext until user gesture
+      // Browsers might block AudioContext
     }
   };
 
@@ -189,7 +229,6 @@ const GameView = () => {
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
     };
-    // Delay initial size to ensure DOM is ready
     setTimeout(updateSize, 0);
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
@@ -214,18 +253,14 @@ const GameView = () => {
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x000022, 0.35));
 
-    // 5. HDRI Loader
-    const rgbeLoader = new RGBELoader();
-    rgbeLoader.load(
-      'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/studio_small_09_1k.hdr',
-      (texture) => {
-        texture.mapping = THREE.EquirectangularReflectionMapping;
-        scene.environment = texture;
-        scene.environment.blur = 0.5;
-      },
-      undefined,
-      (err) => console.log("Procedural reflections loaded.")
-    );
+    // 5. Procedural Reflections Generator (Zero Network requests, zero lag!)
+    try {
+      const proceduralEnv = createProceduralEnvMap();
+      scene.environment = proceduralEnv;
+      scene.environment.blur = 0.4;
+    } catch (err) {
+      console.log("Procedural environment map generation failed", err);
+    }
 
     // 6. Cyber grid space background
     const starsGeometry = new THREE.BufferGeometry();
@@ -260,23 +295,22 @@ const GameView = () => {
     const starField = new THREE.Points(starsGeometry, starsMaterial);
     scene.add(starField);
 
-    // 7. Translucent Glass Track
+    // 7. High-Performance Translucent Glass Track (No complex GPU transmission!)
     const trackGeometry = new THREE.PlaneGeometry(12, 140);
     const trackMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x051a08, // deep emerald green
-      metalness: 0.3,
-      roughness: 0.2,
-      transmission: 0.8,
-      thickness: 1.0,
-      side: THREE.DoubleSide,
+      color: 0x051a08, // Deep emerald green
+      metalness: 0.4,
+      roughness: 0.15,
       clearcoat: 1.0,
-      transparent: true
+      transparent: true,
+      opacity: 0.85,
+      side: THREE.DoubleSide
     });
 
-    // Inject scrolling grid coordinates directly into track vertex/fragment compilation
+    // Inject scrolling grid coordinates safely at the end of compilation to support all drivers/GPUs
     trackMaterial.onBeforeCompile = (shader) => {
       shader.uniforms.uTime = timeUniform.current;
-      shader.vertexShader = `uniform float uTime;\nvarying vec2 vScrollUV;\n` + shader.vertexShader;
+      shader.vertexShader = `varying vec2 vScrollUV;\n` + shader.vertexShader;
       shader.vertexShader = shader.vertexShader.replace(
         '#include <uv_vertex>',
         `
@@ -284,19 +318,21 @@ const GameView = () => {
         vScrollUV = uv;
         `
       );
-      shader.fragmentShader = `uniform float uTime;\nvarying vec2 vScrollUV;\n` + shader.fragmentShader;
+      shader.fragmentShader = `varying vec2 vScrollUV;\nuniform float uTime;\n` + shader.fragmentShader;
       shader.fragmentShader = shader.fragmentShader.replace(
-        '#include <map_fragment>',
+        '#include <dithering_fragment>',
         `
-        #include <map_fragment>
-        // Scroll coordinate offset based on time
+        #include <dithering_fragment>
+        // Custom grid calculation
         float scroll = vScrollUV.y * 35.0 - uTime * 7.5;
-        float gridX = step(0.97, fract(vScrollUV.x * 24.0));
-        float gridY = step(0.97, fract(scroll));
+        float gridX = step(0.96, fract(vScrollUV.x * 24.0));
+        float gridY = step(0.96, fract(scroll));
         float combinedGrid = max(gridX, gridY);
-        // Wireframe glow effect
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.0, 1.0, 0.4), combinedGrid * 0.85);
-        diffuseColor.a = mix(0.1, 0.9, combinedGrid);
+        
+        // Apply wireframe glow grid lines
+        vec3 gridColor = vec3(0.0, 1.0, 0.25);
+        gl_FragColor.rgb = mix(gl_FragColor.rgb, gridColor, combinedGrid * 0.85);
+        gl_FragColor.a = mix(0.12, 0.9, combinedGrid);
         `
       );
     };
@@ -322,24 +358,18 @@ const GameView = () => {
     rightBarrier.position.set(6, TRACK_Y + 0.2, -40);
     scene.add(rightBarrier);
 
-    // 8. --- HIGH-END PHYSICS NEON BLOB ---
+    // 8. --- HIGH-END PHYSICS NEON BLOB (Optimized materials for zero context crashes!) ---
     const outerGeometry = new THREE.SphereGeometry(OUTER_RADIUS, 96, 96);
     const glassMaterial = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
-      metalness: 0.05,
-      roughness: 0.12,
-      transmission: 1.0,
-      thickness: 2.0,
-      ior: 1.5,
-      dispersion: 0.1,
-      side: THREE.DoubleSide,
+      metalness: 0.25,
+      roughness: 0.08,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.1,
+      clearcoatRoughness: 0.05,
       transparent: true,
-      envMapIntensity: 0.4,
-      iridescence: 0.2,
-      iridescenceIOR: 1.3,
-      iridescenceThicknessRange: [100, 400]
+      opacity: 0.6,
+      side: THREE.DoubleSide,
+      envMapIntensity: 1.5
     });
 
     // Dynamic Shader Deformation Injection
@@ -375,21 +405,18 @@ const GameView = () => {
     playerGroup.add(outerSphere);
     scene.add(playerGroup);
 
-    // Inner Core
+    // Inner Core (Optimized emissive/transparent material)
     const innerGeometry = new THREE.SphereGeometry(INNER_RADIUS, 96, 96);
     const liquidMaterial = new THREE.MeshPhysicalMaterial({
       color: 0xccffcc,
-      metalness: 0.2,
-      roughness: 0.04,
-      transmission: 0.9,
-      thickness: 1.2,
-      attenuationColor: new THREE.Color(0x00cc41),
-      attenuationDistance: 0.8,
-      ior: 1.4,
+      metalness: 0.1,
+      roughness: 0.1,
+      transparent: true,
+      opacity: 0.85,
       side: THREE.DoubleSide,
       clearcoat: 1.0,
       emissive: 0x003311,
-      emissiveIntensity: 0.25
+      emissiveIntensity: 0.4
     });
 
     liquidMaterial.onBeforeCompile = (shader) => injectBlobShader(shader, 0.065, 1.4, 1.5, true);
@@ -405,10 +432,11 @@ const GameView = () => {
       color: 0xff003c, // Glowing red warning barriers
       metalness: 0.1,
       roughness: 0.15,
-      transmission: 0.75,
-      thickness: 0.8,
+      clearcoat: 1.0,
+      transparent: true,
+      opacity: 0.8,
       emissive: 0x550005,
-      emissiveIntensity: 0.4
+      emissiveIntensity: 0.5
     });
 
     crystalGeom.current = new THREE.OctahedronGeometry(0.55, 0);
@@ -434,6 +462,10 @@ const GameView = () => {
 
     // Keyboard handlers
     const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        handleExit();
+        return;
+      }
       const state = stateRef.current;
       if (!state.isPlaying || state.gameOver) return;
 
@@ -487,7 +519,7 @@ const GameView = () => {
     window.addEventListener('pointerdown', handlePointerDown);
     window.addEventListener('pointerup', handlePointerUp);
 
-    // --- CONTINUOUS GAMEPLAY AND preview LOOP ---
+    // --- CONTINUOUS GAMEPLAY AND PREVIEW LOOP ---
     const clock = new THREE.Clock();
 
     const animate = () => {
@@ -545,12 +577,11 @@ const GameView = () => {
             state.jumpY = 0;
             state.verticalVelocity = 0;
             state.isJumping = false;
-            // Play a little bounce or impact effect if desired
           }
         }
         playerGroup.position.y = BLOB_START_Y + state.jumpY;
 
-        // Smooth squash scale deformation when jumping
+        // Smooth squash scale deformation when jumping/rolling
         const squashScaleY = state.isJumping ? (1.0 + Math.min(0.2, state.jumpY * 0.1)) : (1.0 - Math.min(0.3, Math.abs(state.verticalVelocity) * 0.02));
         const squashScaleXZ = state.isJumping ? (1.0 - Math.min(0.1, state.jumpY * 0.05)) : (1.0 + Math.min(0.15, Math.abs(state.verticalVelocity) * 0.01));
         playerGroup.scale.set(squashScaleXZ, squashScaleY, squashScaleXZ);
@@ -638,7 +669,7 @@ const GameView = () => {
           if (levelRef.current) levelRef.current.innerText = `LEVEL ${nextLevel}`;
         }
 
-        // Handle Unlocks silently without spamming React state
+        // Handle Unlocks silently
         if (state.score >= 500 && !state.unlockedYellow) {
           state.unlockedYellow = true;
           setUnlockedYellow(true);
@@ -889,7 +920,7 @@ const GameView = () => {
     crystals.current = [];
   };
 
-  // Return to home
+  // Return to home / Close overlay
   const handleExit = () => {
     const state = stateRef.current;
     state.isPlaying = false;
@@ -908,15 +939,32 @@ const GameView = () => {
     });
     crystals.current = [];
 
-    window.location.hash = '#home';
+    if (onClose) {
+      onClose();
+    } else {
+      window.location.hash = '#home';
+    }
   };
 
   return (
-    <div className={`fixed inset-0 w-full h-full z-40 flex items-center justify-center p-4 sm:p-8 touch-none font-mono ${darkMode ? 'bg-[#050505]' : 'bg-[#F0F0F0]'}`}>
+    <div 
+      className="fixed inset-0 w-full h-full z-[100] flex items-center justify-center p-4 sm:p-8 touch-none font-mono bg-black/75 backdrop-blur-xl animate-in fade-in duration-300"
+      onClick={handleExit}
+    >
+      {/* Always-visible top-right close window button outside the bezel */}
+      <button 
+        onClick={handleExit}
+        className="absolute top-4 right-4 z-[110] p-3 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-white/70 hover:text-red-500 hover:border-red-500/30 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-2xl"
+        title="Close Game Overlay (Esc)"
+      >
+        <X size={20} />
+      </button>
+
       <div 
         ref={containerRef} 
+        onClick={(e) => e.stopPropagation()} // Prevent clicking game bezel from closing it
         className={`relative w-full max-w-4xl aspect-[4/3] md:aspect-video rounded-[2rem] overflow-hidden select-none border-4 shadow-2xl transition-all duration-700
-          ${darkMode ? 'bg-black border-[#333] shadow-[0_0_60px_rgba(0,255,65,0.1)]' : 'bg-black border-white shadow-[0_0_60px_rgba(0,85,255,0.15)]'}`}
+          ${darkMode ? 'bg-black border-[#333] shadow-[0_0_60px_rgba(0,255,65,0.15)]' : 'bg-black border-white shadow-[0_0_60px_rgba(0,85,255,0.2)]'}`}
       >
         {/* CRT Scanline / Bezel Overlay for retro charm */}
         <div className="absolute inset-0 z-50 pointer-events-none opacity-20 bg-[linear-gradient(rgba(255,255,255,0),rgba(255,255,255,0)_50%,rgba(0,0,0,0.2)_50%,rgba(0,0,0,0.2))] bg-[length:100%_4px] rounded-[2rem] shadow-[inset_0_0_100px_rgba(0,0,0,0.9)]" />
@@ -934,7 +982,7 @@ const GameView = () => {
                 <span ref={scoreRef} className="text-lg md:text-xl font-bold tracking-tight">{Math.floor(stateRef.current.score).toString().padStart(5, '0')}</span>
                 <span className="text-[6px] md:text-[8px] opacity-30 uppercase tracking-widest pt-0.5 border-t border-white/5">BEST: {highScore}</span>
               </div>
-              <div className="text-[8px] md:text-[10px] opacity-60 uppercase tracking-widest pl-2">
+              <div className="text-[8px] md:text-[10px] opacity-60 uppercase tracking-widest pl-2 font-bold">
                 {!unlockedYellow && <span className="text-[#ffd700]/70">NEXT: YELLOW (500)</span>}
                 {unlockedYellow && !unlockedPink && <span className="text-[#ff007f]/70">NEXT: PINK (1500)</span>}
                 {unlockedPink && <span className="text-[#00FF41]/70">ALL UNLOCKED</span>}
@@ -968,7 +1016,7 @@ const GameView = () => {
               
               <button
                 onClick={handleExit}
-                className="p-2 md:p-2.5 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl text-white/60 hover:text-red-500 hover:border-red-500/30 transition-all shadow-xl cursor-pointer"
+                className="p-2 md:p-2.5 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl text-white/60 hover:text-red-500 hover:border-red-500/30 transition-all shadow-xl cursor-pointer animate-pulse"
                 title="Close Runner"
               >
                 <X size={14} />
@@ -1092,7 +1140,7 @@ const GameView = () => {
               {gameOver && (
                 <div className="absolute inset-x-4 md:inset-x-5 top-4 md:top-5 bottom-4 md:bottom-5 rounded-2xl bg-black/98 border border-red-500/20 flex flex-col items-center justify-center p-4 md:p-6 text-center animate-in fade-in zoom-in-95 duration-200 z-50">
                   <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center bg-red-500/10 border border-red-500/25 text-red-500 mb-3 md:mb-4 animate-bounce">
-                    <Heart size={16} md:size={18} />
+                    <Heart size={16} />
                   </div>
                   <h2 className="text-lg md:text-xl font-syne font-extrabold uppercase text-red-500 mb-0.5">GAME OVER</h2>
                   <p className="text-[7px] md:text-[8px] text-white/40 tracking-wider uppercase mb-4 md:mb-5">Capsule core depleted</p>
@@ -1112,7 +1160,7 @@ const GameView = () => {
                       onClick={startGame}
                       className="w-full py-2.5 md:py-3 px-6 rounded-xl bg-red-500 text-white font-syne font-bold uppercase tracking-wider text-[10px] md:text-xs transition-all hover:scale-[1.01] hover:bg-red-600 active:scale-95 shadow-[0_0_15px_rgba(239,68,68,0.25)] cursor-pointer flex items-center justify-center gap-1.5"
                     >
-                      <RefreshCw size={11} className="animate-spin-slow" /> RETRY RUN
+                      <RefreshCw size={11} /> RETRY RUN
                     </button>
                     <button
                       onClick={handleExit}

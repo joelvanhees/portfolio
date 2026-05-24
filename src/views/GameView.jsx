@@ -129,6 +129,7 @@ const GameView = () => {
   const obstacleMat = useRef(null);
   const crystalGeom = useRef(null);
   const crystalMat = useRef(null);
+  const innerBlobMaterial = useRef(null);
 
   // --- INITIALIZE THREE.JS RUNNER WORLD ---
   useEffect(() => {

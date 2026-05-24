@@ -11,6 +11,7 @@ import ProjectModal from './components/ProjectModal';
 import FloatingConsole from './components/FloatingConsole';
 import CooldownPool from './components/CooldownPool';
 import TransparentLogo from './components/TransparentLogo';
+import ShellBlob from './components/ShellBlob';
 
 import { buildProjects } from './content/projects.jsx';
 
@@ -265,27 +266,28 @@ const App = () => {
               {`0${i} // ${item}`}
             </button>
           ))}
-          {/* Dedicated Cooldown Menu Link */}
-          <button
-            onClick={() => {
-              setCooldownActive(true);
-              setMenuOpen(false);
-            }}
-            className="text-xs font-mono tracking-widest mt-6 px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff] hover:scale-105 hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.5),0_6px_20px_rgba(0,0,0,0.2),0_0_25px_rgba(0,210,255,0.4)] transition-all duration-300 active:scale-95 cursor-pointer"
-          >
-            COOL DOWN
-          </button>
+          {/* Additional Menu Actions */}
+          <div className="flex flex-row gap-4 mt-6">
+            <button
+              onClick={() => {
+                setCooldownActive(true);
+                setMenuOpen(false);
+              }}
+              className="text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff] hover:scale-105 hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.5),0_6px_20px_rgba(0,0,0,0.2),0_0_25px_rgba(0,210,255,0.4)] transition-all duration-300 active:scale-95 cursor-pointer"
+            >
+              COOL DOWN
+            </button>
 
-          {/* Dedicated Blob Run Game Menu Link */}
-          <button
-            onClick={() => {
-              handleNav('game');
-              setMenuOpen(false);
-            }}
-            className="text-xs font-mono tracking-widest mt-3 px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84] hover:scale-105 hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.3),0_6px_20px_rgba(0,0,0,0.2),0_0_25px_rgba(0,255,65,0.3)] transition-all duration-300 active:scale-95 cursor-pointer"
-          >
-            BLOB RUN ⌁
-          </button>
+            <button
+              onClick={() => {
+                handleNav('game');
+                setMenuOpen(false);
+              }}
+              className="text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84] hover:scale-105 hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.3),0_6px_20px_rgba(0,0,0,0.2),0_0_25px_rgba(0,255,65,0.3)] transition-all duration-300 active:scale-95 cursor-pointer"
+            >
+              BLOB RUN ⌁
+            </button>
+          </div>
         </div>
       )}
 
@@ -481,12 +483,12 @@ const App = () => {
         <button
           onClick={() => setConsoleMinimized(false)}
           title="Restore System Shell"
-          className={`fixed bottom-6 right-6 p-4 rounded-full border shadow-2xl z-[90] cursor-pointer transition-all duration-300 hover:scale-110 flex items-center justify-center animate-bounce
+          className={`fixed bottom-6 right-6 p-3 rounded-full border shadow-2xl z-[90] cursor-pointer transition-all duration-300 hover:scale-110 flex items-center justify-center
             ${darkMode 
-              ? 'bg-black border-[#00FF41]/40 text-[#00FF41] hover:shadow-[0_0_20px_rgba(0,255,65,0.4)] shadow-[0_0_10px_rgba(0,255,65,0.2)]' 
-              : 'bg-white border-[#0055FF]/40 text-[#0055FF] hover:shadow-[0_0_20px_rgba(0,85,255,0.4)] shadow-[0_0_10px_rgba(0,85,255,0.2)]'}`}
+              ? 'bg-black/60 backdrop-blur border-[#00FF41]/40 text-[#00FF41] hover:shadow-[0_0_20px_rgba(0,255,65,0.4)] shadow-[0_0_10px_rgba(0,255,65,0.2)]' 
+              : 'bg-white/60 backdrop-blur border-[#0055FF]/40 text-[#0055FF] hover:shadow-[0_0_20px_rgba(0,85,255,0.4)] shadow-[0_0_10px_rgba(0,85,255,0.2)]'}`}
         >
-          <Terminal size={22} className="animate-pulse" />
+          <ShellBlob isThinking={false} darkMode={darkMode} className="w-8 h-8" />
         </button>
       )}
       {cooldownActive && (

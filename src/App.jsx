@@ -28,6 +28,7 @@ const App = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [trailPos, setTrailPos] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(true);
+  const [isHovering, setIsHovering] = useState(false);
 
   const projects = useMemo(() => buildProjects({ setActiveImage }), [setActiveImage]);
 
@@ -54,9 +55,18 @@ const App = () => {
     };
     window.addEventListener('mousemove', handleMouseMove);
 
+    const handleMouseOver = (e) => {
+      const target = e.target;
+      if (!target) return;
+      const isInteractive = target.closest('a, button, [role="button"], .cursor-pointer, input, textarea, select');
+      setIsHovering(!!isInteractive);
+    };
+    window.addEventListener('mouseover', handleMouseOver);
+
     return () => {
       window.removeEventListener('resize', checkMobile);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseover', handleMouseOver);
     };
   }, []);
 
@@ -239,12 +249,9 @@ const App = () => {
               setCooldownActive(true);
               setMenuOpen(false);
             }}
-            className={`text-xs font-mono tracking-widest mt-6 border px-4 py-2 rounded-full transition-all animate-pulse cursor-pointer hover:shadow-lg active:scale-95
-              ${darkMode 
-                ? 'border-[#00FF41]/30 text-[#00FF41] hover:bg-[#00FF41]/10 hover:border-[#00FF41]' 
-                : 'border-[#0055FF]/30 text-[#0055FF] hover:bg-[#0055FF]/10 hover:border-[#0055FF]'}`}
+            className="text-xs font-mono tracking-widest mt-6 px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff] hover:scale-105 hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.5),0_6px_20px_rgba(0,0,0,0.2),0_0_25px_rgba(0,210,255,0.4)] transition-all duration-300 active:scale-95 cursor-pointer"
           >
-            [ LAUNCH_COOLDOWN_POOL ≈ ]
+            COOL DOWN
           </button>
         </div>
       )}
@@ -456,10 +463,15 @@ const App = () => {
       )}
       {!isMobile && (
         <div 
-          className={`fixed w-12 h-12 rounded-full pointer-events-none z-[100] -translate-x-1/2 -translate-y-1/2 transition-shadow duration-300
-            ${darkMode 
-              ? 'bg-white/[0.01] border border-white/35 shadow-[inset_0_4px_6px_rgba(255,255,255,0.3),inset_0_-4px_6px_rgba(0,0,0,0.4),0_8px_24px_rgba(0,0,0,0.35)]' 
-              : 'bg-white/[0.04] border border-white/60 shadow-[inset_0_4px_6px_rgba(255,255,255,0.5),inset_0_-4px_6px_rgba(0,0,0,0.15),0_6px_16px_rgba(0,0,0,0.15)]'} backdrop-blur-[6px]`}
+          className={`fixed rounded-full pointer-events-none z-[100] -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out backdrop-blur-[4px]
+            ${isHovering 
+              ? (darkMode 
+                ? 'w-16 h-16 bg-white/[0.005] border border-[#00FF41]/60 shadow-[inset_0_3px_5px_rgba(255,255,255,0.25),inset_0_-3px_5px_rgba(0,0,0,0.4),0_0_20px_rgba(0,255,65,0.35)]'
+                : 'w-16 h-16 bg-white/[0.015] border border-[#0055FF]/60 shadow-[inset_0_3px_5px_rgba(255,255,255,0.4),inset_0_-3px_5px_rgba(0,0,0,0.1),0_0_16px_rgba(0,85,255,0.25)]')
+              : (darkMode 
+                ? 'w-12 h-12 bg-white/[0.002] border border-white/25 shadow-[inset_0_4px_6px_rgba(255,255,255,0.2),inset_0_-4px_6px_rgba(0,0,0,0.45),0_6px_20px_rgba(0,0,0,0.35)]' 
+                : 'w-12 h-12 bg-white/[0.008] border border-white/45 shadow-[inset_0_4px_6px_rgba(255,255,255,0.45),inset_0_-4px_6px_rgba(0,0,0,0.15),0_5px_12px_rgba(0,0,0,0.15)]')
+            }`}
           style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}
         />
       )}

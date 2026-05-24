@@ -49,18 +49,24 @@ const TypewriterText = ({ text }) => {
   return <span className="whitespace-pre-wrap">{text.slice(0, currentIndex)}</span>;
 };
 
-
-const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTriggerCooldown }) => {
+const FloatingConsole = ({ 
+  darkMode, 
+  toggleDarkMode, 
+  onClose, 
+  onMinimize, 
+  onTriggerCooldown,
+  userName,
+  setUserName,
+  awaitingName,
+  setAwaitingName
+}) => {
   const [input, setInput] = useState('');
   const [isMaximized, setIsMaximized] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   
-  // Name caching and state flow
-  const [awaitingName, setAwaitingName] = useState(() => !localStorage.getItem('vanhees_user_name'));
-  
+  // History is initialized using the temporary in-memory userName prop (100% GDPR compliant!)
   const [history, setHistory] = useState(() => {
-    const cachedName = localStorage.getItem('vanhees_user_name');
-    if (!cachedName) {
+    if (!userName) {
       return [
         {
           text: "JOEL VAN HEES // ARCHITECTURAL SYSTEM SHELL v1.2\n==========================================\nNeural bridge connecting... Online.\n\nBefore we initialize, please tell me: What is your name?",
@@ -71,7 +77,7 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
     } else {
       return [
         {
-          text: `JOEL VAN HEES // SYSTEM SHELL v1.2\n==========================================\nWelcome back, ${cachedName}. Connection stable.\nType 'help' for executable commands or ask me any question.`,
+          text: `JOEL VAN HEES // SYSTEM SHELL v1.2\n==========================================\nWelcome back, ${userName}. Connection stable.\nType 'help' for executable commands or ask me any question.`,
           isInput: false,
           isFirstMessage: true
         }
@@ -86,17 +92,17 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
   }, [history]);
 
   // Helper to occasionally address the user namentlich (with a 25% chance)
-  const getNameAddon = (userName) => {
-    if (!userName) return '';
+  const getNameAddon = (nameToUse) => {
+    if (!nameToUse) return '';
     const isChance = Math.random() < 0.25; // 25% chance
     if (!isChance) return '';
     
     const addons = [
-      `, ${userName}`,
-      ` - stay curious, ${userName}!`,
-      `\n\nHope you're having an inspiring day, ${userName}.`,
-      ` (Active Operator: ${userName})`,
-      `\n\nIs there anything else I can compile for you, ${userName}?`
+      `, ${nameToUse}`,
+      ` - stay curious, ${nameToUse}!`,
+      `\n\nHope you're having an inspiring day, ${nameToUse}.`,
+      ` (Active Operator: ${nameToUse})`,
+      `\n\nIs there anything else I can compile for you, ${nameToUse}?`
     ];
     return addons[Math.floor(Math.random() * addons.length)];
   };
@@ -117,14 +123,14 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
       let customRender = null;
 
       if (awaitingName) {
-        // Name registration phase
+        // Name registration phase (stored in memory, not disk)
         const name = rawInput;
-        localStorage.setItem('vanhees_user_name', name);
+        setUserName(name);
         setAwaitingName(false);
         responseText = `Welcome, ${name}. Neural bridge online. Uplink established.\nAccess granted to architectural systems and creative diagnostics.\n\nType 'help' to see available commands or ask me any question.`;
       } else {
-        const userName = localStorage.getItem('vanhees_user_name') || 'Operator';
-        const nameAddon = getNameAddon(userName);
+        const activeUser = userName || 'Operator';
+        const nameAddon = getNameAddon(activeUser);
 
         switch (cmd) {
           case 'help':
@@ -151,7 +157,7 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
             );
             break;
           case 'cooldown':
-            responseText = `[INITIALIZING COOLDOWN POOL...] Entering sensory reflection space... Enjoy the relaxation, ${userName}!`;
+            responseText = `[INITIALIZING COOLDOWN POOL...] Entering sensory reflection space... Enjoy the relaxation, ${activeUser}!`;
             if (onTriggerCooldown) {
               setTimeout(onTriggerCooldown, 800);
             }
@@ -162,7 +168,7 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
             break;
           case 'checkyourbus':
             window.open('https://checkyourbus.vercel.app', '_blank', 'noopener,noreferrer');
-            responseText = `[INITIALIZING CHECK_YOUR_BUS...] Redirecting to literature essay: https://checkyourbus.vercel.app - Hope you like it, ${userName}!`;
+            responseText = `[INITIALIZING CHECK_YOUR_BUS...] Redirecting to literature essay: https://checkyourbus.vercel.app - Hope you like it, ${activeUser}!`;
             break;
           case 'clear':
             setHistory([]);
@@ -173,45 +179,98 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
             onClose();
             return;
           default:
-            // Custom conversational keyword routing
+            // --- MASSIVE COMPREHENSIVE CONVERSATIONAL ROUTING DATABASE ---
             let matched = false;
             
+            // Greetings
             if (cmd === 'hi' || cmd === 'hello' || cmd === 'hallo' || cmd === 'hey' || cmd === 'moin' || cmd === 'servus' || cmd === 'yo' || cmd === 'guten tag' || cmd === 'was geht') {
               const helloResponses = [
-                `Hallo ${userName}! Wie kann ich dir heute helfen? Tippe 'help' für Befehle.`,
-                `Hi ${userName}! Schön, dass du den Weg in meine Kommandozeile gefunden hast. 👾`,
-                `Hey ${userName}! Du tippst verdammt flüssig. Was steht heute auf der Agenda?`,
-                `Moin Moin, ${userName}! Bereit, ein bisschen High-End-Code anzuschauen?`,
-                `Servus, ${userName}! Suchst du nach 'projects', 'skills' oder einfach nur Inspiration?`
+                `Hallo ${activeUser}! Wie kann ich dir heute helfen? Tippe 'help' für Befehle.`,
+                `Hi ${activeUser}! Schön, dass du den Weg in meine Kommandozeile gefunden hast. 👾`,
+                `Hey ${activeUser}! Du tippst verdammt flüssig. Was steht heute auf der Agenda?`,
+                `Moin Moin, ${activeUser}! Bereit, ein bisschen High-End-Code anzuschauen?`,
+                `Servus, ${activeUser}! Suchst du nach 'projects', 'skills' oder einfach nur Inspiration?`
               ];
               responseText = helloResponses[Math.floor(Math.random() * helloResponses.length)];
               matched = true;
-            } else if (cmd.includes('skill') || cmd.includes('tech') || cmd.includes('code') || cmd.includes('programmier') || cmd.includes('sprache')) {
-              responseText = `TECH STACK & CAPABILITIES:\n- Frontend: React, JavaScript (ES6+), HTML5, CSS3, Tailwind CSS\n- Creative: Three.js, WebGL, Shaders (GLSL), Canvas API, generative systems\n- Design: Figma (layout, UI/UX systems), Adobe Creative Suite (Illustrator, Photoshop, After Effects)\n- Tools: Vite, Git, Vercel, npm` + nameAddon;
+            } 
+            // Budget, Prices and Costs (Resolves directly to contact button)
+            else if (cmd.includes('geld') || cmd.includes('kosten') || cmd.includes('preis') || cmd.includes('budget') || cmd.includes('zahlen') || cmd.includes('honorar') || cmd.includes('cost') || cmd.includes('price') || cmd.includes('money') || cmd.includes('charge')) {
+              responseText = `PROJEKTKOSTEN & ANGEBOTE:\nFür Anfragen bezüglich Projektkosten, Budgetrahmen oder Honorarsätzen erstelle ich individuelle Angebote, die exakt auf den Umfang deines Vorhabens abgestimmt sind. Lass uns deine Vorstellungen besprechen und ein passendes Angebot kalkulieren!\n\nNutze den direkten Link zum Kontaktformular, um eine Anfrage zu senden, ${activeUser}:`;
+              customRender = () => (
+                <button 
+                  onClick={() => {
+                    window.location.hash = '#contact';
+                  }}
+                  className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-mono transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
+                    ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-[#0055FF] text-[#0055FF]'}`}
+                >
+                  [ GO_TO_CONTACT_FORM ↓ ]
+                </button>
+              );
               matched = true;
-            } else if (cmd.includes('experience') || cmd.includes('career') || cmd.includes('werdegang') || cmd.includes('cv') || cmd.includes('studium') || cmd.includes('arbeit') || cmd.includes('beruf')) {
-              responseText = `CREATIVE MILESTONES:\n- B.A. Integrated Design @ KISD (Köln) & HSD (Düsseldorf)\n- Speculative peeling car rebrand exhibited at NRW-Forum Düsseldorf\n- Social Media Director @ Salatschüssel (10M+ Likes, 200k+ followers)\n- Lead visual designer & dev for high-end boutique client portfolios` + nameAddon;
+            }
+            // Technical Stack, Programming and Code
+            else if (cmd.includes('skill') || cmd.includes('tech') || cmd.includes('code') || cmd.includes('programmier') || cmd.includes('sprache') || cmd.includes('three') || cmd.includes('webgl') || cmd.includes('react') || cmd.includes('glsl') || cmd.includes('framework')) {
+              responseText = `TECHNICAL CAPABILITIES & DEVELOPER ENGINE:\n\n- FRONTEND LAYER: React, Modern ES6+ JavaScript, Semantic HTML5, CSS3, Tailwind CSS\n- IMMERSIVE CREATIVE LAYER: Three.js, Canvas API, WebGL, custom GLSL Shaders, generative systems\n- DIGITAL BRAND DESIGN: Figma (UI/UX layout systems, adaptive auto-layout, tokens), Adobe Creative Suite (Illustrator, Photoshop, After Effects)\n- BUILD ENGINES & WORKFLOW: Vite, Git, Vercel, npm, high-performance optimization.` + nameAddon;
               matched = true;
-            } else if (cmd.includes('service') || cmd.includes('leistung') || cmd.includes('angebot') || cmd.includes('design') || cmd.includes('webdesign')) {
-              responseText = `DESIGN & DEVELOP SERVICES:\n- 3D Web Experiences (generative typography, custom WebGL visualizers)\n- Branding Systems (logo, visual identity, physical/digital brand collateral)\n- Spatial UI/UX Design (architectural typography, immersive interactions)\n- Creative Direction (collaborations, campaign visuals, digital storytelling)` + nameAddon;
+            } 
+            // Experience and Milestones
+            else if (cmd.includes('experience') || cmd.includes('career') || cmd.includes('werdegang') || cmd.includes('cv') || cmd.includes('studium') || cmd.includes('arbeit') || cmd.includes('beruf') || cmd.includes('schule') || cmd.includes('kisd') || cmd.includes('hsd')) {
+              responseText = `CREATIVE MILESTONES & ACADEMIC GROUNDING:\n\n- STUDY: B.A. Integrated Design studied at KISD (Köln) and HSD (Düsseldorf).\n- EXHIBITION: Speculative interactive brand installation exhibited at the NRW-Forum Düsseldorf.\n- SOCIAL ENGINE: Director of Social Media at "Salatschüssel" (scaled the community channel to over 10M+ Likes and 200,000+ active followers).\n- BOUTIQUE SERVICES: Custom branding systems and generative web systems developed for premium client portfolios.`;
               matched = true;
-            } else if (cmd.includes('figma') || cmd.includes('prototype') || cmd.includes('ux') || cmd.includes('ui')) {
-              responseText = `FIGMA APPROACH:\nTreating Figma not just as a layout tool, but as a space for structural modeling. All web layouts are built with pixel-perfect layouts, responsive auto-layout structures, and dynamic design tokens, ensuring a seamless translation to client-side code, ${userName}.`;
+            } 
+            // Design, Art and Concept Services
+            else if (cmd.includes('service') || cmd.includes('leistung') || cmd.includes('angebot') || cmd.includes('design') || cmd.includes('webdesign') || cmd.includes('concept') || cmd.includes('creative direction')) {
+              responseText = `DESIGN & DEVELOPMENT SERVICES:\n\n- 3D WEB EXPERIENCES: Immersive WebGL spaces, procedural typographic canvas installations, and reactive interactive visualizations.\n- BRANDING SYSTEMS: Scalable visual identities, logo architecture, typography standards, and integrated physical/digital collateral.\n- SPATIAL UI/UX SYSTEMS: Concept-driven, responsive layouts, design token libraries in Figma, and micro-interactions.\n- CREATIVE DIRECTION: Collaborative conceptual campaigns, video storytelling, and experimental design technologies.` + nameAddon;
               matched = true;
-            } else if (cmd.includes('sound') || cmd.includes('music') || cmd.includes('musik') || cmd.includes('soundscape') || cmd.includes('atmosphere')) {
-              responseText = `SOUNDSCAPE DESIGN:\nSound is spatial. The portfolio features an immersive atmospheric soundscape designed to give weight and depth to the interactive space. Can be toggled on/off in the "Check Your Bus" project detail modal, ${userName}.`;
+            } 
+            // Figma specific approaches
+            else if (cmd.includes('figma') || cmd.includes('prototype') || cmd.includes('ux') || cmd.includes('ui') || cmd.includes('wireframe') || cmd.includes('layout')) {
+              responseText = `FIGMA INTERFACE ARCHITECTURE:\nI treat Figma not merely as an ad-hoc layout sheet, but as a systematic model for structural code translation. Every visual draft uses strict auto-layout formulas, component hierarchies, and responsive padding variables. This guarantees that all UI patterns adapt beautifully to any viewport when written in React or CSS, ${activeUser}.`;
               matched = true;
-            } else if (cmd.includes('joel') || cmd.includes('van hees') || cmd.includes('creator')) {
-              responseText = `ABOUT JOEL:\nJoel van Hees is a graphic designer and creative coder based in Germany. His practice lives at the intersection of classical graphic design and experimental technology. He believes that the browser is a spatial environment ready for emotional, atmospheric, and conceptual layouts, ${userName}.`;
+            } 
+            // Music, soundscapes and atmospheres
+            else if (cmd.includes('sound') || cmd.includes('music') || cmd.includes('musik') || cmd.includes('soundscape') || cmd.includes('atmosphere') || cmd.includes('audio')) {
+              responseText = `ATMOSPHERIC SOUNDSCAPE SYNTHESIS:\nSound shapes spatial depth. My portfolio integrates custom-engineered ambient tracks (like "Orbital Drift Run.mp3" in the Blob Runner overlay) and atmospheric sounds to establish emotional presence in digital installations. Audio controls are modular and easy to toggle directly inside project overlays, ${activeUser}.`;
               matched = true;
-            } else if (cmd.includes('pool') || cmd.includes('relax') || cmd.includes('pause')) {
-              responseText = `[INITIALIZING COOLDOWN POOL...] Entering sensory reflection space... Take your time, ${userName}.`;
+            } 
+            // Background on Cologne, Germany or cities
+            else if (cmd.includes('stadt') || cmd.includes('koeln') || cmd.includes('cologne') || cmd.includes('germany') || cmd.includes('deutschland') || cmd.includes('ort') || cmd.includes('location')) {
+              responseText = `LOCATION IN PROFILE:\nMy creative practice is based in Cologne, Germany—a historic hub for experimental media, art, and integrated design studies. I work with clients both locally in North Rhine-Westphalia and globally via digital neural uplinks.` + nameAddon;
+              matched = true;
+            }
+            // General info about Joel van Hees himself
+            else if (cmd.includes('joel') || cmd.includes('van hees') || cmd.includes('creator') || cmd.includes('wer') || cmd.includes('who') || cmd.includes('person')) {
+              responseText = `PROFILE SUMMARY:\nJoel van Hees is an integrated graphic designer and developer living in Cologne. He merges classical design disciplines (composition, strict grid typography, brand strategy) with experimental frontend technologies (Three.js, custom shaders, reactive DOM interactions). He treats the web browser as an emotional, narrative canvas ready for deep atmosphere.`;
+              matched = true;
+            } 
+            // Hobbies and personal preferences
+            else if (cmd.includes('hobby') || cmd.includes('freizeit') || cmd.includes('sport') || cmd.includes('privat') || cmd.includes('personal')) {
+              responseText = `PERSONAL CHANNELS:\nBeyond commercial systems, I enjoy speculative design, chiptune sound synthesis, generative mathematics, and exploring experimental game loops. I'm fascinated by liquid-glass aesthetics, water simulations, and the intersection of music and dynamic motion, ${activeUser}.`;
+              matched = true;
+            }
+            // Vision, inspiration and philosophy
+            else if (cmd.includes('vision') || cmd.includes('philosophie') || cmd.includes('vision') || cmd.includes('ansatz') || cmd.includes('inspiration') || cmd.includes('future') || cmd.includes('ziel') || cmd.includes('zukunft')) {
+              responseText = `CREATIVE PRACTICE MANIFESTO:\n"The browser is not a static page—it is a spatial environment." My goal is to build digital spaces that evoke emotional, memorable, and atmospheric resonance. I believe that brand identities in the future should not just be looked at, but experienced and explored interactively. Let's shape the visual standards of tomorrow, ${activeUser}.`;
+              matched = true;
+            }
+            // Blob Runner game loops
+            else if (cmd.includes('game') || cmd.includes('gameover') || cmd.includes('runner') || cmd.includes('play') || cmd.includes('spielen') || cmd.includes('spiel') || cmd.includes('blob run')) {
+              responseText = `SYSTEM RUNNER [BLOB RUNNER ⌁]:\nHave you tried my high-performance WebGL 3D game yet? It runs in a beautiful, retro-cyber glassmorphic TV console and is extremely fast! You have to dodge red warning barriers and collect golden shards to unlock glowing core colors. Click the glowing pulsing blob in the bottom right corner of the screen to close the console and enter the running lane, ${activeUser}!`;
+              matched = true;
+            }
+            // Cooldown room
+            else if (cmd.includes('pool') || cmd.includes('relax') || cmd.includes('pause') || cmd.includes('cooldown') || cmd.includes('wasser') || cmd.includes('water')) {
+              responseText = `[INITIALIZING COOLDOWN POOL...] Entering sensory reflection space... Take a moment to relax, ${activeUser}.`;
               if (onTriggerCooldown) {
                 setTimeout(onTriggerCooldown, 800);
               }
               matched = true;
-            } else if (cmd.includes('geld') || cmd.includes('kosten') || cmd.includes('preis') || cmd.includes('budget') || cmd.includes('zahlen') || cmd.includes('honorar') || cmd.includes('cost') || cmd.includes('price') || cmd.includes('money') || cmd.includes('charge')) {
-              responseText = `PROJEKTKOSTEN & ANGEBOTE:\nFür Anfragen bezüglich Projektkosten, Budgetrahmen oder Honorarsätzen erstelle ich individuelle Angebote, die exakt auf den Umfang deines Vorhabens abgestimmt sind. Lass uns deine Vorstellungen besprechen und ein passendes Angebot kalkulieren!\n\nNutze den direkten Link zum Kontaktformular, um eine Anfrage zu senden, ${userName}:`;
+            }
+            // Contact uplink
+            else if (cmd.includes('kontakt') || cmd.includes('email') || cmd.includes('mail') || cmd.includes('write') || cmd.includes('nachricht') || cmd.includes('uplink') || cmd.includes('schreiben')) {
+              responseText = `SYSTEM CONTACT UPLINK:\nReady to establish connection? Reach out via:\n- Direct Mail: kontakt@joelvanhees.de\n- Instagram: @joelvn20\n\nClick the button below to jump straight to the contact terminal, ${activeUser}:`;
               customRender = () => (
                 <button 
                   onClick={() => {
@@ -226,16 +285,17 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
               matched = true;
             }
             
+            // Standard witty fallback responses (Expanded and highly descriptive!)
             if (!matched) {
               const sassyResponses = [
-                `Ich bin eine Kommandozeile, kein Orakel, ${userName}. Aber netter Versuch! 😉 Tippe 'help' für echte Befehle.`,
-                `Das steht leider nicht in meinem Drehbuch, ${userName}. Frag mich doch lieber nach 'projects' oder 'skills'!`,
-                `Fehler 404: Antwort nicht gefunden. Aber hey, meine glatte Schrift sieht wenigstens extrem edel aus, oder ${userName}?`,
-                `Spannende Eingabe, ${userName}! Klingt fast wie ein geheimer Cheatcode, aber meine Firewall blockiert das. Probier mal 'help'.`,
-                `Joel hat mir vieles beigebracht, ${userName}, aber diese Frage übersteigt meine aktuellen Schaltkreise. Frag mich mal nach 'about'!`,
-                `Ich könnte dir das jetzt im Detail erklären, ${userName}, aber dann müsste ich dich in den Cooldown-Pool werfen. 🏊‍♂️ 'cooldown'`,
-                `Das ist so 2025, ${userName}! Wir leben in der Zukunft. Frag mich lieber nach meinen echten 'skills' oder 'services'!`,
-                `Interessanter Gedanke, ${userName}. Ich wette, die Antwort darauf liegt irgendwo im dekolonialen Bus-Essay... 🚌 'checkyourbus'`
+                `Ich bin eine Kommandozeile, kein Orakel, ${activeUser}. Aber netter Versuch! 😉 Tippe 'help' für echte Befehle.`,
+                `Das steht leider nicht in meinem Drehbuch, ${activeUser}. Frag mich doch lieber nach 'projects' oder 'skills'!`,
+                `Fehler 404: Antwort nicht gefunden. Aber hey, meine glatte Schrift sieht wenigstens extrem edel aus, oder ${activeUser}?`,
+                `Spannende Eingabe, ${activeUser}! Klingt fast wie ein geheimer Cheatcode, aber meine Firewall blockiert das. Probier mal 'help'.`,
+                `Joel hat mir vieles beigebracht, ${activeUser}, aber diese Frage übersteigt meine aktuellen Schaltkreise. Frag mich mal nach 'about'!`,
+                `Ich könnte dir das jetzt im Detail erklären, ${activeUser}, aber dann müsste ich dich in den Cooldown-Pool werfen. 🏊‍♂️ 'cooldown'`,
+                `Das ist so 2025, ${activeUser}! Wir leben in der Zukunft. Frag mich lieber nach meinen echten 'skills' oder 'services'!`,
+                `Interessanter Gedanke, ${activeUser}. Ich wette, die Antwort darauf liegt irgendwo im dekolonialen Bus-Essay... 🚌 'checkyourbus'`
               ];
               responseText = sassyResponses[Math.floor(Math.random() * sassyResponses.length)];
             }

@@ -33,6 +33,8 @@ const App = () => {
   const [trailPos, setTrailPos] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(true);
   const [isHovering, setIsHovering] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [awaitingName, setAwaitingName] = useState(true);
 
   const projects = useMemo(() => buildProjects({ setActiveImage }), [setActiveImage]);
 
@@ -509,6 +511,10 @@ const App = () => {
           }} 
           onMinimize={() => setConsoleMinimized(true)}
           onTriggerCooldown={() => setCooldownActive(true)}
+          userName={userName}
+          setUserName={setUserName}
+          awaitingName={awaitingName}
+          setAwaitingName={setAwaitingName}
         />
       )}
       {(!consoleOpen || consoleMinimized) && (

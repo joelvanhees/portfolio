@@ -252,10 +252,12 @@ const GameView = () => {
         #include <map_fragment>
         // Scroll coordinate offset based on time
         float scroll = vScrollUV.y * 35.0 - uTime * 7.5;
-        float gridX = step(0.96, sin(vScrollUV.x * 3.1415 * 3.0));
-        float gridY = step(0.96, sin(scroll));
+        float gridX = step(0.97, fract(vScrollUV.x * 24.0));
+        float gridY = step(0.97, fract(scroll));
         float combinedGrid = max(gridX, gridY);
-        diffuseColor.rgb += vec3(0.0, 1.0, 0.25) * combinedGrid * 0.4;
+        // Wireframe glow effect
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.0, 1.0, 0.4), combinedGrid * 0.85);
+        diffuseColor.a = mix(0.1, 0.9, combinedGrid);
         `
       );
     };
@@ -502,13 +504,18 @@ const GameView = () => {
             state.jumpY = 0;
             state.verticalVelocity = 0;
             state.isJumping = false;
+            // Play a little bounce or impact effect if desired
           }
         }
         playerGroup.position.y = BLOB_START_Y + state.jumpY;
 
         // Smooth squash scale deformation when jumping
-        const squashScale = 1.0 - Math.min(0.25, Math.abs(state.verticalVelocity) * 0.015);
-        playerGroup.scale.set(1.0, squashScale, 1.0);
+        const squashScaleY = state.isJumping ? (1.0 + Math.min(0.2, state.jumpY * 0.1)) : (1.0 - Math.min(0.3, Math.abs(state.verticalVelocity) * 0.02));
+        const squashScaleXZ = state.isJumping ? (1.0 - Math.min(0.1, state.jumpY * 0.05)) : (1.0 + Math.min(0.15, Math.abs(state.verticalVelocity) * 0.01));
+        playerGroup.scale.set(squashScaleXZ, squashScaleY, squashScaleXZ);
+
+        // Continuous forward rolling animation based on speed
+        playerGroup.rotation.x -= (currentSpeed / OUTER_RADIUS) * dt * 0.25;
 
         // Core visual counteract counter-rotation
         innerCore.rotation.x = -time * 0.45;
@@ -862,11 +869,18 @@ const GameView = () => {
       {/* iOS 26 Liquid Glass Minimal HUD */}
       {isPlaying && !gameOver && (
         <div className="absolute inset-x-6 top-6 z-20 flex justify-between items-start pointer-events-none">
-          {/* Top Left: Sleek Score Card */}
-          <div className="px-5 py-3 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl flex flex-col gap-0.5 text-white shadow-2xl pointer-events-auto">
-            <span className="text-[9px] uppercase opacity-40 tracking-widest font-bold">SCORE</span>
-            <span className="text-xl font-bold tracking-tight">{score}</span>
-            <span className="text-[8px] opacity-30 uppercase tracking-widest pt-0.5 border-t border-white/5">BEST: {highScore}</span>
+          {/* Top Left: Score & Goals */}
+          <div className="flex flex-col gap-2 pointer-events-auto">
+            <div className="px-5 py-3 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl flex flex-col gap-0.5 text-white shadow-2xl">
+              <span className="text-[9px] uppercase opacity-40 tracking-widest font-bold">SCORE</span>
+              <span className="text-xl font-bold tracking-tight">{score.toString().padStart(5, '0')}</span>
+              <span className="text-[8px] opacity-30 uppercase tracking-widest pt-0.5 border-t border-white/5">BEST: {highScore}</span>
+            </div>
+            <div className="text-[10px] opacity-60 uppercase tracking-widest pl-2">
+              {!unlockedYellow && <span className="text-[#ffd700]/70">NEXT: YELLOW UNLOCK (500)</span>}
+              {unlockedYellow && !unlockedPink && <span className="text-[#ff007f]/70">NEXT: PINK UNLOCK (1500)</span>}
+              {unlockedPink && <span className="text-[#00FF41]/70">ALL COLORS UNLOCKED</span>}
+            </div>
           </div>
 
           {/* Top Center: Minimal Level Indicator */}

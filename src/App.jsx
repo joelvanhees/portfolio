@@ -190,7 +190,7 @@ const App = () => {
         style={{ width: `${scrollProgress * 100}%` }}
       />
 
-      <nav className="fixed w-full z-40 px-6 py-6 flex justify-between items-center text-white">
+      <nav className="fixed w-full z-40 px-6 md:px-12 lg:px-16 py-6 flex justify-between items-center text-white">
         <button
           onClick={() => handleNav('home')}
           className="cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-1.5 bg-transparent border-none p-0"
@@ -255,38 +255,43 @@ const App = () => {
       </nav>
 
       {menuOpen && (
-        <div className={`fixed inset-0 z-30 flex flex-col justify-center items-center gap-6 text-3xl md:text-5xl font-syne font-bold ${darkMode ? 'bg-black/95' : 'bg-white/95'} backdrop-blur-xl`}>
-          <TransparentLogo className="w-20 h-20 md:w-28 md:h-28 mb-4 hover:scale-110 transition-all duration-500 cursor-pointer drop-shadow-[0_0_20px_rgba(0,255,65,0.2)]" onClick={() => handleNav('home')} />
-          {['HOME', 'WORK', 'SERVICES', 'ABOUT', 'CONTACT'].map((item, i) => (
-            <button
-              key={item}
-              onClick={() => handleNav(item.toLowerCase())}
-              className={`hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300 ${activePage === item.toLowerCase() ? (darkMode ? 'text-[#00FF41]' : 'text-[#0055FF]') : ''}`}
-            >
-              {`0${i} // ${item}`}
-            </button>
-          ))}
-          {/* Additional Menu Actions */}
-          <div className="flex flex-row gap-4 mt-6">
-            <button
-              onClick={() => {
-                setCooldownActive(true);
-                setMenuOpen(false);
-              }}
-              className="text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff] hover:scale-105 hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.5),0_6px_20px_rgba(0,0,0,0.2),0_0_25px_rgba(0,210,255,0.4)] transition-all duration-300 active:scale-95 cursor-pointer"
-            >
-              COOL DOWN
-            </button>
+        <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)}>
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className={`absolute top-24 right-4 md:right-8 w-64 md:w-80 rounded-2xl flex flex-col justify-start items-end p-6 md:p-8 gap-5 text-lg md:text-xl font-syne font-bold border shadow-2xl transition-all duration-500 animate-in slide-in-from-right-8 ${darkMode ? 'bg-black/60 border-[#00FF41]/20 shadow-[0_0_30px_rgba(0,255,65,0.1)]' : 'bg-white/60 border-[#0055FF]/20 shadow-[0_0_30px_rgba(0,85,255,0.1)]'} backdrop-blur-xl`}
+          >
+            <TransparentLogo className="w-16 h-16 md:w-20 md:h-20 mb-2 hover:scale-110 transition-all duration-500 cursor-pointer drop-shadow-[0_0_20px_rgba(0,255,65,0.2)]" onClick={() => handleNav('home')} />
+            {['HOME', 'WORK', 'SERVICES', 'ABOUT', 'CONTACT'].map((item, i) => (
+              <button
+                key={item}
+                onClick={() => handleNav(item.toLowerCase())}
+                className={`hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300 ${activePage === item.toLowerCase() ? (darkMode ? 'text-[#00FF41]' : 'text-[#0055FF]') : ''}`}
+              >
+                {`0${i} // ${item}`}
+              </button>
+            ))}
+            {/* Additional Menu Actions */}
+            <div className="flex flex-col gap-3 mt-4 w-full items-end">
+              <button
+                onClick={() => {
+                  setCooldownActive(true);
+                  setMenuOpen(false);
+                }}
+                className="w-full text-right text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff] hover:scale-105 transition-all duration-300 cursor-pointer"
+              >
+                COOL DOWN
+              </button>
 
-            <button
-              onClick={() => {
-                handleNav('game');
-                setMenuOpen(false);
-              }}
-              className="text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84] hover:scale-105 hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.3),0_6px_20px_rgba(0,0,0,0.2),0_0_25px_rgba(0,255,65,0.3)] transition-all duration-300 active:scale-95 cursor-pointer"
-            >
-              BLOB RUN ⌁
-            </button>
+              <button
+                onClick={() => {
+                  handleNav('game');
+                  setMenuOpen(false);
+                }}
+                className="w-full text-right text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84] hover:scale-105 transition-all duration-300 cursor-pointer"
+              >
+                BLOB RUN ⌁
+              </button>
+            </div>
           </div>
         </div>
       )}

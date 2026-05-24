@@ -260,7 +260,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
           onTouchEnd={() => {
             mouseRef.current.active = false;
           }}
-          className="relative min-h-screen flex flex-col justify-between md:justify-center px-6 pt-32 pb-16 md:py-20 overflow-hidden bg-transparent"
+          className="relative min-h-screen flex flex-col justify-between md:justify-center px-8 md:px-16 pt-32 pb-16 md:py-20 overflow-hidden bg-transparent"
         >
           <div className={`absolute inset-0 pointer-events-none opacity-[0.03] ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
 

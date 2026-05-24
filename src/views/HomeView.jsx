@@ -247,10 +247,10 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
               <span className="animate-pulse">●</span> System Online
             </p>
 
-            <h1 className="font-rubik text-[19vw] md:text-[15vw] leading-[0.85] md:leading-[0.78] tracking-tighter uppercase select-none w-full">
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-left"><ScrambleText text="Visual" delay={300} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center"><ScrambleText text="Story" delay={600} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors text-right block whitespace-nowrap"><ScrambleText text="Teller" delay={900} darkMode={darkMode} /></div>
+            <h1 className="font-rubik leading-[0.82] md:leading-[0.78] tracking-tighter uppercase select-none w-full flex flex-col items-center md:block">
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-left text-[20vw] md:text-[15vw] w-full"><ScrambleText text="Visual" delay={300} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[24vw] md:text-[15vw] w-full"><ScrambleText text="Story" delay={600} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-right text-[20vw] md:text-[15vw] w-full"><ScrambleText text="Teller" delay={900} darkMode={darkMode} /></div>
             </h1>
           </div>
 

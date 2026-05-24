@@ -148,6 +148,12 @@ const App = () => {
         ::-webkit-scrollbar-track { background: ${darkMode ? '#111' : '#ddd'}; }
         ::-webkit-scrollbar-thumb { background: ${darkMode ? '#333' : '#999'}; }
         ::-webkit-scrollbar-thumb:hover { background: ${darkMode ? '#00FF41' : '#0055FF'}; }
+
+        @media (pointer: fine) {
+          body, a, button, input, textarea, select, [role="button"], .cursor-pointer {
+            cursor: none !important;
+          }
+        }
       `}</style>
 
       <div className={`fixed inset-0 pointer-events-none opacity-[0.03] z-0 ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
@@ -160,12 +166,19 @@ const App = () => {
       <nav className="fixed w-full z-40 px-6 py-6 flex justify-between items-center mix-blend-difference text-white">
         <button
           onClick={() => handleNav('home')}
-          className={`text-sm md:text-base font-bold tracking-tighter cursor-pointer rounded-full px-4 py-2 border transition-all duration-300 hover:scale-105 flex items-center gap-2
-            ${darkMode 
-              ? 'bg-white/5 border-white/20 text-white shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),inset_0_-1px_2px_rgba(0,0,0,0.2),0_4px_20px_rgba(0,0,0,0.4)] backdrop-blur-md hover:bg-white/10 hover:border-white/30' 
-              : 'bg-white/40 border-white/60 text-black shadow-[inset_0_1px_2px_rgba(255,255,255,0.5),inset_0_-1px_2px_rgba(0,0,0,0.1),0_4px_16px_rgba(0,0,0,0.1)] backdrop-blur-md hover:bg-white/60 hover:border-white/80'}`}
+          className="text-lg md:text-xl font-bold tracking-tighter cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-2 bg-transparent border-none p-0"
+          style={{
+            background: darkMode
+              ? 'linear-gradient(135deg, #ffffff 40%, rgba(255,255,255,0.4) 75%, rgba(255,255,255,0.2) 100%)'
+              : 'linear-gradient(135deg, #111111 40%, rgba(0,0,0,0.55) 75%, rgba(0,0,0,0.3) 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            filter: darkMode 
+              ? 'drop-shadow(0px 1px 1px rgba(255,255,255,0.45)) drop-shadow(0px -1px 1px rgba(0,0,0,0.65)) drop-shadow(0px 8px 16px rgba(0,0,0,0.35))' 
+              : 'drop-shadow(0px 1px 1px rgba(255,255,255,0.85)) drop-shadow(0px -1px 1px rgba(0,0,0,0.2)) drop-shadow(0px 4px 10px rgba(0,0,0,0.12))',
+          }}
         >
-          JOEL VAN HEES <span className={`text-[9px] px-1.5 py-0.5 rounded uppercase font-mono tracking-widest ${darkMode ? 'bg-white/10 text-[#00FF41]' : 'bg-black/10 text-[#0055FF]'}`}>[ARCHITECT]</span>
+          JOEL VAN HEES <span className={`text-[9px] px-1.5 py-0.5 rounded uppercase font-mono tracking-widest ${darkMode ? 'bg-[#00FF41]/10 text-[#00FF41]' : 'bg-[#0055FF]/10 text-[#0055FF]'}`}>[ARCHITECT]</span>
         </button>
 
         <div className="flex items-center gap-6">
@@ -421,22 +434,13 @@ const App = () => {
         />
       )}
       {!isMobile && (
-        <>
-          {/* Precision center dot */}
-          <div 
-            className={`fixed w-1.5 h-1.5 rounded-full pointer-events-none z-[100] transition-colors duration-500 -translate-x-1/2 -translate-y-1/2
-              ${darkMode ? 'bg-[#00FF41] shadow-[0_0_8px_#00FF41]' : 'bg-[#0055FF] shadow-[0_0_8px_#0055FF]'}`}
-            style={{ left: `${trailPos.x}px`, top: `${trailPos.y}px` }}
-          />
-          {/* iOS 26 Liquid Glass Bubble */}
-          <div 
-            className={`fixed w-12 h-12 rounded-full pointer-events-none z-[99] -translate-x-1/2 -translate-y-1/2 transition-all duration-300
-              ${darkMode 
-                ? 'bg-white/5 border border-white/25 shadow-[inset_0_2px_4px_rgba(255,255,255,0.2),inset_0_-2px_4px_rgba(0,0,0,0.2),0_10px_30px_rgba(0,0,0,0.3)]' 
-                : 'bg-white/30 border border-white/50 shadow-[inset_0_2px_4px_rgba(255,255,255,0.4),inset_0_-2px_4px_rgba(0,0,0,0.1),0_8px_24px_rgba(0,0,0,0.15)]'} backdrop-blur-[8px]`}
-            style={{ left: `${trailPos.x}px`, top: `${trailPos.y}px` }}
-          />
-        </>
+        <div 
+          className={`fixed w-8 h-8 rounded-full pointer-events-none z-[100] -translate-x-1/2 -translate-y-1/2 transition-shadow duration-300
+            ${darkMode 
+              ? 'bg-white/5 border border-white/30 shadow-[inset_0_2.5px_5px_rgba(255,255,255,0.4),inset_0_-2.5px_5px_rgba(0,0,0,0.45),0_6px_20px_rgba(0,0,0,0.35)]' 
+              : 'bg-white/20 border border-white/55 shadow-[inset_0_2.5px_5px_rgba(255,255,255,0.6),inset_0_-2.5px_5px_rgba(0,0,0,0.25),0_6px_18px_rgba(0,0,0,0.18)]'} backdrop-blur-[10px]`}
+          style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}
+        />
       )}
     </div>
   );

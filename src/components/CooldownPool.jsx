@@ -147,8 +147,8 @@ const CooldownPool = ({ darkMode, onClose }) => {
           }
         }
         ctx.strokeStyle = darkMode 
-          ? `rgba(0, 255, 65, ${0.06 + Math.abs(Math.sin(time + r * 0.2)) * 0.04})`
-          : `rgba(0, 85, 255, ${0.08 + Math.abs(Math.sin(time + r * 0.2)) * 0.04})`;
+          ? `rgba(136, 204, 255, ${0.22 + Math.abs(Math.sin(time + r * 0.2)) * 0.12})`
+          : `rgba(0, 119, 255, ${0.28 + Math.abs(Math.sin(time + r * 0.2)) * 0.12})`;
         ctx.stroke();
       }
 
@@ -173,8 +173,8 @@ const CooldownPool = ({ darkMode, onClose }) => {
           }
         }
         ctx.strokeStyle = darkMode 
-          ? `rgba(0, 255, 65, ${0.06 + Math.abs(Math.sin(time + c * 0.2)) * 0.04})`
-          : `rgba(0, 85, 255, ${0.08 + Math.abs(Math.sin(time + c * 0.2)) * 0.04})`;
+          ? `rgba(136, 204, 255, ${0.22 + Math.abs(Math.sin(time + c * 0.2)) * 0.12})`
+          : `rgba(0, 119, 255, ${0.28 + Math.abs(Math.sin(time + c * 0.2)) * 0.12})`;
         ctx.stroke();
       }
 
@@ -224,6 +224,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
       (texture) => {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         scene.environment = texture;
+        scene.background = texture; // FULL HDR SKY BACKGROUND ACTIVATED
         setLoading(false);
       },
       undefined,
@@ -473,7 +474,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
       {/* 2D Background Math Vector Lines Canvas */}
       <canvas 
         ref={canvasRef} 
-        className="absolute inset-0 w-full h-full pointer-events-none z-0" 
+        className="absolute inset-0 w-full h-full pointer-events-none z-15" 
       />
 
       {/* 3D Foreground Three.js WebGL Glass Pool Canvas */}

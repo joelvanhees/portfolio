@@ -159,11 +159,7 @@ const App = () => {
         ::-webkit-scrollbar-thumb { background: ${darkMode ? '#333' : '#999'}; }
         ::-webkit-scrollbar-thumb:hover { background: ${darkMode ? '#00FF41' : '#0055FF'}; }
 
-        @media (pointer: fine) {
-          body, a, button, input, textarea, select, [role="button"], .cursor-pointer {
-            cursor: none !important;
-          }
-        }
+
       `}</style>
 
       <div className={`fixed inset-0 pointer-events-none opacity-[0.03] z-0 ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
@@ -463,16 +459,9 @@ const App = () => {
       )}
       {!isMobile && (
         <div 
-          className={`fixed rounded-full pointer-events-none z-[100] -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out backdrop-blur-[4px]
-            ${isHovering 
-              ? (darkMode 
-                ? 'w-16 h-16 bg-white/[0.005] border border-[#00FF41]/60 shadow-[inset_0_3px_5px_rgba(255,255,255,0.25),inset_0_-3px_5px_rgba(0,0,0,0.4),0_0_20px_rgba(0,255,65,0.35)]'
-                : 'w-16 h-16 bg-white/[0.015] border border-[#0055FF]/60 shadow-[inset_0_3px_5px_rgba(255,255,255,0.4),inset_0_-3px_5px_rgba(0,0,0,0.1),0_0_16px_rgba(0,85,255,0.25)]')
-              : (darkMode 
-                ? 'w-12 h-12 bg-white/[0.002] border border-white/25 shadow-[inset_0_4px_6px_rgba(255,255,255,0.2),inset_0_-4px_6px_rgba(0,0,0,0.45),0_6px_20px_rgba(0,0,0,0.35)]' 
-                : 'w-12 h-12 bg-white/[0.008] border border-white/45 shadow-[inset_0_4px_6px_rgba(255,255,255,0.45),inset_0_-4px_6px_rgba(0,0,0,0.15),0_5px_12px_rgba(0,0,0,0.15)]')
-            }`}
-          style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}
+          className={`fixed w-2 h-2 rounded-full pointer-events-none z-[100] transition-colors duration-500 -translate-x-1/2 -translate-y-1/2
+            ${darkMode ? 'bg-[#00FF41] shadow-[0_0_8px_#00FF41]' : 'bg-[#0055FF] shadow-[0_0_8px_#0055FF]'}`}
+          style={{ left: `${trailPos.x}px`, top: `${trailPos.y}px` }}
         />
       )}
     </div>

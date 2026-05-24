@@ -424,7 +424,7 @@ const App = () => {
         </div>
       )}
 
-      <footer id="contact" className={`py-24 px-6 ${darkMode ? 'bg-[#00FF41] text-black' : 'bg-[#0055FF] text-white'}`}>
+      <footer id="footer-contact" className={`py-24 px-6 ${darkMode ? 'bg-[#00FF41] text-black' : 'bg-[#0055FF] text-white'}`}>
         <div className="max-w-7xl mx-auto flex flex-col justify-between min-h-[50vh]">
           <div>
             <h2 className="text-6xl md:text-9xl font-rubik font-bold tracking-tighter leading-none mb-8">

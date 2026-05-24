@@ -90,7 +90,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
   useEffect(() => {
     const handleScroll = () => {
       const totalScroll = window.scrollY;
-      const fade = Math.max(0, 1 - totalScroll / (window.innerHeight || 800));
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const fade = Math.max(0, 1 - totalScroll / (docHeight || 800));
       setScrollFade(fade);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -153,8 +154,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
             const dx = gx - mouseRef.current.x;
             const dy2 = gy - mouseRef.current.y;
             const dist = Math.sqrt(dx * dx + dy2 * dy2);
-            if (dist < 180) {
-              mouseDist = Math.sin(dist * 0.04 - time * 3.5) * 16 * (1 - dist / 180);
+            if (dist < 220) {
+              mouseDist = Math.sin(dist * 0.04 - time * 3.5) * 35 * (1 - dist / 220);
             }
           }
 
@@ -192,8 +193,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
             const dx = gx - mouseRef.current.x;
             const dy2 = gy - mouseRef.current.y;
             const dist = Math.sqrt(dx * dx + dy2 * dy2);
-            if (dist < 180) {
-              mouseDist = Math.sin(dist * 0.04 - time * 3.5) * 16 * (1 - dist / 180);
+            if (dist < 220) {
+              mouseDist = Math.sin(dist * 0.04 - time * 3.5) * 35 * (1 - dist / 220);
             }
           }
 
@@ -227,18 +228,18 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
 
   return (
     <>
+      <canvas 
+        ref={canvasRef} 
+        className="fixed inset-0 w-full h-full pointer-events-none -z-10" 
+        style={{ opacity: scrollFade }}
+      />
       <header 
         ref={headerRef}
         onMouseMove={handleMouseMove}
         onMouseEnter={() => { mouseRef.current.active = true; }}
         onMouseLeave={() => { mouseRef.current.active = false; }}
-        className="relative min-h-screen flex flex-col justify-between md:justify-center px-6 pt-32 pb-16 md:py-20 overflow-hidden"
+        className="relative min-h-screen flex flex-col justify-between md:justify-center px-6 pt-32 pb-16 md:py-20 overflow-hidden bg-transparent"
       >
-        <canvas 
-          ref={canvasRef} 
-          className="absolute inset-0 w-full h-full z-0 pointer-events-none" 
-          style={{ opacity: scrollFade }}
-        />
         <div className={`absolute inset-0 pointer-events-none opacity-[0.03] ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
 
         <div className="w-full z-10 flex flex-col justify-between min-h-[70vh] md:min-h-0 md:justify-start pt-6 md:pt-16">
@@ -315,11 +316,11 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
         </div>
       </section>
 
-      <section id="work" className={`py-24 px-6 ${darkMode ? 'bg-[#0A0A0A]' : 'bg-white'}`}>
+      <section id="work" className="py-24 px-6 bg-transparent">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-baseline justify-between mb-16 border-b border-current pb-4">
             <h2 className="text-sm font-mono uppercase tracking-widest">Selected Data</h2>
-            <span className="text-xs opacity-50">INDEX: 00—07</span>
+            <span className="text-xs opacity-50">INDEX: 00—08</span>
           </div>
 
           <div className="grid grid-cols-1 gap-20">
@@ -330,7 +331,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
                     <span className={`text-xs font-bold px-2 py-1 rounded mb-2 inline-block ${darkMode ? 'bg-white text-black' : 'bg-black text-white'}`}>
                       {project.category}
                     </span>
-                    <h3 className={`text-4xl md:text-6xl font-rubik font-bold mt-2 transition-all duration-300 ${project.id === "02" ? "lowercase" : "uppercase"}`}>
+                    <h3 className={`text-3xl sm:text-4xl md:text-6xl font-rubik font-bold mt-2 transition-all duration-300 ${project.id === "02" ? "lowercase" : "uppercase"}`}>
                       <span className="glitch-hover cursor-default block">{project.title}</span>
                     </h3>
                   </div>

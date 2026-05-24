@@ -86,11 +86,13 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
       <header className="relative min-h-screen flex flex-col justify-center px-6 pt-20 overflow-hidden">
         <div className={`absolute inset-0 pointer-events-none opacity-[0.03] ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
 
-        <div className="max-w-7xl mx-auto w-full z-10">
-          <div className="flex flex-col gap-0">
-            <p className={`text-sm md:text-base mb-4 tracking-widest uppercase ${darkMode ? 'text-green-500' : 'text-blue-600'}`}>
-              <span className="animate-pulse">●</span> System Online
-            </p>
+        <div className="w-full z-10 flex flex-col justify-between">
+          <div className="flex flex-col gap-0 w-full">
+            <div className="max-w-7xl mx-auto w-full">
+              <p className={`text-sm md:text-base mb-4 tracking-widest uppercase ${darkMode ? 'text-green-500' : 'text-blue-600'}`}>
+                <span className="animate-pulse">●</span> System Online
+              </p>
+            </div>
 
             <h1 className="font-rubik text-[17vw] md:text-[15vw] leading-[0.78] tracking-tighter uppercase select-none w-full">
               <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-left"><ScrambleText text="Visual" delay={300} darkMode={darkMode} /></div>
@@ -99,7 +101,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
             </h1>
           </div>
 
-          <div className="mt-12 md:mt-24 flex flex-col md:flex-row justify-between items-end border-t border-current pt-6 opacity-80">
+          <div className="max-w-7xl mx-auto w-full mt-12 md:mt-24 flex flex-col md:flex-row justify-between items-end border-t border-current pt-6 opacity-80">
             <div className="max-w-md">
               <p className="text-lg md:text-xl leading-relaxed">
                 Visual systems for brands, interfaces and narrative experiences.

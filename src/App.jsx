@@ -6,6 +6,7 @@ import WorkView from './views/WorkView';
 import ServicesView from './views/ServicesView';
 import AboutView from './views/AboutView';
 import ContactView from './views/ContactView';
+import GameView from './views/GameView';
 import ProjectModal from './components/ProjectModal';
 import FloatingConsole from './components/FloatingConsole';
 import CooldownPool from './components/CooldownPool';
@@ -122,7 +123,7 @@ const App = () => {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '').toLowerCase();
-      const validPages = ['home', 'work', 'services', 'about', 'contact'];
+      const validPages = ['home', 'work', 'services', 'about', 'contact', 'game'];
       if (validPages.includes(hash)) {
         setActivePage(hash);
       } else {
@@ -270,6 +271,17 @@ const App = () => {
           >
             COOL DOWN
           </button>
+
+          {/* Dedicated Blob Run Game Menu Link */}
+          <button
+            onClick={() => {
+              handleNav('game');
+              setMenuOpen(false);
+            }}
+            className="text-xs font-mono tracking-widest mt-3 px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84] hover:scale-105 hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.3),0_6px_20px_rgba(0,0,0,0.2),0_0_25px_rgba(0,255,65,0.3)] transition-all duration-300 active:scale-95 cursor-pointer"
+          >
+            BLOB RUN ⌁
+          </button>
         </div>
       )}
 
@@ -278,6 +290,7 @@ const App = () => {
       {activePage === 'services' && <ServicesView darkMode={darkMode} />}
       {activePage === 'about' && <AboutView darkMode={darkMode} />}
       {activePage === 'contact' && <ContactView darkMode={darkMode} />}
+      {activePage === 'game' && <GameView darkMode={darkMode} />}
 
       {legalOpen && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 md:p-12">

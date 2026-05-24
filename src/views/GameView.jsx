@@ -152,7 +152,17 @@ const GameView = () => {
       antialias: true,
       powerPreference: "high-performance"
     });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    const updateSize = () => {
+      if (!containerRef.current) return;
+      const width = containerRef.current.clientWidth;
+      const height = containerRef.current.clientHeight;
+      renderer.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    };
+    // Delay initial size to ensure DOM is ready
+    setTimeout(updateSize, 0);
+
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
@@ -384,10 +394,12 @@ const GameView = () => {
 
     // 10. Handle window resizing
     const handleResize = () => {
-      if (!cameraRef.current || !rendererRef.current) return;
-      cameraRef.current.aspect = window.innerWidth / window.innerHeight;
+      if (!cameraRef.current || !rendererRef.current || !containerRef.current) return;
+      const width = containerRef.current.clientWidth;
+      const height = containerRef.current.clientHeight;
+      cameraRef.current.aspect = width / height;
       cameraRef.current.updateProjectionMatrix();
-      rendererRef.current.setSize(window.innerWidth, window.innerHeight);
+      rendererRef.current.setSize(width, height);
     };
     window.addEventListener('resize', handleResize);
 
@@ -514,6 +526,9 @@ const GameView = () => {
         const squashScaleXZ = state.isJumping ? (1.0 - Math.min(0.1, state.jumpY * 0.05)) : (1.0 + Math.min(0.15, Math.abs(state.verticalVelocity) * 0.01));
         playerGroup.scale.set(squashScaleXZ, squashScaleY, squashScaleXZ);
 
+        // Speed increases with level
+        const currentSpeed = 30.0 + state.level * 4.5;
+
         // Continuous forward rolling animation based on speed
         playerGroup.rotation.x -= (currentSpeed / OUTER_RADIUS) * dt * 0.25;
 
@@ -533,9 +548,6 @@ const GameView = () => {
           spawnGameCrystal(scene);
           state.lastCrystalSpawn = performance.now();
         }
-
-        // Speed increases with level
-        const currentSpeed = 30.0 + state.level * 4.5;
 
         // Move Obstacles
         for (let i = obstacles.current.length - 1; i >= 0; i--) {
@@ -862,212 +874,221 @@ const GameView = () => {
   };
 
   return (
-    <div ref={containerRef} className="fixed inset-0 w-full h-full z-40 bg-black overflow-hidden select-none font-mono touch-none">
-      {/* 3D WebGL screen */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block z-10 touch-none" />
+    <div className={`fixed inset-0 w-full h-full z-40 flex items-center justify-center p-4 sm:p-8 touch-none font-mono ${darkMode ? 'bg-[#050505]' : 'bg-[#F0F0F0]'}`}>
+      <div 
+        ref={containerRef} 
+        className={`relative w-full max-w-4xl aspect-[4/3] md:aspect-video rounded-[2rem] overflow-hidden select-none border-4 shadow-2xl transition-all duration-700
+          ${darkMode ? 'bg-black border-[#333] shadow-[0_0_60px_rgba(0,255,65,0.1)]' : 'bg-black border-white shadow-[0_0_60px_rgba(0,85,255,0.15)]'}`}
+      >
+        {/* CRT Scanline / Bezel Overlay for retro charm */}
+        <div className="absolute inset-0 z-50 pointer-events-none opacity-20 bg-[linear-gradient(rgba(255,255,255,0),rgba(255,255,255,0)_50%,rgba(0,0,0,0.2)_50%,rgba(0,0,0,0.2))] bg-[length:100%_4px] rounded-[2rem] shadow-[inset_0_0_100px_rgba(0,0,0,0.9)]" />
 
-      {/* iOS 26 Liquid Glass Minimal HUD */}
-      {isPlaying && !gameOver && (
-        <div className="absolute inset-x-6 top-6 z-20 flex justify-between items-start pointer-events-none">
-          {/* Top Left: Score & Goals */}
-          <div className="flex flex-col gap-2 pointer-events-auto">
-            <div className="px-5 py-3 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl flex flex-col gap-0.5 text-white shadow-2xl">
-              <span className="text-[9px] uppercase opacity-40 tracking-widest font-bold">SCORE</span>
-              <span className="text-xl font-bold tracking-tight">{score.toString().padStart(5, '0')}</span>
-              <span className="text-[8px] opacity-30 uppercase tracking-widest pt-0.5 border-t border-white/5">BEST: {highScore}</span>
-            </div>
-            <div className="text-[10px] opacity-60 uppercase tracking-widest pl-2">
-              {!unlockedYellow && <span className="text-[#ffd700]/70">NEXT: YELLOW UNLOCK (500)</span>}
-              {unlockedYellow && !unlockedPink && <span className="text-[#ff007f]/70">NEXT: PINK UNLOCK (1500)</span>}
-              {unlockedPink && <span className="text-[#00FF41]/70">ALL COLORS UNLOCKED</span>}
-            </div>
-          </div>
+        {/* 3D WebGL screen */}
+        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block z-10 touch-none" />
 
-          {/* Top Center: Minimal Level Indicator */}
-          <div className="px-5 py-2 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl flex items-center gap-2 text-[#00ff41] shadow-2xl pointer-events-auto">
-            <Zap size={11} className="animate-pulse" />
-            <span className="text-[9px] font-bold tracking-widest uppercase">LEVEL {level}</span>
-          </div>
-
-          {/* Top Right: Lives and Exit */}
-          <div className="flex flex-col items-end gap-3 pointer-events-auto">
-            <div className="px-5 py-3 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl flex flex-col gap-1.5 shadow-2xl">
-              <span className="text-[9px] uppercase opacity-40 tracking-widest font-bold text-right">LIVES</span>
-              <div className="flex gap-1.5">
-                {[...Array(3)].map((_, i) => (
-                  <Heart
-                    key={i}
-                    size={13}
-                    className={`transition-all duration-300 ${
-                      i < lives 
-                        ? 'text-red-500 fill-red-500 filter drop-shadow-[0_0_4px_rgba(239,68,68,0.4)] scale-100' 
-                        : 'text-white/10 fill-none scale-90'
-                    }`}
-                  />
-                ))}
+        {/* iOS 26 Liquid Glass Minimal HUD */}
+        {isPlaying && !gameOver && (
+          <div className="absolute inset-x-4 md:inset-x-6 top-4 md:top-6 z-20 flex justify-between items-start pointer-events-none">
+            {/* Top Left: Score & Goals */}
+            <div className="flex flex-col gap-2 pointer-events-auto">
+              <div className="px-4 py-2 md:px-5 md:py-3 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl flex flex-col gap-0.5 text-white shadow-2xl">
+                <span className="text-[7px] md:text-[9px] uppercase opacity-40 tracking-widest font-bold">SCORE</span>
+                <span className="text-lg md:text-xl font-bold tracking-tight">{score.toString().padStart(5, '0')}</span>
+                <span className="text-[6px] md:text-[8px] opacity-30 uppercase tracking-widest pt-0.5 border-t border-white/5">BEST: {highScore}</span>
               </div>
-            </div>
-            
-            <button
-              onClick={handleExit}
-              className="p-2.5 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl text-white/60 hover:text-red-500 hover:border-red-500/30 transition-all shadow-xl cursor-pointer"
-              title="Close Runner"
-            >
-              <X size={14} />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* HUD Skin Color Selector (Floating Glass Cylinder on Right) */}
-      {isPlaying && !gameOver && (
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2.5 p-3 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl text-white shadow-2xl pointer-events-auto">
-          <span className="text-[7px] uppercase opacity-35 tracking-wider text-center font-bold pb-1.5 border-b border-white/5 mb-0.5">COLOR</span>
-
-          {/* Green */}
-          <button
-            onClick={() => setSelectedColor('green')}
-            className={`w-8 h-8 rounded-full border transition-all flex items-center justify-center cursor-pointer shadow active:scale-90
-              ${selectedColor === 'green' 
-                ? 'border-[#00ff41] bg-[#00ff41]/10 scale-105 shadow-[0_0_8px_rgba(0,255,65,0.3)]' 
-                : 'border-white/10 hover:border-white/30 bg-[#00ff41]/5'}`}
-            title="Neon Green"
-          >
-            <div className="w-3.5 h-3.5 rounded-full bg-[#00ff41]" />
-          </button>
-
-          {/* Yellow */}
-          <button
-            onClick={() => unlockedYellow && setSelectedColor('yellow')}
-            className={`w-8 h-8 rounded-full border transition-all flex items-center justify-center shadow relative active:scale-90
-              ${!unlockedYellow ? 'opacity-30 cursor-not-allowed bg-black/40 border-white/5' : 'cursor-pointer'}
-              ${selectedColor === 'yellow' && unlockedYellow 
-                ? 'border-[#ffd700] bg-[#ffd700]/10 scale-105 shadow-[0_0_8px_rgba(255,215,0,0.3)]' 
-                : unlockedYellow 
-                  ? 'border-white/10 hover:border-white/30 bg-[#ffd700]/5' 
-                  : ''}`}
-            title={unlockedYellow ? "Neon Yellow" : "Locked (500 pts)"}
-          >
-            {unlockedYellow ? (
-              <div className="w-3.5 h-3.5 rounded-full bg-[#ffd700]" />
-            ) : (
-              <Lock size={10} className="text-white/40" />
-            )}
-          </button>
-
-          {/* Pink */}
-          <button
-            onClick={() => unlockedPink && setSelectedColor('pink')}
-            className={`w-8 h-8 rounded-full border transition-all flex items-center justify-center shadow relative active:scale-90
-              ${!unlockedPink ? 'opacity-30 cursor-not-allowed bg-black/40 border-white/5' : 'cursor-pointer'}
-              ${selectedColor === 'pink' && unlockedPink 
-                ? 'border-[#ff007f] bg-[#ff007f]/10 scale-105 shadow-[0_0_8px_rgba(255,0,127,0.3)]' 
-                : unlockedPink 
-                  ? 'border-white/10 hover:border-white/30 bg-[#ff007f]/5' 
-                  : ''}`}
-            title={unlockedPink ? "Neon Pink" : "Locked (1500 pts)"}
-          >
-            {unlockedPink ? (
-              <div className="w-3.5 h-3.5 rounded-full bg-[#ff007f]" />
-            ) : (
-              <Lock size={10} className="text-white/40" />
-            )}
-          </button>
-        </div>
-      )}
-
-      {/* Main Start / Game Over Frosted Glass overlay */}
-      {!isPlaying && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center p-6 bg-black/85 backdrop-blur-md">
-          <div className="relative w-full max-w-sm p-8 rounded-3xl border border-white/10 bg-white/[0.01] text-white shadow-[0_0_40px_rgba(0,255,65,0.08)] flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-300">
-            {/* Glowing menu orb */}
-            <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#00ff41]/5 border border-[#00ff41]/20 shadow-[0_0_20px_rgba(0,255,65,0.1)] mb-6 animate-pulse">
-              <Zap size={28} className="text-[#00ff41]" />
-            </div>
-
-            <h1 className="text-2xl font-syne font-extrabold tracking-tighter uppercase mb-1">
-              NEON BLOB RUNNER
-            </h1>
-            
-            <p className="text-[8px] text-white/40 tracking-widest uppercase mb-6">
-              iOS 26 Liquid Glass Generative Space
-            </p>
-
-            {/* Highscore pill */}
-            <div className="w-full flex justify-around border border-white/5 py-3 rounded-xl bg-white/[0.01] mb-6 font-mono text-xs">
-              <div className="flex flex-col gap-0.5">
-                <span className="text-[8px] uppercase opacity-35">High Score</span>
-                <span className="text-sm font-bold text-[#00ff41]">{highScore}</span>
-              </div>
-              <div className="w-px bg-white/10" />
-              <div className="flex flex-col gap-0.5">
-                <span className="text-[8px] uppercase opacity-35">Engine</span>
-                <span className="text-sm font-bold text-[#00ff41]">WebGL 3D</span>
+              <div className="text-[8px] md:text-[10px] opacity-60 uppercase tracking-widest pl-2">
+                {!unlockedYellow && <span className="text-[#ffd700]/70">NEXT: YELLOW (500)</span>}
+                {unlockedYellow && !unlockedPink && <span className="text-[#ff007f]/70">NEXT: PINK (1500)</span>}
+                {unlockedPink && <span className="text-[#00FF41]/70">ALL UNLOCKED</span>}
               </div>
             </div>
 
-            {/* User instructions */}
-            <div className="w-full text-left text-[9px] space-y-1.5 opacity-55 leading-relaxed border-t border-white/5 pt-4 mb-6 font-mono">
-              <p>• <strong>KEYBOARD:</strong> <span className="underline">Left/Right Arrows (or A/D)</span> to change lanes. <span className="underline">Spacebar (or Up Arrow)</span> to jump over obstacles.</p>
-              <p>• <strong>TOUCH SCREEN:</strong> <span className="underline">Swipe Left/Right</span> to slide. <span className="underline">Swipe Up / Tap</span> anywhere to jump.</p>
-              <p>• <strong>GOAL:</strong> Avoid red warning walls & collect golden crystal shards to unlock neon gel cores.</p>
+            {/* Top Center: Minimal Level Indicator */}
+            <div className="hidden md:flex px-5 py-2 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl items-center gap-2 text-[#00ff41] shadow-2xl pointer-events-auto mt-2">
+              <Zap size={11} className="animate-pulse" />
+              <span className="text-[9px] font-bold tracking-widest uppercase">LEVEL {level}</span>
             </div>
 
-            {/* CTA Glass buttons */}
-            <div className="w-full flex flex-col gap-2.5">
-              <button
-                onClick={startGame}
-                className="w-full py-3 px-6 rounded-xl bg-[#00ff41] text-black font-syne font-bold uppercase tracking-wider text-xs transition-all hover:scale-[1.01] hover:bg-[#00cc33] active:scale-95 shadow-[0_0_15px_rgba(0,255,65,0.22)] cursor-pointer flex items-center justify-center gap-1.5"
-              >
-                <Play size={12} fill="black" /> {gameOver ? 'RUN AGAIN' : 'START RUNNER'}
-              </button>
-
+            {/* Top Right: Lives and Exit */}
+            <div className="flex flex-col items-end gap-3 pointer-events-auto">
+              <div className="px-4 py-2 md:px-5 md:py-3 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl flex flex-col gap-1.5 shadow-2xl">
+                <span className="text-[7px] md:text-[9px] uppercase opacity-40 tracking-widest font-bold text-right">LIVES</span>
+                <div className="flex gap-1.5">
+                  {[...Array(3)].map((_, i) => (
+                    <Heart
+                      key={i}
+                      size={13}
+                      className={`transition-all duration-300 ${
+                        i < lives 
+                          ? 'text-red-500 fill-red-500 filter drop-shadow-[0_0_4px_rgba(239,68,68,0.4)] scale-100' 
+                          : 'text-white/10 fill-none scale-90'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+              
               <button
                 onClick={handleExit}
-                className="w-full py-3 px-6 rounded-xl border border-white/10 bg-transparent text-white/50 font-syne font-bold uppercase tracking-wider text-[10px] transition-all hover:bg-white/5 cursor-pointer"
+                className="p-2 md:p-2.5 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl text-white/60 hover:text-red-500 hover:border-red-500/30 transition-all shadow-xl cursor-pointer"
+                title="Close Runner"
               >
-                RETURN TO HOME
+                <X size={14} />
               </button>
             </div>
+          </div>
+        )}
 
-            {/* GAME OVER CARD OVERLAY */}
-            {gameOver && (
-              <div className="absolute inset-x-5 top-5 bottom-5 rounded-2xl bg-black/98 border border-red-500/20 flex flex-col items-center justify-center p-6 text-center animate-in fade-in zoom-in-95 duration-200">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-red-500/10 border border-red-500/25 text-red-500 mb-4 animate-bounce">
-                  <Heart size={18} />
-                </div>
-                <h2 className="text-xl font-syne font-extrabold uppercase text-red-500 mb-0.5">GAME OVER</h2>
-                <p className="text-[8px] text-white/40 tracking-wider uppercase mb-5">Capsule core depleted</p>
-                
-                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.01] w-full mb-5 font-mono text-center space-y-0.5">
-                  <div className="text-[8px] opacity-35 uppercase">FINAL SCORE</div>
-                  <div className="text-2xl font-extrabold text-white">{score}</div>
-                  {score >= highScore && score > 0 && (
-                    <div className="text-[8px] text-[#00ff41] uppercase tracking-widest font-bold pt-0.5">
-                      ★ NEW RECORD ★
-                    </div>
-                  )}
-                </div>
+        {/* HUD Skin Color Selector (Floating Glass Cylinder on Right) */}
+        {isPlaying && !gameOver && (
+          <div className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2.5 p-2 md:p-3 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl text-white shadow-2xl pointer-events-auto scale-90 md:scale-100 transform origin-right">
+            <span className="text-[6px] md:text-[7px] uppercase opacity-35 tracking-wider text-center font-bold pb-1.5 border-b border-white/5 mb-0.5">COLOR</span>
 
-                <div className="w-full flex flex-col gap-2.5">
-                  <button
-                    onClick={startGame}
-                    className="w-full py-3 px-6 rounded-xl bg-red-500 text-white font-syne font-bold uppercase tracking-wider text-xs transition-all hover:scale-[1.01] hover:bg-red-600 active:scale-95 shadow-[0_0_15px_rgba(239,68,68,0.25)] cursor-pointer flex items-center justify-center gap-1.5"
-                  >
-                    <RefreshCw size={11} className="animate-spin-slow" /> RETRY RUN
-                  </button>
-                  <button
-                    onClick={handleExit}
-                    className="w-full py-3 px-6 rounded-xl border border-white/10 bg-transparent text-white/50 font-syne font-bold uppercase tracking-wider text-[10px] transition-all hover:bg-white/5 cursor-pointer"
-                  >
-                    EXIT
-                  </button>
+            {/* Green */}
+            <button
+              onClick={() => setSelectedColor('green')}
+              className={`w-7 h-7 md:w-8 md:h-8 rounded-full border transition-all flex items-center justify-center cursor-pointer shadow active:scale-90
+                ${selectedColor === 'green' 
+                  ? 'border-[#00ff41] bg-[#00ff41]/10 scale-105 shadow-[0_0_8px_rgba(0,255,65,0.3)]' 
+                  : 'border-white/10 hover:border-white/30 bg-[#00ff41]/5'}`}
+              title="Neon Green"
+            >
+              <div className="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full bg-[#00ff41]" />
+            </button>
+
+            {/* Yellow */}
+            <button
+              onClick={() => unlockedYellow && setSelectedColor('yellow')}
+              className={`w-7 h-7 md:w-8 md:h-8 rounded-full border transition-all flex items-center justify-center shadow relative active:scale-90
+                ${!unlockedYellow ? 'opacity-30 cursor-not-allowed bg-black/40 border-white/5' : 'cursor-pointer'}
+                ${selectedColor === 'yellow' && unlockedYellow 
+                  ? 'border-[#ffd700] bg-[#ffd700]/10 scale-105 shadow-[0_0_8px_rgba(255,215,0,0.3)]' 
+                  : unlockedYellow 
+                    ? 'border-white/10 hover:border-white/30 bg-[#ffd700]/5' 
+                    : ''}`}
+              title={unlockedYellow ? "Neon Yellow" : "Locked (500 pts)"}
+            >
+              {unlockedYellow ? (
+                <div className="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full bg-[#ffd700]" />
+              ) : (
+                <Lock size={10} className="text-white/40" />
+              )}
+            </button>
+
+            {/* Pink */}
+            <button
+              onClick={() => unlockedPink && setSelectedColor('pink')}
+              className={`w-7 h-7 md:w-8 md:h-8 rounded-full border transition-all flex items-center justify-center shadow relative active:scale-90
+                ${!unlockedPink ? 'opacity-30 cursor-not-allowed bg-black/40 border-white/5' : 'cursor-pointer'}
+                ${selectedColor === 'pink' && unlockedPink 
+                  ? 'border-[#ff007f] bg-[#ff007f]/10 scale-105 shadow-[0_0_8px_rgba(255,0,127,0.3)]' 
+                  : unlockedPink 
+                    ? 'border-white/10 hover:border-white/30 bg-[#ff007f]/5' 
+                    : ''}`}
+              title={unlockedPink ? "Neon Pink" : "Locked (1500 pts)"}
+            >
+              {unlockedPink ? (
+                <div className="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full bg-[#ff007f]" />
+              ) : (
+                <Lock size={10} className="text-white/40" />
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* Main Start / Game Over Frosted Glass overlay */}
+        {!isPlaying && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
+            <div className="relative w-full max-w-sm p-6 md:p-8 rounded-3xl border border-white/10 bg-white/[0.01] text-white shadow-[0_0_40px_rgba(0,255,65,0.08)] flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-300">
+              {/* Glowing menu orb */}
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center bg-[#00ff41]/5 border border-[#00ff41]/20 shadow-[0_0_20px_rgba(0,255,65,0.1)] mb-4 md:mb-6 animate-pulse">
+                <Zap size={24} className="text-[#00ff41]" />
+              </div>
+
+              <h1 className="text-xl md:text-2xl font-syne font-extrabold tracking-tighter uppercase mb-1">
+                NEON BLOB RUNNER
+              </h1>
+              
+              <p className="text-[7px] md:text-[8px] text-white/40 tracking-widest uppercase mb-4 md:mb-6">
+                iOS 26 Liquid Glass Generative Space
+              </p>
+
+              {/* Highscore pill */}
+              <div className="w-full flex justify-around border border-white/5 py-2 md:py-3 rounded-xl bg-white/[0.01] mb-4 md:mb-6 font-mono text-xs">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[7px] md:text-[8px] uppercase opacity-35">High Score</span>
+                  <span className="text-xs md:text-sm font-bold text-[#00ff41]">{highScore}</span>
+                </div>
+                <div className="w-px bg-white/10" />
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[7px] md:text-[8px] uppercase opacity-35">Engine</span>
+                  <span className="text-xs md:text-sm font-bold text-[#00ff41]">WebGL 3D</span>
                 </div>
               </div>
-            )}
+
+              {/* User instructions */}
+              <div className="w-full text-left text-[8px] md:text-[9px] space-y-1.5 opacity-55 leading-relaxed border-t border-white/5 pt-4 mb-4 md:mb-6 font-mono hidden sm:block">
+                <p>• <strong>KEYBOARD:</strong> <span className="underline">Left/Right Arrows (or A/D)</span> to change lanes. <span className="underline">Spacebar (or Up Arrow)</span> to jump over obstacles.</p>
+                <p>• <strong>TOUCH SCREEN:</strong> <span className="underline">Swipe Left/Right</span> to slide. <span className="underline">Swipe Up / Tap</span> anywhere to jump.</p>
+                <p>• <strong>GOAL:</strong> Avoid red warning walls & collect golden crystal shards to unlock neon gel cores.</p>
+              </div>
+
+              {/* CTA Glass buttons */}
+              <div className="w-full flex flex-col gap-2.5">
+                <button
+                  onClick={startGame}
+                  className="w-full py-2.5 md:py-3 px-6 rounded-xl bg-[#00ff41] text-black font-syne font-bold uppercase tracking-wider text-[10px] md:text-xs transition-all hover:scale-[1.01] hover:bg-[#00cc33] active:scale-95 shadow-[0_0_15px_rgba(0,255,65,0.22)] cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Play size={12} fill="black" /> {gameOver ? 'RUN AGAIN' : 'START RUNNER'}
+                </button>
+
+                <button
+                  onClick={handleExit}
+                  className="w-full py-2.5 md:py-3 px-6 rounded-xl border border-white/10 bg-transparent text-white/50 font-syne font-bold uppercase tracking-wider text-[9px] md:text-[10px] transition-all hover:bg-white/5 cursor-pointer"
+                >
+                  RETURN TO HOME
+                </button>
+              </div>
+
+              {/* GAME OVER CARD OVERLAY */}
+              {gameOver && (
+                <div className="absolute inset-x-4 md:inset-x-5 top-4 md:top-5 bottom-4 md:bottom-5 rounded-2xl bg-black/98 border border-red-500/20 flex flex-col items-center justify-center p-4 md:p-6 text-center animate-in fade-in zoom-in-95 duration-200 z-50">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center bg-red-500/10 border border-red-500/25 text-red-500 mb-3 md:mb-4 animate-bounce">
+                    <Heart size={16} md:size={18} />
+                  </div>
+                  <h2 className="text-lg md:text-xl font-syne font-extrabold uppercase text-red-500 mb-0.5">GAME OVER</h2>
+                  <p className="text-[7px] md:text-[8px] text-white/40 tracking-wider uppercase mb-4 md:mb-5">Capsule core depleted</p>
+                  
+                  <div className="p-3 md:p-3.5 rounded-xl border border-white/5 bg-white/[0.01] w-full mb-4 md:mb-5 font-mono text-center space-y-0.5">
+                    <div className="text-[7px] md:text-[8px] opacity-35 uppercase">FINAL SCORE</div>
+                    <div className="text-xl md:text-2xl font-extrabold text-white">{score}</div>
+                    {score >= highScore && score > 0 && (
+                      <div className="text-[7px] md:text-[8px] text-[#00ff41] uppercase tracking-widest font-bold pt-0.5">
+                        ★ NEW RECORD ★
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="w-full flex flex-col gap-2">
+                    <button
+                      onClick={startGame}
+                      className="w-full py-2.5 md:py-3 px-6 rounded-xl bg-red-500 text-white font-syne font-bold uppercase tracking-wider text-[10px] md:text-xs transition-all hover:scale-[1.01] hover:bg-red-600 active:scale-95 shadow-[0_0_15px_rgba(239,68,68,0.25)] cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      <RefreshCw size={11} className="animate-spin-slow" /> RETRY RUN
+                    </button>
+                    <button
+                      onClick={handleExit}
+                      className="w-full py-2.5 md:py-3 px-6 rounded-xl border border-white/10 bg-transparent text-white/50 font-syne font-bold uppercase tracking-wider text-[9px] md:text-[10px] transition-all hover:bg-white/5 cursor-pointer"
+                    >
+                      EXIT
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

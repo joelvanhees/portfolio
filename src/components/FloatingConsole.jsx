@@ -82,7 +82,18 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
         // Expanded keyword matching / Interactive Q&A
         let matched = false;
         
-        if (cmd.includes('skill') || cmd.includes('tech') || cmd.includes('code') || cmd.includes('programmier') || cmd.includes('sprache')) {
+        if (cmd === 'hi' || cmd === 'hello' || cmd === 'hallo' || cmd === 'hey' || cmd === 'moin' || cmd === 'servus' || cmd === 'yo' || cmd === 'guten tag' || cmd === 'was geht') {
+          const helloResponses = [
+            "Hallo Mensch! Wie kann ich dir heute helfen? Tippe 'help' für Befehle.",
+            "Hi! Schön, dass du den Weg in meine Kommandozeile gefunden hast. 👾",
+            "Hey! Du tippst verdammt flüssig. Was steht heute auf der Agenda?",
+            "Moin Moin! Bereit, ein bisschen High-End-Code anzuschauen?",
+            "Servus! Suchst du nach 'projects', 'skills' oder einfach nur ein bisschen Inspiration?"
+          ];
+          const randomHello = helloResponses[Math.floor(Math.random() * helloResponses.length)];
+          newHistory.push({ text: randomHello });
+          matched = true;
+        } else if (cmd.includes('skill') || cmd.includes('tech') || cmd.includes('code') || cmd.includes('programmier') || cmd.includes('sprache')) {
           newHistory.push({
             text: 'TECH STACK & CAPABILITIES:\n- Frontend: React, JavaScript (ES6+), HTML5, CSS3, Tailwind CSS\n- Creative: Three.js, WebGL, Shaders (GLSL), Canvas API, generative systems\n- Design: Figma (layout, UI/UX systems), Adobe Creative Suite (Illustrator, Photoshop, After Effects)\n- Tools: Vite, Git, Vercel, npm'
           });
@@ -123,9 +134,18 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
         }
         
         if (!matched) {
-          newHistory.push({ 
-            text: `shell: command or question not understood: "${cmd}".\nType "help" for active commands or ask me about "services", "skills", "experience", "joel", "figma", etc.` 
-          });
+          const sassyResponses = [
+            "Ich bin eine Kommandozeile, kein Orakel. Aber netter Versuch! 😉 Tippe 'help' für echte Befehle.",
+            "Das steht leider nicht in meinem Drehbuch. Frag mich doch lieber nach 'projects' oder 'skills'!",
+            "Fehler 404: Antwort nicht gefunden. Aber hey, meine grüne/blaue Schrift sieht wenigstens extrem edel aus, oder?",
+            "Spannende Eingabe! Klingt fast wie ein geheimer Cheatcode, aber meine Firewall blockiert das. Probier mal 'help'.",
+            "Joel hat mir vieles beigebracht, aber diese Frage übersteigt meine aktuellen Schaltkreise. Frag mich mal nach 'about'!",
+            "Ich könnte dir das jetzt im Detail erklären, aber dann müsste ich dich in den Cooldown-Pool werfen. 🏊‍♂️ 'cooldown'",
+            "Das ist so 2025! Wir leben in der Zukunft. Frag mich lieber nach meinen echten 'skills' oder 'services'!",
+            "Interessanter Gedanke. Ich wette, die Antwort darauf liegt irgendwo im dekolonialen Bus-Essay... 🚌 'checkyourbus'"
+          ];
+          const randomSassy = sassyResponses[Math.floor(Math.random() * sassyResponses.length)];
+          newHistory.push({ text: randomSassy });
         }
     }
 

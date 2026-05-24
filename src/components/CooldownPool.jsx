@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { X, Code, Shield, Eye, Layers } from 'lucide-react';
+import { X, Code, Shield, Eye, Layers, Info } from 'lucide-react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
@@ -15,6 +15,18 @@ const CooldownPool = ({ darkMode, onClose }) => {
 
   const [loading, setLoading] = useState(true);
   const [isHoveringPool, setIsHoveringPool] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [infoClosed, setInfoClosed] = useState(false);
+  const [infoOpenManual, setInfoOpenManual] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobileDevice(window.matchMedia('(max-width: 768px)').matches);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // --- AUDIO EFFECTS: WATER LOOP & PROCEDURAL BUBBLES ---
   useEffect(() => {
@@ -533,19 +545,29 @@ const CooldownPool = ({ darkMode, onClose }) => {
 
       {/* Interactive Raycast Hover Info Card */}
       <div 
-        className={`absolute bottom-32 left-6 right-6 md:left-6 md:right-auto z-40 max-w-sm font-mono text-[10px] md:text-xs transition-all duration-500 ease-out transform pointer-events-none
-          ${isHoveringPool 
+        className={`absolute bottom-24 left-6 right-6 md:left-6 md:right-auto z-40 max-w-sm font-mono text-[10px] md:text-xs transition-all duration-500 ease-out transform pointer-events-none
+          ${(infoOpenManual || (!isMobileDevice && isHoveringPool && !infoClosed)) 
             ? 'opacity-100 translate-y-0 scale-100' 
             : 'opacity-0 translate-y-4 scale-95'}`}
       >
-        <div className={`p-5 md:p-6 rounded-2xl border shadow-2xl backdrop-blur-md flex flex-col gap-2.5
+        <div className={`p-5 md:p-6 rounded-2xl border shadow-2xl backdrop-blur-md flex flex-col gap-2.5 pointer-events-auto
           ${darkMode 
             ? 'bg-black/85 border-[#00FF41]/35 text-[#00FF41] shadow-[0_0_40px_rgba(0,255,65,0.15)] shadow-black/80' 
             : 'bg-white/90 border-[#0055FF]/35 text-[#0055FF] shadow-[0_0_30px_rgba(0,85,255,0.15)] shadow-black/10'}`}
         >
-          <div className="flex items-center gap-2 border-b border-current pb-2 font-bold uppercase tracking-wider text-[11px] md:text-xs">
-            <Code size={14} className="animate-pulse" />
-            <span>[ SYSTEM CORE: GLASS LIQUID BASIN ]</span>
+          <div className="flex justify-between items-center border-b border-current pb-2">
+            <div className="flex items-center gap-2 font-bold uppercase tracking-wider text-[11px] md:text-xs">
+              <button 
+                onClick={() => {
+                  setInfoClosed(true);
+                  setInfoOpenManual(false);
+                }}
+                className="w-3.5 h-3.5 rounded-full bg-[#FF5F56] hover:bg-[#E0443E] transition-all cursor-pointer border-none p-0 flex items-center justify-center pointer-events-auto"
+                title="Schließen"
+              />
+              <Code size={14} className="ml-1.5 animate-pulse" />
+              <span>[ SYSTEM CORE: GLASS LIQUID BASIN ]</span>
+            </div>
           </div>
           <p className="leading-relaxed opacity-95 text-[11px]">
             Designed, developed, and mathematically modeled by <strong className="underline">Joel van Hees</strong>.
@@ -587,6 +609,21 @@ const CooldownPool = ({ darkMode, onClose }) => {
           END COOLDOWN
         </button>
       </div>
+
+      {/* Floating Info Toggle Button (perfectly visible on both mobile and desktop) */}
+      <button
+        onClick={() => {
+          setInfoOpenManual(prev => !prev);
+          setInfoClosed(false);
+        }}
+        title="Details anzeigen"
+        className={`absolute bottom-6 left-6 p-4 rounded-full border shadow-2xl z-40 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer flex items-center justify-center
+          ${darkMode 
+            ? 'bg-black/80 border-[#00FF41]/40 text-[#00FF41] hover:shadow-[0_0_20px_rgba(0,255,65,0.4)]' 
+            : 'bg-white/90 border-[#0055FF]/40 text-[#0055FF] hover:shadow-[0_0_20px_rgba(0,85,255,0.4)]'}`}
+      >
+        <Info size={18} />
+      </button>
 
       {/* Top right close button */}
       <button 

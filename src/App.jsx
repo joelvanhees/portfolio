@@ -9,6 +9,7 @@ import ContactView from './views/ContactView';
 import ProjectModal from './components/ProjectModal';
 import FloatingConsole from './components/FloatingConsole';
 import CooldownPool from './components/CooldownPool';
+import TransparentLogo from './components/TransparentLogo';
 
 import { buildProjects } from './content/projects.jsx';
 
@@ -99,9 +100,23 @@ const App = () => {
   }, [darkMode]);
 
   useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    
+    // Scroll immediately
     window.scrollTo(0, 0);
     document.documentElement.scrollTo(0, 0);
     document.body.scrollTo(0, 0);
+
+    // Reinforce scroll in the next frame to prevent browser layout jumping
+    const handle = requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTo(0, 0);
+      document.body.scrollTo(0, 0);
+    });
+
+    return () => cancelAnimationFrame(handle);
   }, [activePage]);
 
   useEffect(() => {
@@ -172,23 +187,29 @@ const App = () => {
       <nav className="fixed w-full z-40 px-6 py-6 flex justify-between items-center text-white">
         <button
           onClick={() => handleNav('home')}
-          className="text-xs sm:text-base md:text-xl font-bold tracking-tighter cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-1.5 bg-transparent border-none p-0"
-          style={{
-            background: darkMode
-              ? 'linear-gradient(180deg, #ffffff 40%, rgba(255,255,255,0.45) 70%, rgba(0,255,65,0.9) 100%)'
-              : 'linear-gradient(180deg, #0a0a0a 40%, rgba(0,0,0,0.5) 70%, rgba(0,85,255,0.9) 100%)',
-            WebkitBackgroundClip: 'text',
-            backgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            textShadow: darkMode
-              ? '0px 1px 1px rgba(255,255,255,0.65), 0px -1px 1px rgba(0,0,0,0.7), 0px 0px 8px rgba(0,255,65,0.45)'
-              : '0px 1px 1px rgba(255,255,255,0.9), 0px -1px 1px rgba(0,0,0,0.25), 0px 0px 8px rgba(0,85,255,0.35)',
-            filter: darkMode
-              ? 'drop-shadow(0px 8px 16px rgba(0,0,0,0.35))'
-              : 'drop-shadow(0px 4px 10px rgba(0,0,0,0.12))',
-          }}
+          className="cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-2 md:gap-3 bg-transparent border-none p-0"
         >
-          JOEL VAN HEES <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded uppercase font-mono tracking-widest ${darkMode ? 'bg-[#00FF41]/15 text-[#00FF41] border border-[#00FF41]/25' : 'bg-[#0055FF]/10 text-[#0055FF] border border-[#0055FF]/20'}`}>[ARCHITECT]</span>
+          <TransparentLogo className="w-5 h-5 md:w-6.5 md:h-6.5 hidden md:inline-block rounded-full shadow-[0_0_12px_rgba(0,255,65,0.15)] border border-white/10" />
+          <span
+            className="text-xs sm:text-base md:text-xl font-bold tracking-tighter"
+            style={{
+              background: darkMode
+                ? 'linear-gradient(180deg, #ffffff 40%, rgba(255,255,255,0.45) 70%, rgba(0,255,65,0.9) 100%)'
+                : 'linear-gradient(180deg, #0a0a0a 40%, rgba(0,0,0,0.5) 70%, rgba(0,85,255,0.9) 100%)',
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textShadow: darkMode
+                ? '0px 1px 1px rgba(255,255,255,0.65), 0px -1px 1px rgba(0,0,0,0.7), 0px 0px 8px rgba(0,255,65,0.45)'
+                : '0px 1px 1px rgba(255,255,255,0.9), 0px -1px 1px rgba(0,0,0,0.25), 0px 0px 8px rgba(0,85,255,0.35)',
+              filter: darkMode
+                ? 'drop-shadow(0px 8px 16px rgba(0,0,0,0.35))'
+                : 'drop-shadow(0px 4px 10px rgba(0,0,0,0.12))',
+            }}
+          >
+            JOEL VAN HEES
+          </span>
+          <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded uppercase font-mono tracking-widest ${darkMode ? 'bg-[#00FF41]/15 text-[#00FF41] border border-[#00FF41]/25' : 'bg-[#0055FF]/10 text-[#0055FF] border border-[#0055FF]/20'}`}>[ARCHITECT]</span>
         </button>
 
         <div className="flex items-center gap-2 sm:gap-6 mix-blend-difference">
@@ -230,6 +251,7 @@ const App = () => {
 
       {menuOpen && (
         <div className={`fixed inset-0 z-30 flex flex-col justify-center items-center gap-6 text-3xl md:text-5xl font-syne font-bold ${darkMode ? 'bg-black/95' : 'bg-white/95'} backdrop-blur-xl`}>
+          <TransparentLogo className="w-20 h-20 md:w-28 md:h-28 mb-4 hover:scale-110 transition-all duration-500 cursor-pointer drop-shadow-[0_0_20px_rgba(0,255,65,0.2)]" onClick={() => handleNav('home')} />
           {['HOME', 'WORK', 'SERVICES', 'ABOUT', 'CONTACT'].map((item, i) => (
             <button
               key={item}

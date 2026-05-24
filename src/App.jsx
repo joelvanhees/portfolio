@@ -111,19 +111,31 @@ const App = () => {
       window.history.scrollRestoration = 'manual';
     }
     
-    // Scroll immediately
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTo(0, 0);
-    document.body.scrollTo(0, 0);
+    // Disable smooth scrolling temporarily to prevent page-change layout jumps
+    const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
+    
+    // Scroll immediately and instantly
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.body.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
     // Reinforce scroll in the next frame to prevent browser layout jumping
     const handle = requestAnimationFrame(() => {
-      window.scrollTo(0, 0);
-      document.documentElement.scrollTo(0, 0);
-      document.body.scrollTo(0, 0);
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      document.documentElement.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      document.body.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      
+      // Restore smooth scroll behavior in the next cycle
+      setTimeout(() => {
+        document.documentElement.style.scrollBehavior = originalScrollBehavior;
+      }, 50);
     });
 
-    return () => cancelAnimationFrame(handle);
+    return () => {
+      cancelAnimationFrame(handle);
+      document.documentElement.style.scrollBehavior = originalScrollBehavior;
+    };
   }, [activePage]);
 
   useEffect(() => {
@@ -499,10 +511,15 @@ const App = () => {
           onTriggerCooldown={() => setCooldownActive(true)}
         />
       )}
-      {consoleOpen && consoleMinimized && (
+      {(!consoleOpen || consoleMinimized) && (
         <button
-          onClick={() => setConsoleMinimized(false)}
-          title="Restore System Shell"
+          onClick={() => {
+            if (!consoleOpen) {
+              setConsoleOpen(true);
+            }
+            setConsoleMinimized(false);
+          }}
+          title={consoleMinimized ? "Restore System Shell" : "Open System Shell"}
           className="fixed bottom-6 right-6 z-[90] cursor-pointer transition-all duration-300 hover:scale-110 hover:-translate-y-2 flex items-center justify-center border-none bg-transparent outline-none drop-shadow-2xl"
         >
           <ShellBlob isThinking={false} darkMode={darkMode} className="w-32 h-32 md:w-44 md:h-44 pointer-events-none" />

@@ -1160,35 +1160,23 @@ const GameView = ({ darkMode, onClose }) => {
                 </div>
               </div>
 
-              {/* GAME OVER CARD OVERLAY */}
+              {/* GAME OVER CARD OVERLAY (Ultra-Minimalist pure black screen style!) */}
               {gameOver && (
-                <div className="absolute inset-x-4 md:inset-x-5 top-4 md:top-5 bottom-4 md:bottom-5 rounded-2xl bg-black/98 border border-red-500/20 flex flex-col items-center justify-center p-4 md:p-6 text-center animate-in fade-in zoom-in-95 duration-200 z-50">
-                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center bg-red-500/10 border border-red-500/25 text-red-500 mb-3 md:mb-4 animate-bounce">
-                    <Heart size={16} />
-                  </div>
-                  <h2 className="text-lg md:text-xl font-syne font-extrabold uppercase text-red-500 mb-0.5">GAME OVER</h2>
-                  <p className="text-[7px] md:text-[8px] text-white/40 tracking-wider uppercase mb-4 md:mb-5">Capsule core depleted</p>
-                  
-                  <div className="p-3 md:p-3.5 rounded-xl border border-white/5 bg-white/[0.01] w-full mb-4 md:mb-5 font-mono text-center space-y-0.5">
-                    <div className="text-[7px] md:text-[8px] opacity-35 uppercase">FINAL SCORE</div>
-                    <div className="text-xl md:text-2xl font-extrabold text-white">{score}</div>
-                    {score >= highScore && score > 0 && (
-                      <div className="text-[7px] md:text-[8px] text-[#00ff41] uppercase tracking-widest font-bold pt-0.5">
-                        ★ NEW RECORD ★
-                      </div>
-                    )}
-                  </div>
+                <div className="absolute inset-0 bg-black flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300 z-50">
+                  <h2 className="text-3xl md:text-4xl font-syne font-extrabold tracking-tighter uppercase text-red-500 mb-8 animate-pulse">
+                    GAME OVER
+                  </h2>
 
-                  <div className="w-full flex flex-col gap-2">
+                  <div className="w-full max-w-xs flex flex-col gap-3">
                     <button
                       onClick={startGame}
-                      className="w-full py-2.5 md:py-3 px-6 rounded-xl bg-red-500 text-white font-syne font-bold uppercase tracking-wider text-[10px] md:text-xs transition-all hover:scale-[1.01] hover:bg-red-600 active:scale-95 shadow-[0_0_15px_rgba(239,68,68,0.25)] cursor-pointer flex items-center justify-center gap-1.5"
+                      className="w-full py-3 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-syne font-bold uppercase tracking-wider text-xs transition-all hover:scale-[1.01] active:scale-95 shadow-[0_0_15px_rgba(239,68,68,0.35)] cursor-pointer"
                     >
-                      <RefreshCw size={11} /> RETRY RUN
+                      PLAY AGAIN
                     </button>
                     <button
                       onClick={handleExit}
-                      className="w-full py-2.5 md:py-3 px-6 rounded-xl border border-white/10 bg-transparent text-white/50 font-syne font-bold uppercase tracking-wider text-[9px] md:text-[10px] transition-all hover:bg-white/5 cursor-pointer"
+                      className="w-full py-3 px-6 rounded-xl border border-white/10 hover:bg-white/5 text-white/50 font-syne font-bold uppercase tracking-wider text-xs transition-all cursor-pointer"
                     >
                       EXIT
                     </button>

@@ -210,6 +210,20 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
                 setTimeout(onTriggerCooldown, 800);
               }
               matched = true;
+            } else if (cmd.includes('geld') || cmd.includes('kosten') || cmd.includes('preis') || cmd.includes('budget') || cmd.includes('zahlen') || cmd.includes('honorar') || cmd.includes('cost') || cmd.includes('price') || cmd.includes('money') || cmd.includes('charge')) {
+              responseText = `PROJEKTKOSTEN & ANGEBOTE:\nFür Anfragen bezüglich Projektkosten, Budgetrahmen oder Honorarsätzen erstelle ich individuelle Angebote, die exakt auf den Umfang deines Vorhabens abgestimmt sind. Lass uns deine Vorstellungen besprechen und ein passendes Angebot kalkulieren!\n\nNutze den direkten Link zum Kontaktformular, um eine Anfrage zu senden, ${userName}:`;
+              customRender = () => (
+                <button 
+                  onClick={() => {
+                    window.location.hash = '#contact';
+                  }}
+                  className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-mono transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
+                    ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-[#0055FF] text-[#0055FF]'}`}
+                >
+                  [ GO_TO_CONTACT_FORM ↓ ]
+                </button>
+              );
+              matched = true;
             }
             
             if (!matched) {

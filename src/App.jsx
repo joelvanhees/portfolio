@@ -187,9 +187,8 @@ const App = () => {
       <nav className="fixed w-full z-40 px-6 py-6 flex justify-between items-center text-white">
         <button
           onClick={() => handleNav('home')}
-          className="cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-2 md:gap-3 bg-transparent border-none p-0"
+          className="cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-1.5 bg-transparent border-none p-0"
         >
-          <TransparentLogo className="w-5 h-5 md:w-6.5 md:h-6.5 hidden md:inline-block rounded-full shadow-[0_0_12px_rgba(0,255,65,0.15)] border border-white/10" />
           <span
             className="text-xs sm:text-base md:text-xl font-bold tracking-tighter"
             style={{

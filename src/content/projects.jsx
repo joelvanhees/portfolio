@@ -7,6 +7,7 @@ import carImg from '../assets/images/car_preview.jpg';
 import previewWebImg from '../assets/images/previewWEB.png';
 import checkYourBusImg from '../assets/images/check_your_bus_cover.jpg';
 import pdfFile from '../assets/pdf/feinkonzept_joelvanhees.pdf';
+import eyeImg1 from '../assets/images/eye_sculpture_1.png';
 
 export const buildProjects = ({ setActiveImage }) => [
   {
@@ -113,6 +114,20 @@ The P50 becomes a platform rather than a product.`,
     exhibitions: [
       "Superheroes Exhibition @ NRW-Forum Düsseldorf / Next Museum",
     ],
+  },
+  {
+    id: "08",
+    category: "3D PRINT / KINETIC / CODING / SCULPTURE",
+    title: "Gefängnisplanet I",
+    description: "A wall-mounted kinetic sculpture exploring modern digital captivity through feeds, notifications, and soft behavioral pulls.",
+    longDescription: `Gefängnisplanet I (Prison Planet) is a wall-mounted kinetic sculpture about a prison that no one builds for you. You build it yourself.
+
+You scroll instead of live. You watch instead of move. The cell has no walls and no door. It is made of feeds, of notifications, of the soft pull of one more minute. The strangest part is that you want it. The sculpture does not judge this. It only watches back.`,
+    warningText: "Gefängnisplanet I is part of an active funding process, shown here as a preview only, with all rights reserved by the artist.",
+    tech: ["Concept & Design", "Digital Sculpting", "3D Modelling", "3D Printing", "Kinetic Mechanism", "Hand Finishing", "Animatronics", "Mixed Media"],
+    visualComponent: <img src={eyeImg1} className="w-full h-full object-cover cursor-zoom-in" alt="Gefängnisplanet Preview" onClick={() => setActiveImage(eyeImg1)} />,
+    link: "#",
+    featured: true,
   },
   {
     id: "04",

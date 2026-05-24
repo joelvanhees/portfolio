@@ -134,7 +134,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
       const cols = Math.floor(width / 35) + 2;
       const rows = Math.floor(height / 35) + 2;
 
-      ctx.lineWidth = 1;
+      ctx.lineWidth = 1.35;
 
       // Draw horizontal lines
       for (let r = 0; r < rows; r++) {
@@ -170,8 +170,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
         }
 
         ctx.strokeStyle = darkMode
-          ? `rgba(0, 255, 65, ${scrollFade * (0.04 + Math.abs(Math.sin(time + r * 0.1)) * 0.04)})`
-          : `rgba(0, 85, 255, ${scrollFade * (0.06 + Math.abs(Math.sin(time + r * 0.1)) * 0.04)})`;
+          ? `rgba(0, 255, 65, ${scrollFade * (0.16 + Math.abs(Math.sin(time + r * 0.1)) * 0.12)})`
+          : `rgba(0, 85, 255, ${scrollFade * (0.20 + Math.abs(Math.sin(time + r * 0.1)) * 0.14)})`;
         ctx.stroke();
       }
 
@@ -209,8 +209,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
         }
 
         ctx.strokeStyle = darkMode
-          ? `rgba(0, 255, 65, ${scrollFade * (0.04 + Math.abs(Math.sin(time + c * 0.1)) * 0.04)})`
-          : `rgba(0, 85, 255, ${scrollFade * (0.06 + Math.abs(Math.sin(time + c * 0.1)) * 0.04)})`;
+          ? `rgba(0, 255, 65, ${scrollFade * (0.16 + Math.abs(Math.sin(time + c * 0.1)) * 0.12)})`
+          : `rgba(0, 85, 255, ${scrollFade * (0.20 + Math.abs(Math.sin(time + c * 0.1)) * 0.14)})`;
         ctx.stroke();
       }
 

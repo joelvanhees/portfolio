@@ -48,6 +48,10 @@ import logoMichael from '../assets/branding/logos/michaelanikoleit.logo.jpg';
 
 import { p50Data } from '../content/p50';
 
+import eyeImg1 from '../assets/images/eye_sculpture_1.png';
+import eyeImg2 from '../assets/images/eye_sculpture_2.png';
+import eyeImg3 from '../assets/images/eye_sculpture_3.png';
+
 const ProjectModal = ({
   selectedProject,
   darkMode,
@@ -144,6 +148,13 @@ const ProjectModal = ({
           </button>
         </div>
 
+        {selectedProject.warningText && (
+          <div className="bg-red-500/10 border-b border-red-500/30 px-6 py-3.5 text-center text-xs font-mono tracking-wider text-red-500 uppercase font-bold flex items-center justify-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+            {selectedProject.warningText}
+          </div>
+        )}
+
         <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
           <div className="flex flex-col gap-6">
             <div className={`relative w-full overflow-hidden flex items-center justify-center rounded-2xl ${darkMode ? 'bg-black/50' : 'bg-white/50'}
@@ -220,6 +231,22 @@ const ProjectModal = ({
                 </div>
                 <div className={`aspect-[3/2] w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
                   <LazyImage src={imgRef02} alt="UI Mockup" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setActiveImage(imgRef02)} />
+                </div>
+              </div>
+            )}
+
+            {selectedProject.id === "08" && (
+              <div className="flex flex-col gap-4 mt-4">
+                <div className={`aspect-[3.7/1] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
+                  <LazyImage src={eyeImg1} className="w-full h-full object-cover" alt="Gefängnisplanet I - V16 Ansichten" onClick={() => setActiveImage(eyeImg1)} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className={`aspect-[2.3/1] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
+                    <LazyImage src={eyeImg2} className="w-full h-full object-cover" alt="Gefängnisplanet I - Einbau" onClick={() => setActiveImage(eyeImg2)} />
+                  </div>
+                  <div className={`aspect-[2.3/1] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
+                    <LazyImage src={eyeImg3} className="w-full h-full object-cover" alt="Gefängnisplanet I - Querschnitt" onClick={() => setActiveImage(eyeImg3)} />
+                  </div>
                 </div>
               </div>
             )}

@@ -66,25 +66,34 @@ const ProjectModal = ({
 
   // Soundscape audio initializer
   useEffect(() => {
+    let activeAudio = null;
+
     if (selectedProject?.id === "07") {
-      audioRef.current = new Audio('/sound.mp3');
-      audioRef.current.loop = true;
-      audioRef.current.volume = 0.4;
-      const playAudio = async () => {
-        try {
-          await audioRef.current.play();
-          setIsPlayingSound(true);
-        } catch (e) {
-          console.log("Audio play blocked by browser. User interaction needed.");
-        }
-      };
-      playAudio();
+      activeAudio = new Audio('/sound.mp3');
+      activeAudio.loop = true;
+      activeAudio.volume = 0.4;
+      audioRef.current = activeAudio;
+
+      const playPromise = activeAudio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlayingSound(true);
+          })
+          .catch((err) => {
+            console.log("Audio play blocked or interrupted:", err);
+          });
+      }
     }
+
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
+      if (activeAudio) {
+        activeAudio.pause();
+        activeAudio.currentTime = 0; // reset playback position
         setIsPlayingSound(false);
+      }
+      if (audioRef.current) {
+        audioRef.current = null;
       }
     };
   }, [selectedProject]);

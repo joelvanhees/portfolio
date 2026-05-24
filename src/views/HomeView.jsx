@@ -88,20 +88,18 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
 
         <div className="w-full z-10">
           <div className="flex flex-col gap-0 w-full">
-            <div className="max-w-7xl mx-auto w-full">
-              <p className={`text-sm md:text-base mb-4 tracking-widest uppercase ${darkMode ? 'text-green-500' : 'text-blue-600'}`}>
-                <span className="animate-pulse">●</span> System Online
-              </p>
-            </div>
+            <p className={`text-sm md:text-base mb-6 md:mb-4 tracking-widest uppercase text-left w-full ${darkMode ? 'text-green-500' : 'text-blue-600'}`}>
+              <span className="animate-pulse">●</span> System Online
+            </p>
 
-            <h1 className="font-rubik text-[17vw] md:text-[15vw] leading-[0.78] tracking-tighter uppercase select-none w-full">
+            <h1 className="font-rubik text-[19vw] md:text-[15vw] leading-[0.85] md:leading-[0.78] tracking-tighter uppercase select-none w-full">
               <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-left"><ScrambleText text="Visual" delay={300} darkMode={darkMode} /></div>
               <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center"><ScrambleText text="Story" delay={600} darkMode={darkMode} /></div>
               <div className="glitch-hover cursor-default transition-colors text-right block whitespace-nowrap"><ScrambleText text="Teller" delay={900} darkMode={darkMode} /></div>
             </h1>
           </div>
 
-          <div className="max-w-7xl mx-auto w-full mt-12 md:mt-24 flex flex-col md:flex-row justify-between items-end border-t border-current pt-6 opacity-80">
+          <div className="max-w-7xl mx-auto w-full mt-16 md:mt-24 flex flex-col md:flex-row justify-between items-end border-t border-current pt-6 opacity-80">
             <div className="max-w-md">
               <p className="text-lg md:text-xl leading-relaxed">
                 Visual systems for brands, interfaces and narrative experiences.

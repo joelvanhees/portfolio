@@ -16,6 +16,40 @@ const CooldownPool = ({ darkMode, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [isHoveringPool, setIsHoveringPool] = useState(false);
 
+  // --- AUDIO EFFECTS: WATER LOOP & PROCEDURAL BUBBLES ---
+  useEffect(() => {
+    // 1. Water loop
+    const waterAudio = new Audio('/water.mp3');
+    waterAudio.loop = true;
+    waterAudio.volume = 0.35;
+    
+    const playPromise = waterAudio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(err => console.log("Water audio playback blocked:", err));
+    }
+
+    // 2. Procedural bubble triggers
+    const bubblesAudio = new Audio('/bubbles.mp3');
+    bubblesAudio.volume = 0.35;
+
+    const bubbleInterval = setInterval(() => {
+      if (Math.random() < 0.45) {
+        bubblesAudio.currentTime = 0;
+        bubblesAudio.volume = 0.15 + Math.random() * 0.3; // Randomize volume for organic feel
+        bubblesAudio.play().catch(err => console.log("Bubbles audio playback blocked:", err));
+      }
+    }, 7000);
+
+    // Cleanup
+    return () => {
+      waterAudio.pause();
+      waterAudio.currentTime = 0;
+      bubblesAudio.pause();
+      bubblesAudio.currentTime = 0;
+      clearInterval(bubbleInterval);
+    };
+  }, []);
+
   // --- 1. 2D VECTOR WAVE HEIGHTMAP ARRAYS ---
   const simWidth = 128;
   const simHeight = 128;

@@ -241,16 +241,16 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
         />
         <div className={`absolute inset-0 pointer-events-none opacity-[0.03] ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
 
-        <div className="w-full z-10 flex flex-col justify-between min-h-[70vh] md:min-h-0 md:justify-start">
+        <div className="w-full z-10 flex flex-col justify-between min-h-[70vh] md:min-h-0 md:justify-start pt-6 md:pt-16">
           <div className="flex flex-col gap-0 w-full">
             <p className={`text-sm md:text-base mb-6 md:mb-4 tracking-widest uppercase text-left w-full ${darkMode ? 'text-green-500' : 'text-blue-600'}`}>
               <span className="animate-pulse">●</span> System Online
             </p>
 
             <h1 className="font-rubik leading-[0.82] md:leading-[0.78] tracking-tighter uppercase select-none w-full flex flex-col items-center md:block">
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-left text-[20vw] md:text-[15vw] w-full"><ScrambleText text="Visual" delay={300} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[24vw] md:text-[15vw] w-full"><ScrambleText text="Story" delay={600} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-right text-[20vw] md:text-[15vw] w-full"><ScrambleText text="Teller" delay={900} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-left text-[23vw] md:text-[15vw] w-full"><ScrambleText text="Visual" delay={300} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[27vw] md:text-[15vw] w-full"><ScrambleText text="Story" delay={600} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-right text-[23vw] md:text-[15vw] w-full"><ScrambleText text="Teller" delay={900} darkMode={darkMode} /></div>
             </h1>
           </div>
 

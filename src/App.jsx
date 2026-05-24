@@ -223,7 +223,7 @@ const App = () => {
       </nav>
 
       {menuOpen && (
-        <div className={`fixed inset-0 z-30 flex flex-col justify-center items-center gap-8 text-4xl md:text-6xl font-syne font-bold ${darkMode ? 'bg-black/95' : 'bg-white/95'} backdrop-blur-xl`}>
+        <div className={`fixed inset-0 z-30 flex flex-col justify-center items-center gap-6 text-3xl md:text-5xl font-syne font-bold ${darkMode ? 'bg-black/95' : 'bg-white/95'} backdrop-blur-xl`}>
           {['HOME', 'WORK', 'SERVICES', 'ABOUT', 'CONTACT'].map((item, i) => (
             <button
               key={item}
@@ -233,6 +233,19 @@ const App = () => {
               {`0${i} // ${item}`}
             </button>
           ))}
+          {/* Dedicated Cooldown Menu Link */}
+          <button
+            onClick={() => {
+              setCooldownActive(true);
+              setMenuOpen(false);
+            }}
+            className={`text-xs font-mono tracking-widest mt-6 border px-4 py-2 rounded-full transition-all animate-pulse cursor-pointer hover:shadow-lg active:scale-95
+              ${darkMode 
+                ? 'border-[#00FF41]/30 text-[#00FF41] hover:bg-[#00FF41]/10 hover:border-[#00FF41]' 
+                : 'border-[#0055FF]/30 text-[#0055FF] hover:bg-[#0055FF]/10 hover:border-[#0055FF]'}`}
+          >
+            [ LAUNCH_COOLDOWN_POOL ≈ ]
+          </button>
         </div>
       )}
 
@@ -334,16 +347,18 @@ const App = () => {
         </div>
       )}
 
-      <ProjectModal
-        selectedProject={selectedProject}
-        darkMode={darkMode}
-        showVideoSequence={showVideoSequence}
-        setShowVideoSequence={setShowVideoSequence}
-        setSelectedProject={setSelectedProject}
-        setActiveImage={setActiveImage}
-        setActivePdf={setActivePdf}
-        onStartProject={handleStartProject}
-      />
+      {selectedProject && (
+        <ProjectModal
+          selectedProject={selectedProject}
+          darkMode={darkMode}
+          showVideoSequence={showVideoSequence}
+          setShowVideoSequence={setShowVideoSequence}
+          setSelectedProject={setSelectedProject}
+          setActiveImage={setActiveImage}
+          setActivePdf={setActivePdf}
+          onStartProject={handleStartProject}
+        />
+      )}
 
       {activeImage && (
         <div
@@ -441,10 +456,10 @@ const App = () => {
       )}
       {!isMobile && (
         <div 
-          className={`fixed w-8 h-8 rounded-full pointer-events-none z-[100] -translate-x-1/2 -translate-y-1/2 transition-shadow duration-300
+          className={`fixed w-12 h-12 rounded-full pointer-events-none z-[100] -translate-x-1/2 -translate-y-1/2 transition-shadow duration-300
             ${darkMode 
-              ? 'bg-white/5 border border-white/30 shadow-[inset_0_2.5px_5px_rgba(255,255,255,0.4),inset_0_-2.5px_5px_rgba(0,0,0,0.45),0_6px_20px_rgba(0,0,0,0.35)]' 
-              : 'bg-white/20 border border-white/55 shadow-[inset_0_2.5px_5px_rgba(255,255,255,0.6),inset_0_-2.5px_5px_rgba(0,0,0,0.25),0_6px_18px_rgba(0,0,0,0.18)]'} backdrop-blur-[10px]`}
+              ? 'bg-white/[0.01] border border-white/35 shadow-[inset_0_4px_6px_rgba(255,255,255,0.3),inset_0_-4px_6px_rgba(0,0,0,0.4),0_8px_24px_rgba(0,0,0,0.35)]' 
+              : 'bg-white/[0.04] border border-white/60 shadow-[inset_0_4px_6px_rgba(255,255,255,0.5),inset_0_-4px_6px_rgba(0,0,0,0.15),0_6px_16px_rgba(0,0,0,0.15)]'} backdrop-blur-[6px]`}
           style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}
         />
       )}

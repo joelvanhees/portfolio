@@ -488,12 +488,9 @@ const App = () => {
         <button
           onClick={() => setConsoleMinimized(false)}
           title="Restore System Shell"
-          className={`fixed bottom-6 right-6 p-3 rounded-full border shadow-2xl z-[90] cursor-pointer transition-all duration-300 hover:scale-110 flex items-center justify-center
-            ${darkMode 
-              ? 'bg-black/60 backdrop-blur border-[#00FF41]/40 text-[#00FF41] hover:shadow-[0_0_20px_rgba(0,255,65,0.4)] shadow-[0_0_10px_rgba(0,255,65,0.2)]' 
-              : 'bg-white/60 backdrop-blur border-[#0055FF]/40 text-[#0055FF] hover:shadow-[0_0_20px_rgba(0,85,255,0.4)] shadow-[0_0_10px_rgba(0,85,255,0.2)]'}`}
+          className="fixed bottom-6 right-6 z-[90] cursor-pointer transition-all duration-300 hover:scale-110 hover:-translate-y-2 flex items-center justify-center border-none bg-transparent outline-none drop-shadow-2xl"
         >
-          <ShellBlob isThinking={false} darkMode={darkMode} className="w-8 h-8" />
+          <ShellBlob isThinking={false} darkMode={darkMode} className="w-20 h-20 md:w-24 md:h-24 pointer-events-none" />
         </button>
       )}
       {cooldownActive && (

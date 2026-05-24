@@ -6,11 +6,7 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
   const [input, setInput] = useState('');
   const [isMaximized, setIsMaximized] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
-  const [history, setHistory] = useState([
-    { text: 'JOEL VAN HEES [SYSTEM SHELL v1.1]', isSystem: true },
-    { text: 'Type "help" for executable commands or ask general questions.', isSystem: true },
-    { text: '', isSystem: true },
-  ]);
+  const [history, setHistory] = useState([]);
   const logEndRef = useRef(null);
 
   useEffect(() => {
@@ -203,7 +199,6 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
             </button>
           </div>
           <span className="opacity-90 flex items-center gap-2 font-bold ml-2">
-            <ShellBlob isThinking={isThinking} darkMode={darkMode} className="w-5 h-5" /> 
             SYSTEM SHELL // joel@architect:~
           </span>
         </div>
@@ -211,6 +206,13 @@ const FloatingConsole = ({ darkMode, toggleDarkMode, onClose, onMinimize, onTrig
 
       {/* Output screen */}
       <div className="flex-1 p-4 overflow-y-auto font-mono text-[11px] leading-relaxed space-y-2 whitespace-pre-wrap">
+        <div className="flex items-center gap-4 mb-6 pb-6 border-b border-current/10">
+          <ShellBlob isThinking={isThinking} darkMode={darkMode} className="w-16 h-16 md:w-24 md:h-24 shrink-0 drop-shadow-[0_0_15px_currentColor]" />
+          <div className="flex flex-col justify-center opacity-70">
+            <div className="font-bold mb-1">JOEL VAN HEES [SYSTEM SHELL v1.1]</div>
+            <div>Type "help" for executable commands or ask general questions.</div>
+          </div>
+        </div>
         {history.map((log, i) => (
           <div 
             key={i} 

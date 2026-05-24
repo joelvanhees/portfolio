@@ -179,8 +179,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
         }
 
         ctx.strokeStyle = darkMode
-          ? `rgba(0, 255, 65, ${currentFade * (0.15 + Math.abs(Math.sin(time + r * 0.1)) * 0.08)})`
-          : `rgba(0, 85, 255, ${currentFade * (0.18 + Math.abs(Math.sin(time + r * 0.1)) * 0.10)})`;
+          ? `rgba(0, 255, 65, ${currentFade * (0.05 + Math.abs(Math.sin(time + r * 0.1)) * 0.05)})`
+          : `rgba(0, 85, 255, ${currentFade * (0.08 + Math.abs(Math.sin(time + r * 0.1)) * 0.05)})`;
         ctx.stroke();
       }
 
@@ -218,8 +218,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
         }
 
         ctx.strokeStyle = darkMode
-          ? `rgba(0, 255, 65, ${currentFade * (0.15 + Math.abs(Math.sin(time + c * 0.1)) * 0.08)})`
-          : `rgba(0, 85, 255, ${currentFade * (0.18 + Math.abs(Math.sin(time + c * 0.1)) * 0.10)})`;
+          ? `rgba(0, 255, 65, ${currentFade * (0.05 + Math.abs(Math.sin(time + c * 0.1)) * 0.05)})`
+          : `rgba(0, 85, 255, ${currentFade * (0.08 + Math.abs(Math.sin(time + c * 0.1)) * 0.05)})`;
         ctx.stroke();
       }
 

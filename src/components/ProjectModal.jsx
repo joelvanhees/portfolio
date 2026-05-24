@@ -9,6 +9,7 @@ const TypographicClockVisual = lazy(() => import('./visuals/TypographicClockVisu
 const BufferOverflowVisual = lazy(() => import('./visuals/BufferOverflowVisual'));
 
 import previewWebImg from '../assets/images/previewWEB.png';
+import checkYourBusImg from '../assets/images/check_your_bus_preview.png';
 
 import imgRef01 from '../assets/images/IMG_REF_01.jpg';
 import imgRef02 from '../assets/images/IMG_REF_02.jpeg';
@@ -280,6 +281,26 @@ const ProjectModal = ({
                   <p className="text-lg font-light leading-relaxed mb-6">
                     Designed and produced the official 'Salatschüssel' plush toy as a physical extension of the digital brand. The process involved 3D character design, prototyping, and final production oversight.
                   </p>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-rubik font-bold mb-4 uppercase text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Literature & Interaction</h3>
+                  <p className="text-lg font-light leading-relaxed mb-6">
+                    Developed 'Check Your Bus', an interactive digital essay exploring decolonial critique (based on Machado de Oliveira's 'Hospicing Modernity') and liquid modernity. The project features custom canvas visualizations, sensory experiments, real-time reflection interfaces, and an immersive soundscape.
+                  </p>
+
+                  <div className="flex flex-col gap-4 mb-4">
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className={`aspect-video w-full rounded-xl border flex items-center justify-center overflow-hidden ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
+                        <img src={checkYourBusImg} loading="lazy" className="w-full h-full object-cover cursor-zoom-in" alt="Check Your Bus Preview" onClick={() => setActiveImage(checkYourBusImg)} />
+                      </div>
+                    </div>
+                    <div className="flex gap-4 mt-2">
+                      <a href="https://checkyourbus.vercel.app" target="_blank" rel="noopener noreferrer" className={`px-4 py-2 rounded-full text-xs font-mono border hover:bg-white hover:text-black transition-all ${darkMode ? 'border-white/20' : 'border-black/10'}`}>
+                        [LAUNCH_LIVE_SITE ↗]
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : selectedProject.id === "04" ? (

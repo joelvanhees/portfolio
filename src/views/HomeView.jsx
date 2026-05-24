@@ -164,7 +164,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
         <div className="max-w-7xl mx-auto">
           <div className="flex items-baseline justify-between mb-16 border-b border-current pb-4">
             <h2 className="text-sm font-mono uppercase tracking-widest">Selected Data</h2>
-            <span className="text-xs opacity-50">INDEX: 00—06</span>
+            <span className="text-xs opacity-50">INDEX: 00—07</span>
           </div>
 
           <div className="grid grid-cols-1 gap-20">

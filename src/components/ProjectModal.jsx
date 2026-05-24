@@ -62,11 +62,7 @@ const ProjectModal = ({
   const [isPlayingSound, setIsPlayingSound] = useState(false);
   const audioRef = useRef(null);
 
-  // Interactive bus dashboard states
-  const [bus1, setBus1] = useState("");
-  const [bus2, setBus2] = useState("");
-  const [bus3, setBus3] = useState("");
-  const [showBusResult, setShowBusResult] = useState(false);
+  // Selected project hooks
 
   // Soundscape audio initializer
   useEffect(() => {
@@ -369,132 +365,94 @@ const ProjectModal = ({
                   </button>
                 </div>
 
+                {/* Dedicated Launch Button directly under atmosphere */}
+                <div className="pt-2">
+                  <a 
+                    href="https://checkyourbus.vercel.app" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="w-full py-4 rounded-xl font-syne font-bold uppercase text-center transition-all hover:scale-[1.02] flex items-center justify-center gap-2 border bg-[#0022cc] text-[#ccff00] border-[#ccff00] hover:bg-[#ccff00] hover:text-[#0022cc] shadow-[0_0_20px_rgba(204,255,0,0.15)] cursor-pointer text-base"
+                  >
+                    Check Your Bus live ansehen ↗
+                  </a>
+                </div>
+
                 {/* Conceptual Strategy: Figma & Implementation */}
                 <div>
                   <h3 className="text-xl font-rubik font-bold mb-4 uppercase text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Design & Implementation</h3>
                   <p className="text-lg font-light leading-relaxed mb-6">
-                    Check Your Bus was first developed as a high-fidelity visual design system in **Figma** to establish precise glassmorphism grids, bold typographic hierarchy, and its signature electric blue and neon styling. 
+                    Check Your Bus was first developed as a high-fidelity visual design system in Figma to establish precise glassmorphism grids, bold typographic hierarchy, and its signature electric blue and neon styling. 
                   </p>
                   <p className="text-lg font-light leading-relaxed mb-6">
-                    It was subsequently custom-coded and engineered in **Vanilla HTML, CSS, and JavaScript** without any bulky external frameworks, ensuring maximum loading speed and ultra-smooth scrolling.
+                    It was subsequently custom-coded and engineered in Vanilla HTML, CSS, and JavaScript without any bulky external frameworks, ensuring maximum loading speed and ultra-smooth scrolling.
                   </p>
-                </div>
-
-                {/* Interactive Bus Dashboard (Simulated) */}
-                <div className={`p-6 rounded-2xl border ${darkMode ? 'border-[#ccff00]/20 bg-black/40' : 'border-[#0022cc]/20 bg-[#0022cc]/5'} shadow-2xl space-y-6`}>
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-mono font-bold uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#ccff00] to-[#00FF41]">
-                      [BUS_DASHBOARD.EXE]
-                    </h3>
-                    <span className="text-[10px] font-mono opacity-50 uppercase">[STATUS: INTERACTIVE]</span>
-                  </div>
-                  <p className="text-sm opacity-80 leading-relaxed font-mono">
-                    {'>'} Map the passengers steering your worldview right now:
-                  </p>
-
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-mono uppercase opacity-60 mb-2">1. Who or what is driving your decisions?</label>
-                      <input 
-                        type="text" 
-                        value={bus1} 
-                        onChange={(e) => setBus1(e.target.value)}
-                        placeholder="e.g. Rationality, parental expectations, ambition..." 
-                        className={`w-full p-3 rounded-xl border text-sm font-mono outline-none transition-all ${darkMode ? 'bg-black/60 border-white/10 text-white focus:border-[#ccff00]' : 'bg-white border-black/10 text-black focus:border-[#0022cc]'}`}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-mono uppercase opacity-60 mb-2">2. Which fear or voice shouts loudest?</label>
-                      <input 
-                        type="text" 
-                        value={bus2} 
-                        onChange={(e) => setBus2(e.target.value)}
-                        placeholder="e.g. Fear of failure, not being enough..." 
-                        className={`w-full p-3 rounded-xl border text-sm font-mono outline-none transition-all ${darkMode ? 'bg-black/60 border-white/10 text-white focus:border-[#ccff00]' : 'bg-white border-black/10 text-black focus:border-[#0022cc]'}`}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-mono uppercase opacity-60 mb-2">3. What sits in the back, unseen?</label>
-                      <input 
-                        type="text" 
-                        value={bus3} 
-                        onChange={(e) => setBus3(e.target.value)}
-                        placeholder="e.g. SUPPRESSED_DREAM.DAT, early childhood memory..." 
-                        className={`w-full p-3 rounded-xl border text-sm font-mono outline-none transition-all ${darkMode ? 'bg-black/60 border-white/10 text-white focus:border-[#ccff00]' : 'bg-white border-black/10 text-black focus:border-[#0022cc]'}`}
-                      />
-                    </div>
-
-                    <button 
-                      onClick={() => setShowBusResult(true)}
-                      disabled={!bus1 || !bus2 || !bus3}
-                      className={`w-full py-3 rounded-xl font-mono text-sm font-bold uppercase transition-all duration-300 ${(!bus1 || !bus2 || !bus3) ? 'opacity-40 cursor-not-allowed' : 'hover:scale-[1.01]'} ${darkMode ? 'bg-[#ccff00] text-black hover:bg-[#b5e000]' : 'bg-[#0022cc] text-white hover:bg-[#001bb3]'}`}
-                    >
-                      Analyze Bus Configuration
-                    </button>
-
-                    {showBusResult && (
-                      <div className={`p-4 rounded-xl border animate-in fade-in slide-in-from-bottom-4 duration-500 font-mono text-xs leading-relaxed ${darkMode ? 'bg-black/80 border-[#ccff00]/40 text-[#ccff00]' : 'bg-[#0022cc]/10 border-[#0022cc]/30 text-[#0022cc]'}`}>
-                        <div className="font-bold uppercase tracking-widest mb-2 text-current">[DIAGNOSTIC_REPORT]</div>
-                        <p className="mb-3">
-                          Diagnostics complete. Your identified passengers are coexisting: <span className="underline">"{bus1}"</span> as driver, <span className="underline">"{bus2}"</span> as the dominant voice, and <span className="underline">"{bus3}"</span> in the background.
-                        </p>
-                        <p className="italic opacity-85">
-                          "If we cannot hold space for the complexities within us, there is no chance for us to hold space for the complexities around us." — V. Machado de Oliveira, Hospicing Modernity
-                        </p>
-                      </div>
-                    )}
-                  </div>
                 </div>
 
                 {/* Grid of screenshots & Translation */}
                 <div className="space-y-6">
                   <h3 className="text-xl font-rubik font-bold uppercase text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500">Interface & Translation</h3>
                   <p className="text-lg font-light leading-relaxed">
-                    The project was designed fully bilingual (in both **German** and **English**) to support accessibility. Below are selected interface cards showcasing the high-fidelity design first mapped in **Figma** and then custom-engineered in pure **JavaScript** and **CSS**.
+                    The project was designed fully bilingual (in German and English) to support accessibility. Below are selected interface cards showcasing the high-fidelity design first mapped in Figma and then custom-engineered in pure JavaScript and CSS.
                   </p>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-6">
+                    {/* Top Row: Full-width Image 01 (aspect-square) */}
                     <div className="flex flex-col gap-2">
-                      <div className={`aspect-[9/16] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                        <img src={busLanguageImg} loading="lazy" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="Bilingual Screen" onClick={() => setActiveImage(busLanguageImg)} />
+                      <div className={`aspect-square w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
+                        <img 
+                          src={busLanguageImg} 
+                          loading="lazy" 
+                          className="w-full h-full object-cover hover:scale-102 transition-transform duration-700" 
+                          alt="Bilingual Screen" 
+                          onClick={() => setActiveImage(busLanguageImg)} 
+                        />
                       </div>
                       <span className="font-mono text-[10px] opacity-60 uppercase text-center">[01 // LANG_SCREEN]</span>
                     </div>
 
-                    <div className="flex flex-col gap-2">
-                      <div className={`aspect-[9/16] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                        <img src={busPerceptionImg} loading="lazy" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="Perception Check Card" onClick={() => setActiveImage(busPerceptionImg)} />
+                    {/* Middle Row: Two-column grid with Image 02 and Image 03 (aspect-9/16) */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-2">
+                        <div className={`aspect-[9/16] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
+                          <img 
+                            src={busPerceptionImg} 
+                            loading="lazy" 
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" 
+                            alt="Perception Check Card" 
+                            onClick={() => setActiveImage(busPerceptionImg)} 
+                          />
+                        </div>
+                        <span className="font-mono text-[10px] opacity-60 uppercase text-center">[02 // PERCEPTION_CHECK]</span>
                       </div>
-                      <span className="font-mono text-[10px] opacity-60 uppercase text-center">[02 // PERCEPTION_CHECK]</span>
+
+                      <div className="flex flex-col gap-2">
+                        <div className={`aspect-[9/16] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
+                          <img 
+                            src={busLiquidImg} 
+                            loading="lazy" 
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" 
+                            alt="Solid Liquid Card" 
+                            onClick={() => setActiveImage(busLiquidImg)} 
+                          />
+                        </div>
+                        <span className="font-mono text-[10px] opacity-60 uppercase text-center">[03 // SOLID_LIQUID_CARD]</span>
+                      </div>
                     </div>
 
+                    {/* Bottom Row: Full-width Image 04 (aspect-square) */}
                     <div className="flex flex-col gap-2">
-                      <div className={`aspect-[9/16] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                        <img src={busLiquidImg} loading="lazy" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="Solid Liquid Card" onClick={() => setActiveImage(busLiquidImg)} />
-                      </div>
-                      <span className="font-mono text-[10px] opacity-60 uppercase text-center">[03 // SOLID_LIQUID_CARD]</span>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <div className={`aspect-[9/16] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                        <img src={busAttentionImg} loading="lazy" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="Attention Extraction Card" onClick={() => setActiveImage(busAttentionImg)} />
+                      <div className={`aspect-square w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
+                        <img 
+                          src={busAttentionImg} 
+                          loading="lazy" 
+                          className="w-full h-full object-cover hover:scale-102 transition-transform duration-700" 
+                          alt="Attention Extraction Card" 
+                          onClick={() => setActiveImage(busAttentionImg)} 
+                        />
                       </div>
                       <span className="font-mono text-[10px] opacity-60 uppercase text-center">[04 // ATTENTION_CARD]</span>
                     </div>
                   </div>
-                </div>
-
-                {/* Custom Dedicated Launch Button */}
-                <div className="pt-6 border-t border-white/10 font-mono">
-                  <h3 className="text-sm font-mono uppercase tracking-widest opacity-50 mb-4">Launch</h3>
-                  <a 
-                    href="https://checkyourbus.vercel.app" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="w-full py-4 rounded-xl font-bold uppercase tracking-widest text-center transition-all hover:scale-[1.02] flex items-center justify-center gap-2 border bg-[#0022cc] text-[#ccff00] border-[#ccff00] hover:bg-[#ccff00] hover:text-[#0022cc] shadow-[0_0_20px_rgba(204,255,0,0.15)] cursor-pointer"
-                  >
-                    [BOARD_THE_BUS_LIVE ↗]
-                  </a>
                 </div>
               </div>
             ) : selectedProject.id === "04" ? (

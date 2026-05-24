@@ -99,7 +99,7 @@ const GameView = ({ darkMode, onClose }) => {
     if (saved) setHighScore(parseInt(saved, 10));
     
     // Play custom uploaded loop music "Orbital Drift Run.mp3"
-    bgMusicRef.current = new Audio('/Orbital Drift Run.mp3');
+    bgMusicRef.current = new Audio('/Orbital%20Drift%20Run.mp3');
     bgMusicRef.current.loop = true;
     bgMusicRef.current.volume = 0.4;
     
@@ -826,6 +826,7 @@ const GameView = ({ darkMode, onClose }) => {
 
   // Handle crystal collection
   const triggerCollectCrystal = (scene, index) => {
+    const state = stateRef.current;
     const cry = crystals.current[index];
 
     // Golden blast ring burst
@@ -876,6 +877,10 @@ const GameView = ({ darkMode, onClose }) => {
     setGameOver(true);
     playSynthSound('gameover');
 
+    if (bgMusicRef.current) {
+      bgMusicRef.current.pause();
+    }
+
     // Save local records
     const finalScore = state.score;
     const currentHigh = parseInt(localStorage.getItem('vanhees_runner_highscore') || '0', 10);
@@ -890,6 +895,11 @@ const GameView = ({ darkMode, onClose }) => {
     const state = stateRef.current;
     
     setIsPlaying(true);
+
+    if (bgMusicRef.current) {
+      bgMusicRef.current.currentTime = 0;
+      bgMusicRef.current.play().catch(e => console.log('Music start failed', e));
+    }
     setGameOver(false);
     setScore(0);
     setLevel(1);
@@ -928,6 +938,10 @@ const GameView = ({ darkMode, onClose }) => {
     
     setIsPlaying(false);
     setGameOver(false);
+
+    if (bgMusicRef.current) {
+      bgMusicRef.current.pause();
+    }
 
     // Clear active obstacles/crystals
     obstacles.current.forEach(obs => {
@@ -1082,58 +1096,68 @@ const GameView = ({ darkMode, onClose }) => {
           </div>
         )}
 
-        {/* Main Start / Game Over Frosted Glass overlay */}
+        {/* Main Start / Game Over Frosted Glass overlay (Now in gorgeous 3:2 Horizontal Layout!) */}
         {!isPlaying && (
           <div className="absolute inset-0 z-30 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
-            <div className="relative w-full max-w-sm p-6 md:p-8 rounded-3xl border border-white/10 bg-white/[0.01] text-white shadow-[0_0_40px_rgba(0,255,65,0.08)] flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-300">
-              {/* Glowing menu orb */}
-              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center bg-[#00ff41]/5 border border-[#00ff41]/20 shadow-[0_0_20px_rgba(0,255,65,0.1)] mb-4 md:mb-6 animate-pulse">
-                <Zap size={24} className="text-[#00ff41]" />
-              </div>
-
-              <h1 className="text-xl md:text-2xl font-syne font-extrabold tracking-tighter uppercase mb-1">
-                NEON BLOB RUNNER
-              </h1>
+            <div className="relative w-full max-w-2xl p-6 md:p-8 rounded-3xl border border-white/10 bg-white/[0.01] text-white shadow-[0_0_40px_rgba(0,255,65,0.08)] flex flex-col md:grid md:grid-cols-12 gap-6 items-center md:items-start text-center md:text-left animate-in fade-in zoom-in-95 duration-300">
               
-              <p className="text-[7px] md:text-[8px] text-white/40 tracking-widest uppercase mb-4 md:mb-6">
-                iOS 26 Liquid Glass Generative Space
-              </p>
-
-              {/* Highscore pill */}
-              <div className="w-full flex justify-around border border-white/5 py-2 md:py-3 rounded-xl bg-white/[0.01] mb-4 md:mb-6 font-mono text-xs">
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[7px] md:text-[8px] uppercase opacity-35">High Score</span>
-                  <span className="text-xs md:text-sm font-bold text-[#00ff41]">{highScore}</span>
+              {/* Left Column (Main Panel) */}
+              <div className="col-span-7 flex flex-col items-center md:items-start w-full">
+                {/* Glowing menu orb */}
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#00ff41]/5 border border-[#00ff41]/20 shadow-[0_0_15px_rgba(0,255,65,0.1)] mb-3 animate-pulse">
+                  <Zap size={18} className="text-[#00ff41]" />
                 </div>
-                <div className="w-px bg-white/10" />
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[7px] md:text-[8px] uppercase opacity-35">Engine</span>
-                  <span className="text-xs md:text-sm font-bold text-[#00ff41]">WebGL 3D</span>
+
+                <h1 className="text-xl md:text-2xl font-syne font-extrabold tracking-tighter uppercase mb-0.5">
+                  NEON BLOB RUNNER
+                </h1>
+                
+                <p className="text-[7px] md:text-[8px] text-white/40 tracking-widest uppercase mb-4">
+                  iOS 26 Liquid Glass Generative Space
+                </p>
+
+                {/* Highscore pill */}
+                <div className="w-full flex justify-around border border-white/5 py-2 md:py-2.5 rounded-xl bg-white/[0.01] mb-4 font-mono text-xs">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[7px] md:text-[8px] uppercase opacity-35">High Score</span>
+                    <span className="text-xs md:text-sm font-bold text-[#00ff41]">{highScore}</span>
+                  </div>
+                  <div className="w-px bg-white/10" />
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[7px] md:text-[8px] uppercase opacity-35">Engine</span>
+                    <span className="text-xs md:text-sm font-bold text-[#00ff41]">WebGL 3D</span>
+                  </div>
+                </div>
+
+                {/* CTA Glass buttons */}
+                <div className="w-full flex flex-col gap-2">
+                  <button
+                    onClick={startGame}
+                    className="w-full py-2.5 px-6 rounded-xl bg-[#00ff41] text-black font-syne font-bold uppercase tracking-wider text-[10px] md:text-xs transition-all hover:scale-[1.01] hover:bg-[#00cc33] active:scale-95 shadow-[0_0_15px_rgba(0,255,65,0.22)] cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <Play size={12} fill="black" /> {gameOver ? 'RUN AGAIN' : 'START RUNNER'}
+                  </button>
+
+                  <button
+                    onClick={handleExit}
+                    className="w-full py-2.5 px-6 rounded-xl border border-white/10 bg-transparent text-white/50 font-syne font-bold uppercase tracking-wider text-[9px] md:text-[10px] transition-all hover:bg-white/5 cursor-pointer"
+                  >
+                    RETURN TO HOME
+                  </button>
                 </div>
               </div>
 
-              {/* User instructions */}
-              <div className="w-full text-left text-[8px] md:text-[9px] space-y-1.5 opacity-55 leading-relaxed border-t border-white/5 pt-4 mb-4 md:mb-6 font-mono hidden sm:block">
-                <p>• <strong>KEYBOARD:</strong> <span className="underline">Left/Right Arrows (or A/D)</span> to change lanes. <span className="underline">Spacebar (or Up Arrow)</span> to jump over obstacles.</p>
-                <p>• <strong>TOUCH SCREEN:</strong> <span className="underline">Swipe Left/Right</span> to slide. <span className="underline">Swipe Up / Tap</span> anywhere to jump.</p>
-                <p>• <strong>GOAL:</strong> Avoid red warning walls & collect golden crystal shards to unlock neon gel cores.</p>
-              </div>
+              {/* Vertical divider */}
+              <div className="hidden md:block col-span-1 w-px bg-white/10 self-stretch mx-auto my-1" />
 
-              {/* CTA Glass buttons */}
-              <div className="w-full flex flex-col gap-2.5">
-                <button
-                  onClick={startGame}
-                  className="w-full py-2.5 md:py-3 px-6 rounded-xl bg-[#00ff41] text-black font-syne font-bold uppercase tracking-wider text-[10px] md:text-xs transition-all hover:scale-[1.01] hover:bg-[#00cc33] active:scale-95 shadow-[0_0_15px_rgba(0,255,65,0.22)] cursor-pointer flex items-center justify-center gap-1.5"
-                >
-                  <Play size={12} fill="black" /> {gameOver ? 'RUN AGAIN' : 'START RUNNER'}
-                </button>
-
-                <button
-                  onClick={handleExit}
-                  className="w-full py-2.5 md:py-3 px-6 rounded-xl border border-white/10 bg-transparent text-white/50 font-syne font-bold uppercase tracking-wider text-[9px] md:text-[10px] transition-all hover:bg-white/5 cursor-pointer"
-                >
-                  RETURN TO HOME
-                </button>
+              {/* Right Column (Instructions Panel - perfectly matching 3:2 aspect!) */}
+              <div className="col-span-4 flex flex-col justify-center items-start w-full text-left font-mono text-[8px] md:text-[9px] leading-relaxed opacity-70 border-t border-white/5 md:border-t-0 pt-4 md:pt-0">
+                <span className="text-[8px] uppercase opacity-40 tracking-widest font-bold mb-2">SYSTEM MANUAL</span>
+                <div className="space-y-2 border-t border-white/5 pt-2 w-full">
+                  <p>• <strong>KEYBOARD:</strong> <span className="underline">Left/Right Arrows (or A/D)</span> to change lanes. <span className="underline">Spacebar (or Up)</span> to jump over walls.</p>
+                  <p>• <strong>TOUCH SCREEN:</strong> <span className="underline">Swipe Left/Right</span> to slide lanes. <span className="underline">Swipe Up / Tap</span> to jump.</p>
+                  <p>• <strong>GOAL:</strong> Avoid red warning walls & collect golden crystals to charge core capsules.</p>
+                </div>
               </div>
 
               {/* GAME OVER CARD OVERLAY */}

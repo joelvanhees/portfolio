@@ -86,7 +86,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
       <header className="relative min-h-screen flex flex-col justify-center px-6 pt-20 overflow-hidden">
         <div className={`absolute inset-0 pointer-events-none opacity-[0.03] ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
 
-        <div className="w-full z-10 flex flex-col justify-between">
+        <div className="w-full z-10">
           <div className="flex flex-col gap-0 w-full">
             <div className="max-w-7xl mx-auto w-full">
               <p className={`text-sm md:text-base mb-4 tracking-widest uppercase ${darkMode ? 'text-green-500' : 'text-blue-600'}`}>

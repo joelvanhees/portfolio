@@ -54,7 +54,7 @@ function ScrambleText({ text, delay = 0, darkMode }) {
   );
 }
 
-const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) => {
+const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, handleNav, setCooldownActive }) => {
   const [terminalLine, setTerminalLine] = useState(0);
   const [bootComplete, setBootComplete] = useState(false);
 
@@ -271,13 +271,28 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
             </p>
 
             <h1 className="font-rubik leading-[0.82] md:leading-[0.78] tracking-tighter uppercase select-none w-full flex flex-col items-center md:block">
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-left text-[23vw] md:text-[15vw] w-full"><ScrambleText text="Visual" delay={300} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[27vw] md:text-[15vw] w-full"><ScrambleText text="Story" delay={600} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-right text-[23vw] md:text-[15vw] w-full"><ScrambleText text="Teller" delay={900} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-left text-[23vw] md:text-[12.5vw] w-full"><ScrambleText text="Visual" delay={300} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[27vw] md:text-[12.5vw] w-full"><ScrambleText text="Story" delay={600} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-right text-[23vw] md:text-[12.5vw] w-full"><ScrambleText text="Teller" delay={900} darkMode={darkMode} /></div>
             </h1>
           </div>
 
-          <div className="max-w-7xl mx-auto w-full mt-16 md:mt-24 flex flex-col md:flex-row justify-between items-end border-t border-current pt-6 opacity-80">
+          <div className="w-full flex flex-wrap gap-4 mt-6 md:mt-10 mb-2 md:mb-6">
+            <button
+              onClick={() => setCooldownActive(true)}
+              className="text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff] hover:scale-105 transition-all duration-300 cursor-pointer uppercase"
+            >
+              COOL DOWN
+            </button>
+            <button
+              onClick={() => handleNav('game')}
+              className="text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84] hover:scale-105 transition-all duration-300 cursor-pointer uppercase"
+            >
+              BLOB RUN ⌁
+            </button>
+          </div>
+
+          <div className="max-w-7xl mx-auto w-full flex flex-col md:flex-row justify-between items-end border-t border-current pt-6 opacity-80">
             <div className="max-w-md">
               <p className="text-lg md:text-xl leading-relaxed">
                 Visual systems for brands, interfaces and narrative experiences.

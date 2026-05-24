@@ -296,7 +296,7 @@ const App = () => {
         </div>
       )}
 
-      {activePage === 'home' && <HomeView darkMode={darkMode} projects={projects} setSelectedProject={setSelectedProject} selectedProject={selectedProject} />}
+      {activePage === 'home' && <HomeView darkMode={darkMode} projects={projects} setSelectedProject={setSelectedProject} selectedProject={selectedProject} handleNav={handleNav} setCooldownActive={setCooldownActive} />}
       {activePage === 'work' && <WorkView darkMode={darkMode} />}
       {activePage === 'services' && <ServicesView darkMode={darkMode} />}
       {activePage === 'about' && <AboutView darkMode={darkMode} />}

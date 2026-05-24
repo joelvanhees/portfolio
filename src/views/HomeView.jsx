@@ -86,12 +86,14 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
   const headerRef = useRef(null);
   const mouseRef = useRef({ x: 0, y: 0, active: false });
   const [scrollFade, setScrollFade] = useState(1);
+  const scrollFadeRef = useRef(1);
 
   useEffect(() => {
     const handleScroll = () => {
       const totalScroll = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const fade = Math.max(0, 1 - totalScroll / (docHeight || 800));
+      scrollFadeRef.current = fade;
       setScrollFade(fade);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -106,8 +108,6 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
   };
 
   useEffect(() => {
-    if (scrollFade <= 0) return;
-
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -126,16 +126,24 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
     resize();
 
     const render = () => {
-      time += 0.012;
+      const currentFade = scrollFadeRef.current;
       const width = canvas.width / (window.devicePixelRatio || 1);
       const height = canvas.height / (window.devicePixelRatio || 1);
+
+      if (currentFade <= 0.01) {
+        ctx.clearRect(0, 0, width, height);
+        animationId = requestAnimationFrame(render);
+        return;
+      }
+
+      time += 0.012;
 
       ctx.clearRect(0, 0, width, height);
 
       const cols = Math.floor(width / 35) + 2;
       const rows = Math.floor(height / 35) + 2;
 
-      ctx.lineWidth = 1.35;
+      ctx.lineWidth = 1.5;
 
       // Draw horizontal lines
       for (let r = 0; r < rows; r++) {
@@ -154,12 +162,12 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
             const dx = gx - mouseRef.current.x;
             const dy2 = gy - mouseRef.current.y;
             const dist = Math.sqrt(dx * dx + dy2 * dy2);
-            if (dist < 220) {
-              mouseDist = Math.sin(dist * 0.04 - time * 3.5) * 35 * (1 - dist / 220);
+            if (dist < 280) {
+              mouseDist = Math.sin(dist * 0.04 - time * 3.5) * 65 * (1 - dist / 280);
             }
           }
 
-          const dy = (wave1 + wave2 + wave3 + mouseDist) * scrollFade;
+          const dy = (wave1 + wave2 + wave3 + mouseDist) * currentFade;
           const drawX = gx;
           const drawY = gy + dy;
 
@@ -171,8 +179,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
         }
 
         ctx.strokeStyle = darkMode
-          ? `rgba(0, 255, 65, ${scrollFade * (0.16 + Math.abs(Math.sin(time + r * 0.1)) * 0.12)})`
-          : `rgba(0, 85, 255, ${scrollFade * (0.20 + Math.abs(Math.sin(time + r * 0.1)) * 0.14)})`;
+          ? `rgba(0, 255, 65, ${currentFade * (0.45 + Math.abs(Math.sin(time + r * 0.1)) * 0.25)})`
+          : `rgba(0, 85, 255, ${currentFade * (0.50 + Math.abs(Math.sin(time + r * 0.1)) * 0.25)})`;
         ctx.stroke();
       }
 
@@ -193,12 +201,12 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
             const dx = gx - mouseRef.current.x;
             const dy2 = gy - mouseRef.current.y;
             const dist = Math.sqrt(dx * dx + dy2 * dy2);
-            if (dist < 220) {
-              mouseDist = Math.sin(dist * 0.04 - time * 3.5) * 35 * (1 - dist / 220);
+            if (dist < 280) {
+              mouseDist = Math.sin(dist * 0.04 - time * 3.5) * 65 * (1 - dist / 280);
             }
           }
 
-          const dy = (wave1 + wave2 + wave3 + mouseDist) * scrollFade;
+          const dy = (wave1 + wave2 + wave3 + mouseDist) * currentFade;
           const drawX = gx;
           const drawY = gy + dy;
 
@@ -210,8 +218,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
         }
 
         ctx.strokeStyle = darkMode
-          ? `rgba(0, 255, 65, ${scrollFade * (0.16 + Math.abs(Math.sin(time + c * 0.1)) * 0.12)})`
-          : `rgba(0, 85, 255, ${scrollFade * (0.20 + Math.abs(Math.sin(time + c * 0.1)) * 0.14)})`;
+          ? `rgba(0, 255, 65, ${currentFade * (0.45 + Math.abs(Math.sin(time + c * 0.1)) * 0.25)})`
+          : `rgba(0, 85, 255, ${currentFade * (0.50 + Math.abs(Math.sin(time + c * 0.1)) * 0.25)})`;
         ctx.stroke();
       }
 
@@ -224,23 +232,38 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationId);
     };
-  }, [darkMode, scrollFade]);
+  }, [darkMode]);
 
   return (
     <>
       <canvas 
         ref={canvasRef} 
-        className="fixed inset-0 w-full h-full pointer-events-none -z-10" 
+        className="fixed inset-0 w-full h-full pointer-events-none z-10" 
         style={{ opacity: scrollFade }}
       />
-      <header 
-        ref={headerRef}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => { mouseRef.current.active = true; }}
-        onMouseLeave={() => { mouseRef.current.active = false; }}
-        className="relative min-h-screen flex flex-col justify-between md:justify-center px-6 pt-32 pb-16 md:py-20 overflow-hidden bg-transparent"
-      >
-        <div className={`absolute inset-0 pointer-events-none opacity-[0.03] ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
+      <div className="relative z-20 w-full">
+        <header 
+          ref={headerRef}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={() => { mouseRef.current.active = true; }}
+          onMouseLeave={() => { mouseRef.current.active = false; }}
+          onTouchStart={(e) => {
+            mouseRef.current.active = true;
+            if (e.touches && e.touches[0]) {
+              handleMouseMove(e.touches[0]);
+            }
+          }}
+          onTouchMove={(e) => {
+            if (e.touches && e.touches[0]) {
+              handleMouseMove(e.touches[0]);
+            }
+          }}
+          onTouchEnd={() => {
+            mouseRef.current.active = false;
+          }}
+          className="relative min-h-screen flex flex-col justify-between md:justify-center px-6 pt-32 pb-16 md:py-20 overflow-hidden bg-transparent"
+        >
+          <div className={`absolute inset-0 pointer-events-none opacity-[0.03] ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
 
         <div className="w-full z-10 flex flex-col justify-between min-h-[70vh] md:min-h-0 md:justify-start pt-6 md:pt-16">
           <div className="flex flex-col gap-0 w-full">
@@ -419,6 +442,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject }) =
           </div>
         </div>
       </section>
+      </div>
     </>
   );
 };

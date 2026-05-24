@@ -412,24 +412,79 @@ const GameView = ({ darkMode }) => {
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
-    // Handle Pointer / Touch tracking
-    const handlePointerMove = (e) => {
-      if (!isPlaying || gameOver) return;
-      const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-      const mouseZ = -(e.clientY / window.innerHeight) * 2 + 1;
-      
-      // Map pointer directly to platform coordinates
-      targetPos.current.x = mouseX * (MOVEMENT_LIMIT * 0.9);
-      targetPos.current.z = -mouseZ * (MOVEMENT_LIMIT * 0.9);
-    };
+    // High-fidelity unified pointer & touch tracking
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let lastSwipeY = 0;
+    let lastSwipeTime = 0;
 
     const handlePointerDown = (e) => {
       if (!isPlaying || gameOver) return;
-      triggerJump();
+      
+      touchStartX = e.clientX;
+      touchStartY = e.clientY;
+      touchStartTime = performance.now();
+      
+      lastSwipeY = e.clientY;
+      lastSwipeTime = performance.now();
+      
+      // Desktop mouse click triggers immediate jump
+      if (e.pointerType === 'mouse') {
+        triggerJump();
+      }
+    };
+
+    const handlePointerMove = (e) => {
+      if (!isPlaying || gameOver) return;
+      
+      // Update target coordinate for blob tracking
+      const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+      const mouseZ = -(e.clientY / window.innerHeight) * 2 + 1;
+      targetPos.current.x = mouseX * (MOVEMENT_LIMIT * 0.9);
+      targetPos.current.z = -mouseZ * (MOVEMENT_LIMIT * 0.9);
+      
+      // Mobile touch swipe-up jump physics
+      if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+        const now = performance.now();
+        const timeDiff = now - lastSwipeTime;
+        
+        if (timeDiff > 0) {
+          const dy = e.clientY - lastSwipeY;
+          const speedY = dy / timeDiff; // speed in px/ms
+          
+          // Speed is negative for upwards movements.
+          // Trigger jump if swiping up quickly (speedY < -0.7)
+          if (speedY < -0.7 && (now - lastJumpTime.current > 250)) {
+            triggerJump();
+          }
+        }
+        lastSwipeY = e.clientY;
+        lastSwipeTime = now;
+      }
+    };
+
+    const handlePointerUp = (e) => {
+      if (!isPlaying || gameOver) return;
+      
+      // Touch tap-to-jump detection
+      if (e.pointerType === 'touch') {
+        const now = performance.now();
+        const duration = now - touchStartTime;
+        const dx = e.clientX - touchStartX;
+        const dy = e.clientY - touchStartY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        // If touch was quick (< 250ms) and didn't move much (< 15px), it's a Tap!
+        if (duration < 250 && dist < 15) {
+          triggerJump();
+        }
+      }
     };
 
     window.addEventListener('pointermove', handlePointerMove);
     window.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('pointerup', handlePointerUp);
 
     // Cleanup resources
     return () => {
@@ -438,6 +493,7 @@ const GameView = ({ darkMode }) => {
       window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('pointerup', handlePointerUp);
       
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
@@ -854,9 +910,9 @@ const GameView = ({ darkMode }) => {
   };
 
   return (
-    <div ref={containerRef} className="fixed inset-0 w-full h-full z-40 bg-black overflow-hidden select-none font-mono">
+    <div ref={containerRef} className="fixed inset-0 w-full h-full z-40 bg-black overflow-hidden select-none font-mono touch-none">
       {/* 3D WebGL game screen */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block z-10" />
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block z-10 touch-none" />
 
       {/* Glossy translucent HUD overlay */}
       {isPlaying && !gameOver && (

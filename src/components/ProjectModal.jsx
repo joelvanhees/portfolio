@@ -1,6 +1,7 @@
 import { lazy, Suspense, useState, useEffect, useRef } from 'react';
 import { ArrowUpRight, FileText, Layers, Maximize2, Video, X, Volume2, VolumeX } from 'lucide-react';
 import LazyImage from './LazyImage';
+import { playClickSound } from '../utils/clickSound';
 
 
 import HoverVideoPlayer from './visuals/HoverVideoPlayer';
@@ -117,6 +118,7 @@ const ProjectModal = ({
   const handleClose = () => {
     setSelectedProject(null);
     setShowVideoSequence(false);
+    playClickSound('close');
   };
 
   return (
@@ -620,7 +622,7 @@ const ProjectModal = ({
             <div className={`mt-auto pt-8 border-t font-mono ${darkMode ? 'border-white/10' : 'border-black/10'}`}>
               {selectedProject.id !== "02" && selectedProject.id !== "07" && (
                 <button
-                  onClick={onStartProject}
+                  onClick={() => { onStartProject(); playClickSound('open'); }}
                   className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest transition-all hover:scale-[1.02] flex items-center justify-center gap-2 cursor-pointer ${darkMode ? 'bg-[#00FF41] text-black hover:bg-[#00cc33]' : 'bg-black text-white hover:bg-black/90'}`}
                 >
                   Launch Your Project <ArrowUpRight size={18} />

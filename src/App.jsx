@@ -14,6 +14,7 @@ import TransparentLogo from './components/TransparentLogo';
 import ShellBlob from './components/ShellBlob';
 
 import { buildProjects } from './content/projects.jsx';
+import { playClickSound } from './utils/clickSound';
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(true);
@@ -228,13 +229,16 @@ const App = () => {
               if (consoleOpen) {
                 if (consoleMinimized) {
                   setConsoleMinimized(false);
+                  playClickSound('open');
                 } else {
                   setConsoleOpen(false);
                   setConsoleMinimized(false);
+                  playClickSound('close');
                 }
               } else {
                 setConsoleOpen(true);
                 setConsoleMinimized(false);
+                playClickSound('open');
               }
             }}
             className={`flex items-center gap-1.5 text-[11px] sm:text-xs border px-3.5 py-1.5 sm:px-3 sm:py-1 rounded-full transition-all pointer-events-auto active:scale-95
@@ -247,7 +251,10 @@ const App = () => {
           </button>
 
           <button
-            onClick={() => setDarkMode(!darkMode)}
+            onClick={() => {
+              setDarkMode(!darkMode);
+              playClickSound('click');
+            }}
             className="hidden md:flex items-center gap-2 text-xs border border-white/20 px-3 py-1 rounded-full hover:bg-white hover:text-black transition-all pointer-events-auto"
           >
             {darkMode ? <div className="w-2 h-2 rounded-full bg-[#00FF41]" /> : <div className="w-2 h-2 rounded-full bg-[#0055FF]" />}
@@ -255,7 +262,10 @@ const App = () => {
           </button>
 
           <button 
-            onClick={() => setMenuOpen(!menuOpen)} 
+            onClick={() => {
+              setMenuOpen(!menuOpen);
+              playClickSound('click');
+            }} 
             className="focus:outline-none flex items-center justify-center p-2 rounded-lg transition-colors hover:bg-white/10 active:bg-white/20 pointer-events-auto"
             title="Toggle Menu"
           >
@@ -267,16 +277,19 @@ const App = () => {
       </nav>
 
       {menuOpen && (
-        <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)}>
+        <div className="fixed inset-0 z-30" onClick={() => { setMenuOpen(false); playClickSound('close'); }}>
           <div 
             onClick={(e) => e.stopPropagation()}
             className={`absolute top-24 right-4 md:right-8 w-64 md:w-80 rounded-2xl flex flex-col justify-start items-end p-6 md:p-8 gap-5 text-lg md:text-xl font-syne font-bold border shadow-2xl transition-all duration-500 animate-in slide-in-from-right-8 ${darkMode ? 'bg-black/60 border-[#00FF41]/20 shadow-[0_0_30px_rgba(0,255,65,0.1)]' : 'bg-white border-black shadow-[0_0_35px_rgba(0,0,0,0.25)]'} backdrop-blur-xl`}
           >
-            <TransparentLogo className="w-16 h-16 md:w-20 md:h-20 mb-2 hover:scale-110 transition-all duration-500 cursor-pointer drop-shadow-[0_0_20px_rgba(0,255,65,0.2)]" onClick={() => handleNav('home')} />
+            <TransparentLogo className="w-16 h-16 md:w-20 md:h-20 mb-2 hover:scale-110 transition-all duration-500 cursor-pointer drop-shadow-[0_0_20px_rgba(0,255,65,0.2)]" onClick={() => { handleNav('home'); setMenuOpen(false); playClickSound('click'); }} />
             {['HOME', 'WORK', 'SERVICES', 'ABOUT', 'CONTACT'].map((item, i) => (
               <button
                 key={item}
-                onClick={() => handleNav(item.toLowerCase())}
+                onClick={() => {
+                  handleNav(item.toLowerCase());
+                  playClickSound('click');
+                }}
                 className={`hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300 ${activePage === item.toLowerCase() ? (darkMode ? 'text-[#00FF41]' : 'text-black underline decoration-2 underline-offset-4') : (darkMode ? '' : 'text-black/50')}`}
               >
                 {`0${i} // ${item}`}
@@ -288,6 +301,7 @@ const App = () => {
                 onClick={() => {
                   setCooldownActive(true);
                   setMenuOpen(false);
+                  playClickSound('open');
                 }}
                 className={`w-full text-right text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
                   ${darkMode 
@@ -301,6 +315,7 @@ const App = () => {
                 onClick={() => {
                   handleNav('game');
                   setMenuOpen(false);
+                  playClickSound('open');
                 }}
                 className={`w-full text-right text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
                   ${darkMode 
@@ -330,7 +345,7 @@ const App = () => {
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 md:p-12">
           <div
             className="absolute inset-0 backdrop-blur-xl bg-black/40 transition-all duration-500"
-            onClick={() => setLegalOpen(false)}
+            onClick={() => { setLegalOpen(false); playClickSound('close'); }}
           ></div>
 
           <div className={`relative w-full max-w-4xl max-h-[80vh] overflow-y-auto rounded-3xl border shadow-2xl p-8 md:p-12 transition-all duration-300 animate-in fade-in zoom-in-95
@@ -341,7 +356,7 @@ const App = () => {
           >
             <div className="flex justify-between items-start mb-8 border-b border-current pb-4">
               <h2 className="text-3xl font-syne font-bold">LEGAL DATA</h2>
-              <button onClick={() => setLegalOpen(false)} className="p-2 hover:opacity-50"><X size={24} /></button>
+              <button onClick={() => { setLegalOpen(false); playClickSound('close'); }} className="p-2 hover:opacity-50"><X size={24} /></button>
             </div>
 
             <div className="font-mono text-sm space-y-8 leading-relaxed opacity-80">

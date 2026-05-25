@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { Terminal, ChevronRight } from 'lucide-react';
 import ShellBlob from './ShellBlob';
+import { playClickSound } from '../utils/clickSound';
 
 
 // TypewriterText component to emulate realistic human typing with variable speeds and pauses
-const TypewriterText = ({ text }) => {
+const TypewriterText = ({ text, speed = 'normal' }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -12,7 +13,7 @@ const TypewriterText = ({ text }) => {
     
     let index = 0;
     let timer;
-    const baseSpeed = 10 + Math.random() * 14; // 10ms - 24ms base speed
+    const baseSpeed = speed === 'fast' ? 4 + Math.random() * 4 : 10 + Math.random() * 14;
 
     const type = () => {
       if (index < text.length) {
@@ -22,11 +23,11 @@ const TypewriterText = ({ text }) => {
         let nextDelay = baseSpeed;
         const char = text.charAt(index - 1);
         if (char === '.' || char === '!' || char === '?') {
-          nextDelay += 180 + Math.random() * 60;
+          nextDelay += speed === 'fast' ? 30 + Math.random() * 20 : 180 + Math.random() * 60;
         } else if (char === '\n') {
-          nextDelay += 200 + Math.random() * 80;
+          nextDelay += speed === 'fast' ? 40 + Math.random() * 20 : 200 + Math.random() * 80;
         } else if (char === ' ') {
-          nextDelay += Math.random() * 8;
+          nextDelay += speed === 'fast' ? Math.random() * 2 : Math.random() * 8;
         }
         
         timer = setTimeout(type, nextDelay);
@@ -34,10 +35,10 @@ const TypewriterText = ({ text }) => {
     };
 
     // Slight initial delay to feel more organic
-    timer = setTimeout(type, 60);
+    timer = setTimeout(type, speed === 'fast' ? 20 : 60);
 
     return () => clearTimeout(timer);
-  }, [text]);
+  }, [text, speed]);
 
   // Keep screen scrolled down as index increases
   useEffect(() => {
@@ -70,7 +71,7 @@ const FloatingConsole = ({
     if (!userName) {
       return [
         {
-          text: "JOEL VAN HEES // ARCHITECTURAL SYSTEM SHELL v1.2\n==========================================\nNeural bridge connecting... Online.\n\nBefore we initialize, please tell me: What is your name?",
+          text: "JOEL VAN HEES // ARCHITECTURAL SYSTEM SHELL\n\nBefore we initialize, please tell me: What is your name?",
           isInput: false,
           isFirstMessage: true
         }
@@ -78,7 +79,7 @@ const FloatingConsole = ({
     } else {
       return [
         {
-          text: `JOEL VAN HEES // SYSTEM SHELL v1.2\n==========================================\nWelcome back, ${userName}. Connection stable.\nType 'help' for executable commands or ask me any question.`,
+          text: `JOEL VAN HEES // SYSTEM SHELL\n\nWelcome back, ${userName}. Connection stable.\nType 'help' for executable commands or ask me any question.`,
           isInput: false,
           isFirstMessage: true
         }
@@ -110,6 +111,7 @@ const FloatingConsole = ({
 
   const handleCommand = (e) => {
     if (e.key !== 'Enter') return;
+    playClickSound('click');
     const rawInput = input.trim();
     const cmd = rawInput.toLowerCase();
     if (!rawInput) return;
@@ -328,23 +330,23 @@ const FloatingConsole = ({
           {/* Apple dots style window controls */}
           <div className="flex gap-3 md:gap-1.5 items-center mr-1">
             <button 
-              onClick={onClose}
+              onClick={() => { onClose(); playClickSound('close'); }}
               title="Close Window"
               className="relative w-6 h-6 md:w-3 md:h-3 rounded-full bg-[#FF5F56] hover:bg-[#E0443E] transition-all cursor-pointer border-none p-0 flex items-center justify-center group active:scale-90"
             >
               <span className="text-xs md:text-[6px] font-bold text-black/60 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">×</span>
             </button>
             <button 
-              onClick={() => setIsMaximized(!isMaximized)}
+              onClick={() => { setIsMaximized(!isMaximized); playClickSound('click'); }}
               title="Toggle Size"
               className="hidden md:flex relative w-3.5 h-3.5 md:w-3 md:h-3 rounded-full bg-[#FEBC2E] hover:bg-[#DFA020] transition-all cursor-pointer border-none p-0 items-center justify-center group"
             >
               <span className="text-[7px] md:text-[6px] font-bold text-black/60 opacity-0 group-hover:opacity-100 transition-opacity">↕</span>
             </button>
             <button 
-              onClick={onMinimize}
+              onClick={() => { onMinimize(); playClickSound('close'); }}
               title="Minimize Window"
-              className="hidden md:flex relative w-3.5 h-3.5 md:w-3 md:h-3 rounded-full bg-[#27C93F] hover:bg-[#1AAB29] transition-all cursor-pointer border-none p-0 items-center justify-center group"
+              className="hidden md:flex relative w-3.5 h-3.5 md:w-3 md:h-3 rounded-full bg-[#27C93F] hover:bg-[#1AAB29] transition-all cursor-pointer p-0 flex items-center justify-center group active:scale-90"
             >
               <span className="text-[7px] md:text-[6px] font-bold text-black/60 opacity-0 group-hover:opacity-100 transition-opacity">−</span>
             </button>
@@ -384,7 +386,7 @@ const FloatingConsole = ({
                   darkMode ? 'text-white' : 'text-black'
                 }`}
               >
-                <TypewriterText text={log.text} />
+                <TypewriterText text={log.text} speed={log.isFirstMessage ? 'fast' : 'normal'} />
                 {log.customRender && (
                   <div className="mt-2 font-mono">
                     {log.customRender()}

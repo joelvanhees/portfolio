@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { X, Trophy, Zap, Play, Lock, Heart, RefreshCw } from 'lucide-react';
 import * as THREE from 'three';
+import { playClickSound } from '../utils/clickSound';
 
 // --- GAME PARAMETERS ---
 const OUTER_RADIUS = 1.0;
@@ -907,6 +908,7 @@ const GameView = ({ darkMode, onClose }) => {
   const startGame = () => {
     const state = stateRef.current;
     
+    playClickSound('open');
     setIsPlaying(true);
 
     if (bgMusicRef.current) {
@@ -947,6 +949,7 @@ const GameView = ({ darkMode, onClose }) => {
   const handleExit = () => {
     const state = stateRef.current;
     
+    playClickSound('close');
     state.isPlaying = false;
     state.gameOver = false;
     

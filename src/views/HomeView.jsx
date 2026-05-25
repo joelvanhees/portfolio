@@ -6,6 +6,7 @@ const SpiralTimeSphere = lazy(() => import('../components/visuals/SpiralTimeSphe
 import { homeCapabilities } from '../content/services';
 import salatProfileImg from '../assets/images/salat_profile.png';
 import LazyImage from '../components/LazyImage';
+import { playClickSound } from '../utils/clickSound';
 
 
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*!?<>[]{}=/\\|~^';
@@ -298,6 +299,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                   onClick={() => {
                     const el = document.getElementById('work');
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    playClickSound('click');
                   }}
                   className={`text-xs font-mono tracking-widest px-6 py-2.5 rounded-full transition-all duration-300 hover:scale-105 cursor-pointer uppercase border active:scale-95
                     ${darkMode 
@@ -307,7 +309,10 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                   WORK
                 </button>
                 <button
-                  onClick={() => handleNav('contact')}
+                  onClick={() => {
+                    handleNav('contact');
+                    playClickSound('open');
+                  }}
                   className={`text-xs font-mono tracking-widest px-6 py-2.5 rounded-full transition-all duration-300 hover:scale-105 cursor-pointer uppercase border active:scale-95
                     ${darkMode 
                       ? 'border-[#00FF41] bg-[#00FF41] text-black md:bg-transparent md:text-[#00FF41] hover:bg-[#00FF41] hover:text-black shadow-[0_0_15px_rgba(0,255,65,0.2)]' 
@@ -342,7 +347,10 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                 return (
                   <button
                     key={role}
-                    onClick={() => toggleRole(role)}
+                    onClick={() => {
+                      toggleRole(role);
+                      playClickSound('click');
+                    }}
                     className={`px-4 py-2 rounded-full text-sm uppercase transition-all duration-300 border cursor-pointer active:scale-95
                       ${isSelected 
                         ? (darkMode ? 'bg-[#00FF41] border-[#00FF41] text-black shadow-[0_0_15px_rgba(0,255,65,0.3)]' : 'bg-black border-black text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]') 

@@ -562,9 +562,11 @@ const CooldownPool = ({ darkMode, onClose }) => {
                   setInfoClosed(true);
                   setInfoOpenManual(false);
                 }}
-                className="w-3.5 h-3.5 rounded-full bg-[#FF5F56] hover:bg-[#E0443E] transition-all cursor-pointer border-none p-0 flex items-center justify-center pointer-events-auto"
+                className="w-6 h-6 md:w-3.5 md:h-3.5 rounded-full bg-[#FF5F56] hover:bg-[#E0443E] transition-all cursor-pointer border-none p-0 flex items-center justify-center pointer-events-auto text-black/60 font-bold active:scale-90"
                 title="Schließen"
-              />
+              >
+                <span className="text-xs md:text-[8px] md:hidden">×</span>
+              </button>
               <Code size={14} className="ml-1.5 animate-pulse" />
               <span>[ SYSTEM CORE: GLASS LIQUID BASIN ]</span>
             </div>

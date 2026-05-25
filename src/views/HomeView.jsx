@@ -57,6 +57,20 @@ function ScrambleText({ text, delay = 0, darkMode }) {
 const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, handleNav, setCooldownActive }) => {
   const [terminalLine, setTerminalLine] = useState(0);
   const [bootComplete, setBootComplete] = useState(false);
+  const isMobile = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+
+  const [selectedRoles, setSelectedRoles] = useState({
+    Storyteller: true,
+    Designer: false,
+    Artist: false
+  });
+
+  const toggleRole = (role) => {
+    setSelectedRoles(prev => ({
+      ...prev,
+      [role]: !prev[role]
+    }));
+  };
 
   useEffect(() => {
     const sequence = [
@@ -246,18 +260,18 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
           onMouseMove={handleMouseMove}
           onMouseEnter={() => { mouseRef.current.active = true; }}
           onMouseLeave={() => { mouseRef.current.active = false; }}
-          onTouchStart={(e) => {
+          onTouchStart={isMobile ? undefined : (e) => {
             mouseRef.current.active = true;
             if (e.touches && e.touches[0]) {
               handleMouseMove(e.touches[0]);
             }
           }}
-          onTouchMove={(e) => {
+          onTouchMove={isMobile ? undefined : (e) => {
             if (e.touches && e.touches[0]) {
               handleMouseMove(e.touches[0]);
             }
           }}
-          onTouchEnd={() => {
+          onTouchEnd={isMobile ? undefined : () => {
             mouseRef.current.active = false;
           }}
           className="relative min-h-screen flex flex-col justify-between md:justify-center px-8 md:px-16 pt-32 pb-16 md:py-20 overflow-hidden bg-transparent"
@@ -271,9 +285,9 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             </p>
 
             <h1 className="font-rubik leading-[0.82] md:leading-[0.78] tracking-tighter uppercase select-none w-full flex flex-col items-center md:block">
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-left text-[23vw] md:text-[12.5vw] w-full"><ScrambleText text="Visual" delay={300} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[27vw] md:text-[12.5vw] w-full"><ScrambleText text="Story" delay={600} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-right text-[23vw] md:text-[12.5vw] w-full"><ScrambleText text="Teller" delay={900} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-left text-[19vw] md:text-[12.5vw] w-full"><ScrambleText text="Visual" delay={300} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[22vw] md:text-[12.5vw] w-full"><ScrambleText text="Story" delay={600} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-center md:text-right text-[19vw] md:text-[12.5vw] w-full"><ScrambleText text="Teller" delay={900} darkMode={darkMode} /></div>
             </h1>
           </div>
 
@@ -287,22 +301,25 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             <div className="flex flex-col items-start md:items-end gap-6 w-full md:w-auto">
               <div className="flex flex-wrap gap-4 justify-start md:justify-end">
                 <button
-                  onClick={() => setCooldownActive(true)}
-                  className={`text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer uppercase
+                  onClick={() => {
+                    const el = document.getElementById('work');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className={`text-xs font-mono tracking-widest px-6 py-2.5 rounded-full transition-all duration-300 hover:scale-105 cursor-pointer uppercase border active:scale-95
                     ${darkMode 
-                      ? 'border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff]' 
-                      : 'border border-black bg-black text-white hover:bg-black/90 shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
+                      ? 'border-[#00FF41] text-[#00FF41] bg-transparent hover:bg-[#00FF41] hover:text-black shadow-[0_0_15px_rgba(0,255,65,0.15)]' 
+                      : 'border-black text-black bg-transparent hover:bg-black hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.05)]'}`}
                 >
-                  COOL DOWN
+                  WORK
                 </button>
                 <button
-                  onClick={() => handleNav('game')}
-                  className={`text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer uppercase
+                  onClick={() => handleNav('contact')}
+                  className={`text-xs font-mono tracking-widest px-6 py-2.5 rounded-full transition-all duration-300 hover:scale-105 cursor-pointer uppercase border active:scale-95
                     ${darkMode 
-                      ? 'border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84]' 
-                      : 'border border-black bg-white text-black hover:bg-black hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
+                      ? 'border-[#00FF41] bg-[#00FF41] text-black md:bg-transparent md:text-[#00FF41] hover:bg-[#00FF41] hover:text-black shadow-[0_0_15px_rgba(0,255,65,0.2)]' 
+                      : 'border-black bg-black text-white md:bg-transparent md:text-black hover:bg-black hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
                 >
-                  BLOB RUN ⌁
+                  CONTACT
                 </button>
               </div>
               <div className="text-left md:text-right font-mono text-xs md:text-sm">
@@ -325,10 +342,23 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             <p className="opacity-70 leading-relaxed mb-8 font-mono text-sm">
               My practice combines classical design discipline with experimental technologies to create scalable visual identities.
             </p>
-            <div className="flex gap-4">
-              <span className="border border-current px-4 py-2 rounded-full text-sm uppercase">Storyteller</span>
-              <span className="border border-current px-4 py-2 rounded-full text-sm uppercase">Designer</span>
-              <span className="border border-current px-4 py-2 rounded-full text-sm uppercase">Artist</span>
+            <div className="flex flex-wrap gap-4">
+              {['Storyteller', 'Designer', 'Artist'].map((role) => {
+                const isSelected = selectedRoles[role];
+                return (
+                  <button
+                    key={role}
+                    onClick={() => toggleRole(role)}
+                    className={`px-4 py-2 rounded-full text-sm uppercase transition-all duration-300 border cursor-pointer active:scale-95
+                      ${isSelected 
+                        ? (darkMode ? 'bg-[#00FF41] border-[#00FF41] text-black shadow-[0_0_15px_rgba(0,255,65,0.3)]' : 'bg-black border-black text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]') 
+                        : (darkMode ? 'border-[#00FF41]/40 text-[#00FF41]/80 hover:text-[#00FF41] hover:border-[#00FF41] bg-transparent' : 'border-black/30 text-black/75 hover:text-black hover:border-black bg-transparent')
+                      }`}
+                  >
+                    {role}
+                  </button>
+                );
+              })}
             </div>
           </div>
 

@@ -214,10 +214,10 @@ const App = () => {
         style={{ width: `${scrollProgress * 100}%` }}
       />
 
-      <nav className="fixed w-full z-40 px-6 md:px-12 lg:px-16 py-6 flex justify-between items-center text-white">
+      <nav className="fixed w-full z-[55] px-6 sm:px-12 lg:px-16 py-8 sm:py-6 md:py-8 flex justify-between items-center text-white bg-transparent pointer-events-none">
         <button
           onClick={() => handleNav('home')}
-          className="cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-1.5 bg-transparent border-none p-0"
+          className="cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-1.5 bg-transparent border-none p-0 pointer-events-auto"
         >
           <span
             className="text-xs sm:text-base md:text-xl font-bold tracking-tighter"
@@ -241,7 +241,7 @@ const App = () => {
           <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded uppercase font-mono tracking-widest ${darkMode ? 'bg-[#00FF41]/15 text-[#00FF41] border border-[#00FF41]/25' : 'bg-black/5 text-black border border-black/20'}`}>[ARCHITECT]</span>
         </button>
 
-        <div className="flex items-center gap-2 sm:gap-6 mix-blend-difference">
+        <div className="flex items-center gap-3 sm:gap-6 mix-blend-difference pointer-events-none">
           <button
             onClick={() => {
               if (consoleOpen) {
@@ -256,24 +256,31 @@ const App = () => {
                 setConsoleMinimized(false);
               }
             }}
-            className="flex items-center gap-1 text-[9px] sm:text-xs border border-white/20 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full hover:bg-white hover:text-black transition-all"
+            className={`flex items-center gap-1.5 text-[11px] sm:text-xs border px-3.5 py-1.5 sm:px-3 sm:py-1 rounded-full transition-all pointer-events-auto active:scale-95
+              ${consoleOpen 
+                ? 'border-[#00FF41] text-[#00FF41] bg-[#00FF41]/10' 
+                : 'border-white/20 text-white hover:bg-white hover:text-black'}`}
           >
-            <Terminal size={10} className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+            <Terminal size={12} className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${consoleOpen ? 'text-[#00FF41]' : ''}`} />
             {consoleOpen && !consoleMinimized ? 'SHELL: CLOSE' : 'SHELL: OPEN'}
           </button>
 
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className="hidden md:flex items-center gap-2 text-xs border border-white/20 px-3 py-1 rounded-full hover:bg-white hover:text-black transition-all"
+            className="hidden md:flex items-center gap-2 text-xs border border-white/20 px-3 py-1 rounded-full hover:bg-white hover:text-black transition-all pointer-events-auto"
           >
             {darkMode ? <div className="w-2 h-2 rounded-full bg-[#00FF41]" /> : <div className="w-2 h-2 rounded-full bg-[#0055FF]" />}
             {darkMode ? 'SYSTEM: DARK' : 'SYSTEM: LIGHT'}
           </button>
 
-          <button onClick={() => setMenuOpen(!menuOpen)} className="focus:outline-none flex items-center justify-center p-1">
+          <button 
+            onClick={() => setMenuOpen(!menuOpen)} 
+            className="focus:outline-none flex items-center justify-center p-2 rounded-lg transition-colors hover:bg-white/10 active:bg-white/20 pointer-events-auto"
+            title="Toggle Menu"
+          >
             {menuOpen 
-              ? <X size={20} className="w-5 h-5 sm:w-8 sm:h-8" /> 
-              : <Menu size={20} className="w-5 h-5 sm:w-8 sm:h-8" />}
+              ? <X size={24} className="w-6 h-6 sm:w-8 sm:h-8" /> 
+              : <Menu size={24} className="w-6 h-6 sm:w-8 sm:h-8" />}
           </button>
         </div>
       </nav>
@@ -523,7 +530,7 @@ const App = () => {
           setAwaitingName={setAwaitingName}
         />
       )}
-      {(!consoleOpen || consoleMinimized) && (
+      {!isMobile && (!consoleOpen || consoleMinimized) && (
         <button
           onClick={() => {
             if (!consoleOpen) {

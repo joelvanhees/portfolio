@@ -324,25 +324,25 @@ const FloatingConsole = ({
       >
         <div className="flex items-center gap-3">
           {/* Apple dots style window controls */}
-          <div className="flex gap-2.5 md:gap-1.5 items-center mr-1">
+          <div className="flex gap-3 md:gap-1.5 items-center mr-1">
             <button 
               onClick={onClose}
               title="Close Window"
-              className="relative w-3.5 h-3.5 md:w-3 md:h-3 rounded-full bg-[#FF5F56] hover:bg-[#E0443E] transition-all cursor-pointer border-none p-0 flex items-center justify-center group after:absolute after:-inset-2 md:after:inset-0"
+              className="relative w-6 h-6 md:w-3 md:h-3 rounded-full bg-[#FF5F56] hover:bg-[#E0443E] transition-all cursor-pointer border-none p-0 flex items-center justify-center group active:scale-90"
             >
-              <span className="text-[7px] md:text-[6px] font-bold text-black/60 opacity-0 group-hover:opacity-100 transition-opacity">×</span>
+              <span className="text-xs md:text-[6px] font-bold text-black/60 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">×</span>
             </button>
             <button 
               onClick={() => setIsMaximized(!isMaximized)}
               title="Toggle Size"
-              className="relative w-3.5 h-3.5 md:w-3 md:h-3 rounded-full bg-[#FEBC2E] hover:bg-[#DFA020] transition-all cursor-pointer border-none p-0 flex items-center justify-center group after:absolute after:-inset-2 md:after:inset-0"
+              className="hidden md:flex relative w-3.5 h-3.5 md:w-3 md:h-3 rounded-full bg-[#FEBC2E] hover:bg-[#DFA020] transition-all cursor-pointer border-none p-0 items-center justify-center group"
             >
               <span className="text-[7px] md:text-[6px] font-bold text-black/60 opacity-0 group-hover:opacity-100 transition-opacity">↕</span>
             </button>
             <button 
               onClick={onMinimize}
               title="Minimize Window"
-              className="relative w-3.5 h-3.5 md:w-3 md:h-3 rounded-full bg-[#27C93F] hover:bg-[#1AAB29] transition-all cursor-pointer border-none p-0 flex items-center justify-center group after:absolute after:-inset-2 md:after:inset-0"
+              className="hidden md:flex relative w-3.5 h-3.5 md:w-3 md:h-3 rounded-full bg-[#27C93F] hover:bg-[#1AAB29] transition-all cursor-pointer border-none p-0 items-center justify-center group"
             >
               <span className="text-[7px] md:text-[6px] font-bold text-black/60 opacity-0 group-hover:opacity-100 transition-opacity">−</span>
             </button>

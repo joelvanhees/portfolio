@@ -13,6 +13,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
   const mouseRef = useRef({ x: 0, y: 0, active: false, px: 0, py: 0 });
   const mouseCoords = useRef(new THREE.Vector2());
   const raycaster = useRef(new THREE.Raycaster());
+  const onWaterClickRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
   const [isHoveringPool, setIsHoveringPool] = useState(false);
@@ -319,11 +320,18 @@ const CooldownPool = ({ darkMode, onClose }) => {
     // Custom GLSL waves shader injection
     waterMaterial.onBeforeCompile = (shader) => {
       shader.uniforms.uTime = { value: 0 };
+      shader.uniforms.uRipples = { value: [
+        new THREE.Vector4(0, 0, 0, 0),
+        new THREE.Vector4(0, 0, 0, 0),
+        new THREE.Vector4(0, 0, 0, 0),
+        new THREE.Vector4(0, 0, 0, 0)
+      ] };
       waterMaterial.userData.shader = shader;
 
       shader.vertexShader = `
         varying vec3 vLocalPos;
         uniform float uTime;
+        uniform vec4 uRipples[4]; // xy = local XZ center, z = spawnTime, w = active (1.0)
 
         vec3 getWaveOffset(vec3 p) {
           float time = uTime * 1.8;
@@ -334,6 +342,26 @@ const CooldownPool = ({ darkMode, onClose }) => {
           float w1 = sin(p.x * 2.5 + time) * 0.035 * agitation;
           float w2 = cos(p.z * 2.0 + time * 1.1) * 0.035 * agitation;
           finalPos.y += w1 + w2;
+
+          // Sum up active radial ripples from clicks
+          for (int i = 0; i < 4; i++) {
+            if (uRipples[i].w > 0.5) {
+              float rippleDist = distance(p.xz, uRipples[i].xy);
+              float age = time - uRipples[i].z * 1.8;
+              if (age > 0.0 && age < 6.0) {
+                // Wave propagation: speed = 1.5 units/second
+                float waveFront = age * 1.5;
+                float distToWaveFront = abs(rippleDist - waveFront);
+                
+                // Gaussian envelope for the wave front ripple
+                float rippleHeight = sin(rippleDist * 12.0 - age * 8.0) * 0.08;
+                float envelope = exp(-distToWaveFront * distToWaveFront * 12.0); // sharp wave front
+                float ageFade = smoothstep(6.0, 0.0, age); // fade out over 6 seconds
+                
+                finalPos.y += rippleHeight * envelope * ageFade;
+              }
+            }
+          }
 
           return finalPos;
         }
@@ -412,6 +440,47 @@ const CooldownPool = ({ darkMode, onClose }) => {
     glassFloor.receiveShadow = true;
     scene.add(glassFloor);
 
+    // 3D Interactive Ripples State
+    const activeRipples = [
+      new THREE.Vector4(0, 0, 0, 0),
+      new THREE.Vector4(0, 0, 0, 0),
+      new THREE.Vector4(0, 0, 0, 0),
+      new THREE.Vector4(0, 0, 0, 0)
+    ];
+    let nextRippleIndex = 0;
+
+    const clickRaycaster = new THREE.Raycaster();
+    const clickMouse = new THREE.Vector2();
+
+    onWaterClickRef.current = (e) => {
+      const glCanvas = glCanvasRef.current;
+      if (!glCanvas) return;
+      const rect = glCanvas.getBoundingClientRect();
+      
+      // Calculate normalized device coordinates
+      clickMouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      clickMouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      clickRaycaster.setFromCamera(clickMouse, camera);
+
+      // Check intersections with waterMesh
+      const intersects = clickRaycaster.intersectObject(waterMesh);
+      if (intersects.length > 0) {
+        const intersection = intersects[0];
+        
+        // We only want to trigger ripples if we click/tap on the top surface
+        if (intersection.face && intersection.face.normal.y > 0.5) {
+          const localPoint = waterMesh.worldToLocal(intersection.point.clone());
+          
+          const t = clock.getElapsedTime();
+          activeRipples[nextRippleIndex].set(localPoint.x, localPoint.z, t, 1.0);
+          nextRippleIndex = (nextRippleIndex + 1) % 4;
+
+          playClickSound('click');
+        }
+      }
+    };
+
     // Render loop
     const clock = new THREE.Clock();
 
@@ -421,6 +490,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
       // Update shader uniforms
       if (waterMaterial.userData.shader) {
         waterMaterial.userData.shader.uniforms.uTime.value = time;
+        waterMaterial.userData.shader.uniforms.uRipples.value = activeRipples;
       }
 
       // Normal map offsets

@@ -65,9 +65,11 @@ const GameView = ({ darkMode, onClose }) => {
   const [highScore, setHighScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [lives, setLives] = useState(3);
-  const [selectedColor, setSelectedColor] = useState('green'); // 'green', 'yellow', 'pink'
+  const [selectedColor, setSelectedColor] = useState('green'); // 'green', 'yellow', 'pink', 'blue'
   const [unlockedYellow, setUnlockedYellow] = useState(false);
   const [unlockedPink, setUnlockedPink] = useState(false);
+  const [unlockedBlue, setUnlockedBlue] = useState(false);
+  const [crystalsCollected, setCrystalsCollected] = useState(0);
 
   // Sync state refs to let High-Performance loop read them immediately
   const stateRef = useRef({
@@ -86,13 +88,18 @@ const GameView = ({ darkMode, onClose }) => {
     lastObstacleSpawn: 0,
     lastCrystalSpawn: 0,
     unlockedYellow: false,
-    unlockedPink: false
+    unlockedPink: false,
+    unlockedBlue: false,
+    crystalsCollected: 0
   });
 
   const scoreRef = useRef(null);
   const levelRef = useRef(null);
   const bgMusicRef = useRef(null);
   const audioCtxRef = useRef(null);
+  const trackMaterialRef = useRef(null);
+  const barrierMaterialRef = useRef(null);
+  const gridColorUniform = useRef({ value: new THREE.Color(0.0, 1.0, 0.25) });
 
   // Fetch local High Score on Mount
   useEffect(() => {
@@ -309,10 +316,12 @@ const GameView = ({ darkMode, onClose }) => {
       opacity: 0.85,
       side: THREE.DoubleSide
     });
+    trackMaterialRef.current = trackMaterial;
 
     // Inject scrolling grid coordinates safely at the end of compilation to support all drivers/GPUs
     trackMaterial.onBeforeCompile = (shader) => {
       shader.uniforms.uTime = timeUniform.current;
+      shader.uniforms.uGridColor = gridColorUniform.current;
       shader.vertexShader = `varying vec2 vScrollUV;\n` + shader.vertexShader;
       shader.vertexShader = shader.vertexShader.replace(
         '#include <uv_vertex>',
@@ -321,7 +330,7 @@ const GameView = ({ darkMode, onClose }) => {
         vScrollUV = uv;
         `
       );
-      shader.fragmentShader = `varying vec2 vScrollUV;\nuniform float uTime;\n` + shader.fragmentShader;
+      shader.fragmentShader = `varying vec2 vScrollUV;\nuniform float uTime;\nuniform vec3 uGridColor;\n` + shader.fragmentShader;
       shader.fragmentShader = shader.fragmentShader.replace(
         '#include <dithering_fragment>',
         `
@@ -333,8 +342,7 @@ const GameView = ({ darkMode, onClose }) => {
         float combinedGrid = max(gridX, gridY);
         
         // Apply wireframe glow grid lines
-        vec3 gridColor = vec3(0.0, 1.0, 0.25);
-        gl_FragColor.rgb = mix(gl_FragColor.rgb, gridColor, combinedGrid * 0.85);
+        gl_FragColor.rgb = mix(gl_FragColor.rgb, uGridColor, combinedGrid * 0.85);
         gl_FragColor.a = mix(0.12, 0.9, combinedGrid);
         `
       );
@@ -352,6 +360,7 @@ const GameView = ({ darkMode, onClose }) => {
       transparent: true,
       opacity: 0.28
     });
+    barrierMaterialRef.current = barrierMat;
 
     const leftBarrier = new THREE.Mesh(barrierGeo, barrierMat);
     leftBarrier.position.set(-6, TRACK_Y + 0.2, -40);
@@ -550,17 +559,28 @@ const GameView = ({ darkMode, onClose }) => {
         starField.rotation.x += 0.00004;
       }
 
-      // Live swap core color configs
+      // Live swap environment and grid colors (Blob stays green!)
       if (innerBlobMaterial.current) {
-        const liquidColorMap = {
-          green: { color: 0xccffcc, attenuation: 0x00ff41, emissive: 0x004411 },
-          yellow: { color: 0xffffcc, attenuation: 0xffd700, emissive: 0x443300 },
-          pink: { color: 0xffcccc, attenuation: 0xff007f, emissive: 0x440022 }
+        innerBlobMaterial.current.color.setHex(0xccffcc);
+        innerBlobMaterial.current.attenuationColor.setHex(0x00ff41);
+        innerBlobMaterial.current.emissive.setHex(0x004411);
+      }
+
+      if (trackMaterialRef.current && barrierMaterialRef.current) {
+        const envColorMap = {
+          green: { base: 0x051a08, grid: [0.0, 1.0, 0.25], barrier: 0x00ff41 },
+          yellow: { base: 0x1a1a00, grid: [1.0, 0.84, 0.0], barrier: 0xffea00 },
+          pink: { base: 0x1a0010, grid: [1.0, 0.0, 0.5], barrier: 0xff007f },
+          blue: { base: 0x00101a, grid: [0.0, 0.5, 1.0], barrier: 0x00a2ff }
         };
-        const config = liquidColorMap[stateRef.current.activeColor] || liquidColorMap.green;
-        innerBlobMaterial.current.color.setHex(config.color);
-        innerBlobMaterial.current.attenuationColor.setHex(config.attenuation);
-        innerBlobMaterial.current.emissive.setHex(config.emissive);
+        const envConfig = envColorMap[stateRef.current.activeColor] || envColorMap.green;
+        
+        trackMaterialRef.current.color.setHex(envConfig.base);
+        barrierMaterialRef.current.color.setHex(envConfig.barrier);
+        
+        if (gridColorUniform.current) {
+          gridColorUniform.current.value.setRGB(envConfig.grid[0], envConfig.grid[1], envConfig.grid[2]);
+        }
       }
 
       const state = stateRef.current;
@@ -683,15 +703,7 @@ const GameView = ({ darkMode, onClose }) => {
           if (levelRef.current) levelRef.current.innerText = `LEVEL ${nextLevel}`;
         }
 
-        // Handle Unlocks silently
-        if (state.score >= 500 && !state.unlockedYellow) {
-          state.unlockedYellow = true;
-          setUnlockedYellow(true);
-        }
-        if (state.score >= 1500 && !state.unlockedPink) {
-          state.unlockedPink = true;
-          setUnlockedPink(true);
-        }
+        // Unlocks are triggered directly in triggerCollectCrystal to stay responsive!
 
         // Elegant Dynamic Camera Tracking
         const targetCamPos = new THREE.Vector3(playerGroup.position.x * 0.45, 4.5 + state.jumpY * 0.22, 10.5);
@@ -881,6 +893,22 @@ const GameView = ({ darkMode, onClose }) => {
     if (scoreRef.current) {
       scoreRef.current.innerText = Math.floor(state.score).toString().padStart(5, '0');
     }
+
+    state.crystalsCollected += 1;
+    setCrystalsCollected(state.crystalsCollected);
+
+    if (state.crystalsCollected >= 10 && !state.unlockedYellow) {
+      state.unlockedYellow = true;
+      setUnlockedYellow(true);
+    }
+    if (state.crystalsCollected >= 20 && !state.unlockedPink) {
+      state.unlockedPink = true;
+      setUnlockedPink(true);
+    }
+    if (state.crystalsCollected >= 30 && !state.unlockedBlue) {
+      state.unlockedBlue = true;
+      setUnlockedBlue(true);
+    }
   };
 
   // Game over state handler
@@ -919,10 +947,12 @@ const GameView = ({ darkMode, onClose }) => {
     setScore(0);
     setLevel(1);
     setLives(3);
+    setCrystalsCollected(0);
 
     state.score = 0;
     state.level = 1;
     state.lives = 3;
+    state.crystalsCollected = 0;
     state.currentLane = 1;
     state.jumpY = 0;
     state.verticalVelocity = 0;
@@ -1013,10 +1043,12 @@ const GameView = ({ darkMode, onClose }) => {
                 <span ref={scoreRef} className="text-lg md:text-xl font-bold tracking-tight">{Math.floor(stateRef.current.score).toString().padStart(5, '0')}</span>
                 <span className="text-[6px] md:text-[8px] opacity-30 uppercase tracking-widest pt-0.5 border-t border-white/5">BEST: {highScore}</span>
               </div>
-              <div className="text-[8px] md:text-[10px] opacity-60 uppercase tracking-widest pl-2 font-bold">
-                {!unlockedYellow && <span className="text-[#ffd700]/70">NEXT: YELLOW (500)</span>}
-                {unlockedYellow && !unlockedPink && <span className="text-[#ff007f]/70">NEXT: PINK (1500)</span>}
-                {unlockedPink && <span className="text-[#00FF41]/70">ALL UNLOCKED</span>}
+              <div className="text-[8px] md:text-[10px] opacity-60 uppercase tracking-widest pl-2 font-bold flex flex-col gap-0.5">
+                <span className="text-white/40">Parts: {crystalsCollected}</span>
+                {!unlockedYellow && <span className="text-[#ffd700]/70">NEXT: YELLOW GRID (10 Parts)</span>}
+                {unlockedYellow && !unlockedPink && <span className="text-[#ff007f]/70">NEXT: PINK GRID (20 Parts)</span>}
+                {unlockedPink && !unlockedBlue && <span className="text-[#00a2ff]/70">NEXT: BLUE GRID (30 Parts)</span>}
+                {unlockedBlue && <span className="text-[#00FF41]/70">ALL GRIDS UNLOCKED</span>}
               </div>
             </div>
 
@@ -1083,7 +1115,7 @@ const GameView = ({ darkMode, onClose }) => {
                   : unlockedYellow 
                     ? 'border-white/10 hover:border-white/30 bg-[#ffd700]/5' 
                     : ''}`}
-              title={unlockedYellow ? "Neon Yellow" : "Locked (500 pts)"}
+              title={unlockedYellow ? "Neon Yellow Grid" : "Locked (10 Parts)"}
             >
               {unlockedYellow ? (
                 <div className="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full bg-[#ffd700]" />
@@ -1102,10 +1134,29 @@ const GameView = ({ darkMode, onClose }) => {
                   : unlockedPink 
                     ? 'border-white/10 hover:border-white/30 bg-[#ff007f]/5' 
                     : ''}`}
-              title={unlockedPink ? "Neon Pink" : "Locked (1500 pts)"}
+              title={unlockedPink ? "Neon Pink Grid" : "Locked (20 Parts)"}
             >
               {unlockedPink ? (
                 <div className="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full bg-[#ff007f]" />
+              ) : (
+                <Lock size={10} className="text-white/40" />
+              )}
+            </button>
+
+            {/* Blue */}
+            <button
+              onClick={() => unlockedBlue && setSelectedColor('blue')}
+              className={`w-7 h-7 md:w-8 md:h-8 rounded-full border transition-all flex items-center justify-center shadow relative active:scale-90
+                ${!unlockedBlue ? 'opacity-30 cursor-not-allowed bg-black/40 border-white/5' : 'cursor-pointer'}
+                ${selectedColor === 'blue' && unlockedBlue 
+                  ? 'border-[#00a2ff] bg-[#00a2ff]/10 scale-105 shadow-[0_0_8px_rgba(0,162,255,0.3)]' 
+                  : unlockedBlue 
+                    ? 'border-white/10 hover:border-white/30 bg-[#00a2ff]/5' 
+                    : ''}`}
+              title={unlockedBlue ? "Neon Blue Grid" : "Locked (30 Parts)"}
+            >
+              {unlockedBlue ? (
+                <div className="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full bg-[#00a2ff]" />
               ) : (
                 <Lock size={10} className="text-white/40" />
               )}

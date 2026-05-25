@@ -6,36 +6,33 @@ let globalCachedEnvMap = null;
 
 const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
   const mountRef = useRef(null);
-  const darkModeRef = useRef(darkMode);
-  const isThinkingRef = useRef(isThinking);
-
-  // Keep refs in sync without recreating the Three.js scene
-  useEffect(() => { darkModeRef.current = darkMode; }, [darkMode]);
-  useEffect(() => { isThinkingRef.current = isThinking; }, [isThinking]);
+  const timeUniformRef = useRef({ value: 0 });
+  const velocityUniformRef = useRef({ value: 1.0 });
 
   useEffect(() => {
     if (!mountRef.current) return;
-    const container = mountRef.current;
 
     // --- SETUP ---
     const scene = new THREE.Scene();
 
-    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    // Make background transparent so it blends into the UI
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
     
-    const width = container.clientWidth;
-    const height = container.clientHeight;
+    // Size based on parent container
+    const width = mountRef.current.clientWidth;
+    const height = mountRef.current.clientHeight;
     renderer.setSize(width, height);
-    container.appendChild(renderer.domElement);
+    mountRef.current.appendChild(renderer.domElement);
 
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 300);
     camera.position.set(0, 0, 8);
 
-    // --- SHADER INJECTION ---
-    const timeUniform = { value: 0 };
-    const velocityUniform = { value: 1.0 };
+    // --- SHADER INJEKTION ---
+    const timeUniform = timeUniformRef.current;
+    const velocityUniform = velocityUniformRef.current;
 
     function injectBlobShader(shader, intensity, frequency, speed, isInner) {
       shader.uniforms.uTime = timeUniform;
@@ -64,7 +61,7 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
       );
     }
 
-    // --- MATERIALS ---
+    // --- MATERIALIEN ---
     const glassMaterial = new THREE.MeshPhysicalMaterial({
       color: 0xffffff, 
       metalness: 0.05,
@@ -80,26 +77,30 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
     });
     glassMaterial.onBeforeCompile = (shader) => injectBlobShader(shader, 0.12, 2.0, 1.2, false);
     
+    // Liquid Material reacts to darkMode
+    const neonGreen = 0x00ff66;
+    const neonBlue = 0x0055ff;
+    const liquidColor = darkMode ? neonGreen : neonBlue;
+    const attenuationColor = darkMode ? 0x00cc22 : 0x0033cc;
+    const emissiveColor = darkMode ? 0x003311 : 0x001133;
+
     const liquidMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x00ff66,
+      color: liquidColor,
       metalness: 0.2,
       roughness: 0.04,
       transmission: 0.9,
       thickness: 1.2,
-      attenuationColor: new THREE.Color(0x00cc22),
+      attenuationColor: new THREE.Color(attenuationColor),
       attenuationDistance: 0.8,
       ior: 1.4,
       side: THREE.DoubleSide,
       clearcoat: 1.0,
-      emissive: 0x003311,
+      emissive: emissiveColor,
       emissiveIntensity: 0.2
     });
     liquidMaterial.onBeforeCompile = (shader) => injectBlobShader(shader, 0.06, 1.4, 1.5, true);
 
-    // Track current dark mode to only update material when it actually changes
-    let prevDarkMode = darkModeRef.current;
-
-    // --- OBJECTS ---
+    // --- OBJEKTE ---
     const OUTER_RADIUS = 1.4;
     const INNER_RADIUS = 0.55; 
 
@@ -114,7 +115,7 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
     const innerCore = new THREE.Mesh(innerGeometry, liquidMaterial);
     blobGroup.add(innerCore);
 
-    // --- LIGHTING ---
+    // --- LICHT & BELEUCHTUNG ---
     const spotLight = new THREE.SpotLight(0xffffff, 2.0); 
     spotLight.position.set(5, 10, 5);
     scene.add(spotLight);
@@ -129,7 +130,7 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x000022, 0.3));
 
-    // HDRI for glass reflections
+    // HDRI für Glas-Reflektionen
     if (globalCachedEnvMap) {
       scene.environment = globalCachedEnvMap;
     } else {
@@ -137,57 +138,43 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         globalCachedEnvMap = texture;
         scene.environment = texture; 
+        scene.environment.blur = 0.8; 
       });
     }
 
-    // --- RENDER LOOP ---
+    // --- LOOP ---
     const clock = new THREE.Clock();
     let animationId;
-    let lastRenderTime = 0;
-    const FRAME_INTERVAL = 1000 / 30; // 30fps is smooth enough for the blob
 
-    const animate = (timestamp) => {
+    const animate = () => {
       animationId = requestAnimationFrame(animate);
-
-      // Throttle to 30fps
-      if (timestamp - lastRenderTime < FRAME_INTERVAL) return;
-      lastRenderTime = timestamp;
-
       const time = clock.getElapsedTime();
       
+      // Shader Zeit aktualisieren
       timeUniform.value = time;
       
-      const thinking = isThinkingRef.current;
-      const thinkingFactor = thinking ? 2.5 : 1.0;
+      // Pulsierende Shader-"Geschwindigkeit" simulieren
+      const thinkingFactor = isThinking ? 2.5 : 1.0;
       velocityUniform.value = 1.0 + Math.sin(time * thinkingFactor) * 0.5;
 
-      // Update liquid color when darkMode changes (via ref, not re-mount)
-      const currentDark = darkModeRef.current;
-      if (currentDark !== prevDarkMode) {
-        prevDarkMode = currentDark;
-        liquidMaterial.color.set(currentDark ? 0x00ff66 : 0x0055ff);
-        liquidMaterial.attenuationColor.set(currentDark ? 0x00cc22 : 0x0033cc);
-        liquidMaterial.emissive.set(currentDark ? 0x003311 : 0x001133);
-        liquidMaterial.needsUpdate = true;
-      }
-
-      // Smooth floating and rotation
+      // Sanftes Schweben und Rotieren
       blobGroup.position.y = Math.sin(time * 1.5) * 0.2;
       blobGroup.rotation.y = time * 0.2 * thinkingFactor;
       blobGroup.rotation.z = Math.sin(time * 0.5) * 0.1;
       
+      // Innerer Kern dreht sich leicht gegenläufig
       innerCore.rotation.x = -time * 0.3 * thinkingFactor;
       innerCore.rotation.y = time * 0.1 * thinkingFactor;
 
       renderer.render(scene, camera);
     };
 
-    animationId = requestAnimationFrame(animate);
+    animate();
 
     const handleResize = () => {
-      if (container) {
-        const w = container.clientWidth;
-        const h = container.clientHeight;
+      if (mountRef.current) {
+        const w = mountRef.current.clientWidth;
+        const h = mountRef.current.clientHeight;
         renderer.setSize(w, h);
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
@@ -198,8 +185,8 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
     return () => {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationId);
-      if (container && renderer.domElement) {
-        try { container.removeChild(renderer.domElement); } catch {}
+      if (mountRef.current && renderer.domElement) {
+        mountRef.current.removeChild(renderer.domElement);
       }
       renderer.dispose();
       outerGeometry.dispose();
@@ -207,13 +194,12 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
       glassMaterial.dispose();
       liquidMaterial.dispose();
     };
-  }, []); // Empty deps: scene is created once, never torn down
+  }, [darkMode, isThinking]);
 
   return (
     <div 
       ref={mountRef} 
-      className={`relative flex items-center justify-center overflow-visible ${className} ${isThinking ? 'scale-125' : 'scale-100'}`}
-      style={{ transition: 'transform 0.5s ease' }}
+      className={`relative flex items-center justify-center transition-all duration-500 overflow-visible ${className} ${isThinking ? 'scale-125 drop-shadow-[0_0_15px_rgba(0,255,65,0.6)]' : 'scale-100 drop-shadow-md'}`}
     />
   );
 };

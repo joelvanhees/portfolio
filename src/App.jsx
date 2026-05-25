@@ -539,7 +539,7 @@ const App = () => {
             setConsoleMinimized(false);
           }}
           title={consoleMinimized ? "Restore System Shell" : "Open System Shell"}
-          className="fixed bottom-6 right-6 z-[90] cursor-pointer transition-[transform] duration-300 hover:scale-110 hover:-translate-y-2 flex items-center justify-center border-none bg-transparent outline-none"
+          className="fixed bottom-6 right-6 z-[90] cursor-pointer transition-all duration-300 hover:scale-110 hover:-translate-y-2 flex items-center justify-center border-none bg-transparent outline-none drop-shadow-2xl"
         >
           <ShellBlob isThinking={false} darkMode={darkMode} className="w-32 h-32 md:w-44 md:h-44 pointer-events-none" />
         </button>
@@ -553,15 +553,9 @@ const App = () => {
       {!isMobile && (
         <div 
           ref={cursorRef}
-          className="fixed w-2 h-2 rounded-full pointer-events-none z-[100]"
-          style={{ 
-            left: 0, 
-            top: 0, 
-            transform: 'translate3d(0px, 0px, 0)',
-            willChange: 'transform',
-            backgroundColor: darkMode ? '#00FF41' : '#0055FF',
-            boxShadow: darkMode ? '0 0 8px #00FF41' : '0 0 8px #0055FF',
-          }}
+          className={`fixed w-2 h-2 rounded-full pointer-events-none z-[100] transition-colors duration-500 -translate-x-1/2 -translate-y-1/2
+            ${darkMode ? 'bg-[#00FF41] shadow-[0_0_8px_#00FF41]' : 'bg-[#0055FF] shadow-[0_0_8px_#0055FF]'}`}
+          style={{ left: 0, top: 0, transform: 'translate3d(0px, 0px, 0)' }}
         />
       )}
     </div>

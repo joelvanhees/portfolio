@@ -293,8 +293,6 @@ const SpiralTimeSphere = () => {
     let lastSec = -1;
 
     let animationFrameId;
-    let lastRenderTime = 0;
-    const FRAME_INTERVAL = 1000 / 30; // 30fps for clock display
 
     const getPos = (idx) => {
       if (idx <= 0) idx = 60;
@@ -314,7 +312,7 @@ const SpiralTimeSphere = () => {
     const tempLookTarget = new THREE.Vector3(0, 0, 0);
 
     // --- MAIN ANIMATION ---
-    function animate(timestamp) {
+    function animate() {
       if (!isMountedRef.current) return;
       if (!container || !renderer) return;
 
@@ -323,9 +321,6 @@ const SpiralTimeSphere = () => {
 
       animationFrameId = requestAnimationFrame(animate);
 
-      // Throttle to 30fps
-      if (timestamp - lastRenderTime < FRAME_INTERVAL) return;
-      lastRenderTime = timestamp;
       FRAME++;
       const now = new Date();
       const hrs = now.getHours();

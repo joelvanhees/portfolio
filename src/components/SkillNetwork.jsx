@@ -43,12 +43,6 @@ const SkillNetwork = ({ darkMode, className }) => {
     const ctx = canvas.getContext('2d');
     let animationFrameId;
     let time = 0;
-    let lastRenderTime = 0;
-    const FRAME_INTERVAL = 1000 / 20; // 20fps is plenty for slow floating nodes
-
-    // Pre-build lookup map: O(1) instead of O(n) per link per frame
-    const nodeMap = {};
-    nodes.forEach(n => { nodeMap[n.id] = n; });
 
     const handleResize = () => {
       if (containerRef.current && canvas) {
@@ -65,46 +59,42 @@ const SkillNetwork = ({ darkMode, className }) => {
 
     handleResize();
 
-    const strokeColor = darkMode ? 'rgba(0, 255, 65, 0.2)' : 'rgba(0, 85, 255, 0.2)';
-
-    const render = (timestamp) => {
-      animationFrameId = requestAnimationFrame(render);
-
-      if (timestamp - lastRenderTime < FRAME_INTERVAL) return;
-      lastRenderTime = timestamp;
-
+    const render = () => {
       time += 0.005;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      ctx.strokeStyle = strokeColor;
+      ctx.strokeStyle = darkMode ? 'rgba(0, 255, 65, 0.2)' : 'rgba(0, 85, 255, 0.2)';
       ctx.lineWidth = 1;
 
-      // Batch all links into a single path
-      ctx.beginPath();
-      const w = canvas.width;
-      const h = canvas.height;
-      for (let i = 0; i < links.length; i++) {
-        const nodeA = nodeMap[links[i][0]];
-        const nodeB = nodeMap[links[i][1]];
-        if (!nodeA || !nodeB) continue;
+      const getPos = (node, t) => {
+        const seed = node.id.charCodeAt(0);
+        const floatX = Math.sin(t + seed) * 2;
+        const floatY = Math.cos(t + seed * 0.5) * 2;
 
-        const seedA = nodeA.id.charCodeAt(0);
-        const seedB = nodeB.id.charCodeAt(0);
+        return {
+          x: (node.x / 100) * canvas.width + floatX,
+          y: (node.y / 100) * canvas.height + floatY,
+        };
+      };
 
-        ctx.moveTo(
-          (nodeA.x / 100) * w + Math.sin(time + seedA) * 2,
-          (nodeA.y / 100) * h + Math.cos(time + seedA * 0.5) * 2
-        );
-        ctx.lineTo(
-          (nodeB.x / 100) * w + Math.sin(time + seedB) * 2,
-          (nodeB.y / 100) * h + Math.cos(time + seedB * 0.5) * 2
-        );
-      }
-      ctx.stroke();
+      links.forEach(([idA, idB]) => {
+        const nodeA = nodes.find(n => n.id === idA);
+        const nodeB = nodes.find(n => n.id === idB);
+        if (nodeA && nodeB) {
+          const posA = getPos(nodeA, time);
+          const posB = getPos(nodeB, time);
+          ctx.beginPath();
+          ctx.moveTo(posA.x, posA.y);
+          ctx.lineTo(posB.x, posB.y);
+          ctx.stroke();
+        }
+      });
+
+      animationFrameId = requestAnimationFrame(render);
     };
 
-    animationFrameId = requestAnimationFrame(render);
+    render();
     return () => {
       cancelAnimationFrame(animationFrameId);
       resizeObserver.disconnect();

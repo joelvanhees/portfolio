@@ -188,7 +188,11 @@ const App = () => {
         ::-webkit-scrollbar-thumb:hover { background: ${darkMode ? '#00FF41' : '#000000'}; }
       `}</style>
 
-      <div className={`fixed inset-0 pointer-events-none opacity-[0.03] z-0 ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
+      <div className={`fixed inset-0 pointer-events-none z-0 ${
+        darkMode 
+          ? 'opacity-[0.03] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)]' 
+          : 'opacity-[0.09] bg-[linear-gradient(to_right,#00000022_1px,transparent_1px),linear-gradient(to_bottom,#00000022_1px,transparent_1px)]'
+      } bg-[size:24px_24px]`}></div>
 
       <div
         ref={scrollBarRef}
@@ -196,7 +200,7 @@ const App = () => {
         style={{ width: '0%' }}
       />
 
-      <nav className="fixed w-full z-[55] px-6 sm:px-12 lg:px-16 py-8 sm:py-6 md:py-8 flex justify-between items-center text-white bg-transparent pointer-events-none">
+      <nav className={`fixed w-full z-[55] px-6 sm:px-12 lg:px-16 py-8 sm:py-6 md:py-8 flex justify-between items-center bg-transparent pointer-events-none transition-colors duration-700 ${darkMode ? 'text-white' : 'text-black'}`}>
         <button
           onClick={() => handleNav('home')}
           className="cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-1.5 bg-transparent border-none p-0 pointer-events-auto"
@@ -223,7 +227,7 @@ const App = () => {
           <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded uppercase font-mono tracking-widest ${darkMode ? 'bg-[#00FF41]/15 text-[#00FF41] border border-[#00FF41]/25' : 'bg-black/5 text-black border border-black/20'}`}>[ARCHITECT]</span>
         </button>
 
-        <div className="flex items-center gap-3 sm:gap-6 mix-blend-difference pointer-events-none">
+        <div className="flex items-center gap-3 sm:gap-6 pointer-events-none">
           <button
             onClick={() => {
               if (consoleOpen) {
@@ -243,8 +247,8 @@ const App = () => {
             }}
             className={`flex items-center gap-1.5 text-[11px] sm:text-xs border px-3.5 py-1.5 sm:px-3 sm:py-1 rounded-full transition-all pointer-events-auto active:scale-95
               ${consoleOpen 
-                ? 'border-[#00FF41] text-[#00FF41] bg-[#00FF41]/10' 
-                : 'border-white/20 text-white hover:bg-white hover:text-black'}`}
+                ? (darkMode ? 'border-[#00FF41] text-[#00FF41] bg-[#00FF41]/10' : 'border-[#0055FF] text-[#0055FF] bg-[#0055FF]/10') 
+                : (darkMode ? 'border-white/20 text-white hover:bg-white hover:text-black' : 'border-black/20 text-black hover:bg-black hover:text-white')}`}
           >
             <Terminal size={12} className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${consoleOpen ? 'text-[#00FF41]' : ''}`} />
             {consoleOpen && !consoleMinimized ? 'SHELL: CLOSE' : 'SHELL: OPEN'}
@@ -255,7 +259,10 @@ const App = () => {
               setDarkMode(!darkMode);
               playClickSound('click');
             }}
-            className="hidden md:flex items-center gap-2 text-xs border border-white/20 px-3 py-1 rounded-full hover:bg-white hover:text-black transition-all pointer-events-auto"
+            className={`hidden md:flex items-center gap-2 text-xs border px-3 py-1 rounded-full transition-all pointer-events-auto
+              ${darkMode 
+                ? 'border-white/20 text-white hover:bg-white hover:text-black' 
+                : 'border-black/20 text-black hover:bg-black hover:text-white'}`}
           >
             {darkMode ? <div className="w-2 h-2 rounded-full bg-[#00FF41]" /> : <div className="w-2 h-2 rounded-full bg-[#0055FF]" />}
             {darkMode ? 'SYSTEM: DARK' : 'SYSTEM: LIGHT'}
@@ -266,7 +273,10 @@ const App = () => {
               setMenuOpen(!menuOpen);
               playClickSound('click');
             }} 
-            className="focus:outline-none flex items-center justify-center p-2 rounded-lg transition-colors hover:bg-white/10 active:bg-white/20 pointer-events-auto"
+            className={`focus:outline-none flex items-center justify-center p-2 rounded-lg transition-colors pointer-events-auto
+              ${darkMode 
+                ? 'hover:bg-white/10 active:bg-white/20' 
+                : 'hover:bg-black/10 active:bg-black/20'}`}
             title="Toggle Menu"
           >
             {menuOpen 
@@ -323,6 +333,19 @@ const App = () => {
                     : 'border border-black bg-white text-black hover:bg-black hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
               >
                 BLOB RUN ⌁
+              </button>
+
+              <button
+                onClick={() => {
+                  setDarkMode(!darkMode);
+                  playClickSound('click');
+                }}
+                className={`w-full text-right text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
+                  ${darkMode 
+                    ? 'border border-white/20 bg-white/5 text-white hover:bg-white hover:text-black shadow-[inset_0_2px_4px_rgba(255,255,255,0.15)]' 
+                    : 'border border-black bg-black text-white hover:bg-black/90 hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
+              >
+                THEME: {darkMode ? 'LIGHT ☼' : 'DARK ☾'}
               </button>
             </div>
           </div>

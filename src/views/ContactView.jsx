@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CheckCircle, Loader, Send } from 'lucide-react';
+import { playUiSound } from '../utils/sounds';
 
 const ContactView = ({ darkMode }) => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -12,6 +13,7 @@ const ContactView = ({ darkMode }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    playUiSound('blip');
 
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) return;
 

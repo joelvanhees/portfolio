@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Terminal, ChevronRight } from 'lucide-react';
 import ShellBlob from './ShellBlob';
+import { playUiSound } from '../utils/sounds';
 
 // TypewriterText component to emulate realistic human typing with variable speeds and pauses
 const TypewriterText = ({ text }) => {
@@ -113,6 +114,8 @@ const FloatingConsole = ({
     const cmd = rawInput.toLowerCase();
     if (!rawInput) return;
 
+    playUiSound('blip');
+
     const newHistory = [...history, { text: `joel@architect:~$ ${rawInput}`, isInput: true }];
     setHistory(newHistory);
     setInput('');
@@ -148,6 +151,7 @@ const FloatingConsole = ({
               <button 
                 onClick={() => {
                   window.location.hash = '#contact';
+                  playUiSound('click');
                 }}
                 className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-mono transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
                   ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-black text-black hover:bg-black hover:text-white'}`}
@@ -201,6 +205,7 @@ const FloatingConsole = ({
                 <button 
                   onClick={() => {
                     window.location.hash = '#contact';
+                    playUiSound('click');
                   }}
                   className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-mono transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
                     ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-black text-black hover:bg-black hover:text-white'}`}
@@ -275,6 +280,7 @@ const FloatingConsole = ({
                 <button 
                   onClick={() => {
                     window.location.hash = '#contact';
+                    playUiSound('click');
                   }}
                   className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-mono transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
                     ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-black text-black hover:bg-black hover:text-white'}`}
@@ -326,21 +332,21 @@ const FloatingConsole = ({
           {/* Apple dots style window controls */}
           <div className="flex gap-3 md:gap-1.5 items-center mr-1">
             <button 
-              onClick={onClose}
+              onClick={() => { onClose(); playUiSound('close'); }}
               title="Close Window"
               className="relative w-6 h-6 md:w-3 md:h-3 rounded-full bg-[#FF5F56] hover:bg-[#E0443E] transition-all cursor-pointer border-none p-0 flex items-center justify-center group active:scale-90"
             >
               <span className="text-xs md:text-[6px] font-bold text-black/60 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">×</span>
             </button>
             <button 
-              onClick={() => setIsMaximized(!isMaximized)}
+              onClick={() => { setIsMaximized(!isMaximized); playUiSound('click'); }}
               title="Toggle Size"
               className="hidden md:flex relative w-3.5 h-3.5 md:w-3 md:h-3 rounded-full bg-[#FEBC2E] hover:bg-[#DFA020] transition-all cursor-pointer border-none p-0 items-center justify-center group"
             >
               <span className="text-[7px] md:text-[6px] font-bold text-black/60 opacity-0 group-hover:opacity-100 transition-opacity">↕</span>
             </button>
             <button 
-              onClick={onMinimize}
+              onClick={() => { onMinimize(); playUiSound('close'); }}
               title="Minimize Window"
               className="hidden md:flex relative w-3.5 h-3.5 md:w-3 md:h-3 rounded-full bg-[#27C93F] hover:bg-[#1AAB29] transition-all cursor-pointer border-none p-0 items-center justify-center group"
             >

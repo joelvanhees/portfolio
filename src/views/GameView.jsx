@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { X, Trophy, Zap, Play, Lock, Heart, RefreshCw } from 'lucide-react';
 import * as THREE from 'three';
+import { playUiSound } from '../utils/sounds';
 
 // --- GAME PARAMETERS ---
 const OUTER_RADIUS = 1.4;
@@ -894,6 +895,7 @@ const GameView = ({ darkMode, onClose }) => {
   const startGame = () => {
     const state = stateRef.current;
     
+    playUiSound('open');
     setIsPlaying(true);
 
     if (bgMusicRef.current) {
@@ -933,6 +935,8 @@ const GameView = ({ darkMode, onClose }) => {
   // Return to home / Close overlay
   const handleExit = () => {
     const state = stateRef.current;
+    
+    playUiSound('close');
     state.isPlaying = false;
     state.gameOver = false;
     
@@ -977,7 +981,7 @@ const GameView = ({ darkMode, onClose }) => {
       <div 
         ref={containerRef} 
         onClick={(e) => e.stopPropagation()} // Prevent clicking game bezel from closing it
-        className={`relative w-full max-w-4xl aspect-[4/3] md:aspect-video rounded-[2rem] overflow-hidden select-none border-4 shadow-2xl transition-all duration-700
+        className={`relative w-full max-w-[340px] aspect-[9/16] max-h-[82vh] md:max-h-none md:max-w-4xl md:aspect-video rounded-[2rem] overflow-hidden select-none border-4 shadow-2xl transition-all duration-700
           ${darkMode ? 'bg-black border-[#333] shadow-[0_0_60px_rgba(0,255,65,0.15)]' : 'bg-black border-white shadow-[0_0_60px_rgba(0,85,255,0.2)]'}`}
       >
         {/* CRT Scanline / Bezel Overlay for retro charm */}

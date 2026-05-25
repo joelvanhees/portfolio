@@ -1,6 +1,7 @@
 import { lazy, Suspense, useState, useEffect, useRef } from 'react';
 import { ArrowUpRight, FileText, Layers, Maximize2, Video, X, Volume2, VolumeX } from 'lucide-react';
 import LazyImage from './LazyImage';
+import { playUiSound } from '../utils/sounds';
 
 import HoverVideoPlayer from './visuals/HoverVideoPlayer';
 import InfiniteMarqueeVisual from './visuals/InfiniteMarqueeVisual';
@@ -116,13 +117,14 @@ const ProjectModal = ({
   const handleClose = () => {
     setSelectedProject(null);
     setShowVideoSequence(false);
+    playUiSound('close');
   };
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-12">
       <div
         className="absolute inset-0 backdrop-blur-xl bg-black/40 transition-all duration-500"
-        onClick={handleClose}
+        onClick={() => { handleClose(); }}
       ></div>
 
       <div className={`relative w-full max-w-6xl max-h-[90vh] overflow-y-auto rounded-3xl border shadow-2xl transition-all duration-500 animate-in fade-in zoom-in-95 duration-300
@@ -141,7 +143,7 @@ const ProjectModal = ({
             </h2>
           </div>
           <button
-            onClick={handleClose}
+            onClick={() => { handleClose(); }}
             className="p-2 rounded-full hover:bg-white/10 transition-colors"
           >
             <X size={32} />
@@ -619,7 +621,7 @@ const ProjectModal = ({
             <div className={`mt-auto pt-8 border-t font-mono ${darkMode ? 'border-white/10' : 'border-black/10'}`}>
               {selectedProject.id !== "02" && selectedProject.id !== "07" && (
                 <button
-                  onClick={onStartProject}
+                  onClick={() => { onStartProject(); playUiSound('open'); }}
                   className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest transition-all hover:scale-[1.02] flex items-center justify-center gap-2 cursor-pointer ${darkMode ? 'bg-[#00FF41] text-black hover:bg-[#00cc33]' : 'bg-black text-white hover:bg-black/90'}`}
                 >
                   Launch Your Project <ArrowUpRight size={18} />

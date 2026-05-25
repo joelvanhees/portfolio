@@ -208,7 +208,11 @@ const App = () => {
         ::-webkit-scrollbar-thumb { background: ${darkMode ? '#333' : '#999'}; }
         ::-webkit-scrollbar-thumb:hover { background: ${darkMode ? '#00FF41' : '#000000'}; }
 
-
+        @media (pointer: fine) {
+          html, body, a, button, [role="button"], .cursor-pointer, input, select, textarea, iframe {
+            cursor: none !important;
+          }
+        }
       `}</style>
 
       <div className={`fixed inset-0 pointer-events-none opacity-[0.03] z-0 ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>

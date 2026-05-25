@@ -32,10 +32,10 @@ const SpiralTimeSphere = () => {
 
     // --- CONFIG ---
     const CONFIG = {
-      count: 1500,
+      count: 200,
       radius: 23,
       speedFactor: 1.0,
-      trailLength: 350,
+      trailLength: 80,
       colors: {
         minute: new THREE.Color(0xffff00),
         second: new THREE.Color(0x00ff00),
@@ -300,6 +300,17 @@ const SpiralTimeSphere = () => {
       return pathPositions[idx] || new THREE.Vector3(0, 25, 0);
     };
 
+    // Reusable math objects to achieve 120fps with zero GC pauses!
+    const targetSecPos = new THREE.Vector3();
+    const chaos = new THREE.Vector3();
+    const finalSecPos = new THREE.Vector3();
+    const tempTargetPos = new THREE.Vector3();
+    const tempTargetLook = new THREE.Vector3();
+    const offsetWide = new THREE.Vector3(30, 20, 45);
+    const offsetMedium = new THREE.Vector3(20, 15, 30);
+    const tempOffset = new THREE.Vector3();
+    const tempLookTarget = new THREE.Vector3(0, 0, 0);
+
     // --- MAIN ANIMATION ---
     function animate() {
       if (!isMountedRef.current) return;
@@ -413,7 +424,8 @@ const SpiralTimeSphere = () => {
         }
 
         mesh.position.set(px, py, pz);
-        mesh.scale.lerp(new THREE.Vector3(tScale, tScale, tScale), 0.2);
+        const sx = THREE.MathUtils.lerp(mesh.scale.x, tScale, 0.2);
+        mesh.scale.set(sx, sx, sx);
         mesh.material.color.lerp(tCol, 0.2);
         mesh.material.opacity = THREE.MathUtils.lerp(mesh.material.opacity, tOp, 0.2);
       });
@@ -457,16 +469,16 @@ const SpiralTimeSphere = () => {
           }
         }
 
-        const currentPos = new THREE.Vector3(px, py, pz);
-        mesh.position.copy(currentPos);
+        mesh.position.set(px, py, pz);
 
-        if (currentPos.distanceTo(secondOrb.position) < 4.0) {
+        if (mesh.position.distanceToSquared(secondOrb.position) < 16.0) {
           tScale = baseScale * 1.5;
           tCol = colorSecond;
           tOp = 1.0;
         }
 
-        mesh.scale.lerp(new THREE.Vector3(tScale, tScale, tScale), 0.2);
+        const sx = THREE.MathUtils.lerp(mesh.scale.x, tScale, 0.2);
+        mesh.scale.set(sx, sx, sx);
         mesh.material.color.lerp(tCol, 0.2);
         mesh.material.opacity = THREE.MathUtils.lerp(mesh.material.opacity, tOp, 0.2);
       });
@@ -481,15 +493,15 @@ const SpiralTimeSphere = () => {
       // Second Orb Position
       const secIndex = (secs === 0 ? 60 : secs);
       const nextSecIndex = (secIndex % 60) + 1;
-      const targetSecPos = new THREE.Vector3().lerpVectors(getPos(secIndex), getPos(nextSecIndex), ms / 1000);
+      targetSecPos.lerpVectors(getPos(secIndex), getPos(nextSecIndex), ms / 1000);
 
       const chaosTime = Date.now() * 0.003;
-      const chaos = new THREE.Vector3(
+      chaos.set(
         Math.sin(chaosTime * 1.5),
         Math.cos(chaosTime * 1.8),
-        Math.sin(chaosTime * 2.1),
+        Math.sin(chaosTime * 2.1)
       ).multiplyScalar(2.0);
-      const finalSecPos = targetSecPos.clone().normalize().multiplyScalar(CONFIG.radius - 3.5).add(chaos);
+      finalSecPos.copy(targetSecPos).normalize().multiplyScalar(CONFIG.radius - 3.5).add(chaos);
       secondOrb.position.lerp(finalSecPos, 0.15);
 
       // Trail Update
@@ -503,21 +515,25 @@ const SpiralTimeSphere = () => {
 
       // Camera
       const isJump = (secs >= 59 || secs <= 1);
-      let targetPos = isJump ? minuteOrb.position.clone() : targetSecPos.clone();
-      let targetLook = isJump ? minuteOrb.position.clone() : targetSecPos.clone();
+      if (isJump) {
+        tempTargetPos.copy(minuteOrb.position);
+        tempTargetLook.copy(minuteOrb.position);
+      } else {
+        tempTargetPos.copy(targetSecPos);
+        tempTargetLook.copy(targetSecPos);
+      }
 
       const zoomCycle = Math.sin(accumulatedTime * 0.2);
       const tZoom = (zoomCycle + 1) / 2;
 
-      const offsetWide = new THREE.Vector3(30, 20, 45);
-      const offsetMedium = new THREE.Vector3(20, 15, 30);
-      const currentOffset = offsetMedium.clone().lerp(offsetWide, tZoom * 0.2);
+      tempOffset.copy(offsetMedium).lerp(offsetWide, tZoom * 0.2);
+      tempTargetPos.add(tempOffset);
 
-      const desiredPos = targetPos.add(currentOffset);
-      const desiredLookAt = targetLook.lerp(new THREE.Vector3(0, 0, 0), 0.3);
+      tempLookTarget.set(0, 0, 0);
+      tempTargetLook.lerp(tempLookTarget, 0.3);
 
-      camera.position.lerp(desiredPos, 0.005);
-      camera.userData.currentLookAt.lerp(desiredLookAt, 0.01);
+      camera.position.lerp(tempTargetPos, 0.005);
+      camera.userData.currentLookAt.lerp(tempTargetLook, 0.01);
       camera.lookAt(camera.userData.currentLookAt);
 
       renderer.render(scene, camera);

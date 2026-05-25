@@ -15,7 +15,7 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
 
     // Make background transparent so it blends into the UI
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
     
@@ -109,11 +109,11 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
     const blobGroup = new THREE.Group();
     scene.add(blobGroup);
 
-    const outerGeometry = new THREE.SphereGeometry(OUTER_RADIUS, 128, 128);
+    const outerGeometry = new THREE.SphereGeometry(OUTER_RADIUS, 32, 32);
     const outerSphere = new THREE.Mesh(outerGeometry, glassMaterial);
     blobGroup.add(outerSphere);
 
-    const innerGeometry = new THREE.SphereGeometry(INNER_RADIUS, 128, 128);
+    const innerGeometry = new THREE.SphereGeometry(INNER_RADIUS, 32, 32);
     const innerCore = new THREE.Mesh(innerGeometry, liquidMaterial);
     blobGroup.add(innerCore);
 

@@ -2,6 +2,8 @@ import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
+let globalCachedEnvMap = null;
+
 const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
   const mountRef = useRef(null);
   const timeUniformRef = useRef({ value: 0 });
@@ -67,15 +69,11 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
       transmission: 1.0, 
       thickness: 2.0,
       ior: 1.5, 
-      dispersion: 0.1,
       side: THREE.DoubleSide, 
       clearcoat: 1.0, 
       clearcoatRoughness: 0.1,
       transparent: true,
       envMapIntensity: 0.4,
-      iridescence: 0.2,
-      iridescenceIOR: 1.3, 
-      iridescenceThicknessRange: [100, 400] 
     });
     glassMaterial.onBeforeCompile = (shader) => injectBlobShader(shader, 0.12, 2.0, 1.2, false);
     
@@ -133,11 +131,16 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
     scene.add(new THREE.HemisphereLight(0xffffff, 0x000022, 0.3));
 
     // HDRI für Glas-Reflektionen
-    new RGBELoader().load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/studio_small_09_1k.hdr', (texture) => {
-      texture.mapping = THREE.EquirectangularReflectionMapping;
-      scene.environment = texture; 
-      scene.environment.blur = 0.8; 
-    });
+    if (globalCachedEnvMap) {
+      scene.environment = globalCachedEnvMap;
+    } else {
+      new RGBELoader().load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/studio_small_09_1k.hdr', (texture) => {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        globalCachedEnvMap = texture;
+        scene.environment = texture; 
+        scene.environment.blur = 0.8; 
+      });
+    }
 
     // --- LOOP ---
     const clock = new THREE.Clock();

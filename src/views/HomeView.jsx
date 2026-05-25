@@ -188,8 +188,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
       ctx.lineWidth = 1.0;
 
       // 2. Draw horizontal lines
+      ctx.beginPath();
       for (let r = 0; r < rows; r++) {
-        ctx.beginPath();
         const gy = (r / (rows - 1)) * height;
 
         for (let c = 0; c < cols; c++) {
@@ -203,16 +203,15 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             ctx.lineTo(drawX, drawY);
           }
         }
-
-        ctx.strokeStyle = darkMode
-          ? `rgba(0, 255, 65, ${currentFade * (0.05 + Math.abs(Math.sin(time + r * 0.1)) * 0.05)})`
-          : `rgba(0, 85, 255, ${currentFade * (0.08 + Math.abs(Math.sin(time + r * 0.1)) * 0.05)})`;
-        ctx.stroke();
       }
+      ctx.strokeStyle = darkMode
+        ? `rgba(0, 255, 65, ${currentFade * 0.06})`
+        : `rgba(0, 85, 255, ${currentFade * 0.10})`;
+      ctx.stroke();
 
       // 3. Draw vertical lines
+      ctx.beginPath();
       for (let c = 0; c < cols; c++) {
-        ctx.beginPath();
         const gx = (c / (cols - 1)) * width;
 
         for (let r = 0; r < rows; r++) {
@@ -226,12 +225,11 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             ctx.lineTo(drawX, drawY);
           }
         }
-
-        ctx.strokeStyle = darkMode
-          ? `rgba(0, 255, 65, ${currentFade * (0.05 + Math.abs(Math.sin(time + c * 0.1)) * 0.05)})`
-          : `rgba(0, 85, 255, ${currentFade * (0.08 + Math.abs(Math.sin(time + c * 0.1)) * 0.05)})`;
-        ctx.stroke();
       }
+      ctx.strokeStyle = darkMode
+        ? `rgba(0, 255, 65, ${currentFade * 0.06})`
+        : `rgba(0, 85, 255, ${currentFade * 0.10})`;
+      ctx.stroke();
 
       animationId = requestAnimationFrame(render);
     };

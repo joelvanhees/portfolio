@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef, lazy, Suspense } from 'react';
 import { Menu, X, Terminal } from 'lucide-react';
 
 import HomeView from './views/HomeView';
@@ -7,10 +7,11 @@ import ServicesView from './views/ServicesView';
 import AboutView from './views/AboutView';
 import ContactView from './views/ContactView';
 import GameView from './views/GameView';
-import ProjectModal from './components/ProjectModal';
 import FloatingConsole from './components/FloatingConsole';
-import CooldownPool from './components/CooldownPool';
 import TransparentLogo from './components/TransparentLogo';
+
+const ProjectModal = lazy(() => import('./components/ProjectModal'));
+const CooldownPool = lazy(() => import('./components/CooldownPool'));
 import ShellBlob from './components/ShellBlob';
 
 import { buildProjects } from './content/projects.jsx';
@@ -457,16 +458,18 @@ const App = () => {
       )}
 
       {selectedProject && (
-        <ProjectModal
-          selectedProject={selectedProject}
-          darkMode={darkMode}
-          showVideoSequence={showVideoSequence}
-          setShowVideoSequence={setShowVideoSequence}
-          setSelectedProject={setSelectedProject}
-          setActiveImage={setActiveImage}
-          setActivePdf={setActivePdf}
-          onStartProject={handleStartProject}
-        />
+        <Suspense fallback={null}>
+          <ProjectModal
+            selectedProject={selectedProject}
+            darkMode={darkMode}
+            showVideoSequence={showVideoSequence}
+            setShowVideoSequence={setShowVideoSequence}
+            setSelectedProject={setSelectedProject}
+            setActiveImage={setActiveImage}
+            setActivePdf={setActivePdf}
+            onStartProject={handleStartProject}
+          />
+        </Suspense>
       )}
 
       {activeImage && (
@@ -564,10 +567,12 @@ const App = () => {
         </button>
       )}
       {cooldownActive && (
-        <CooldownPool 
-          darkMode={darkMode} 
-          onClose={() => setCooldownActive(false)} 
-        />
+        <Suspense fallback={null}>
+          <CooldownPool 
+            darkMode={darkMode} 
+            onClose={() => setCooldownActive(false)} 
+          />
+        </Suspense>
       )}
       {!isMobile && (
         <div 

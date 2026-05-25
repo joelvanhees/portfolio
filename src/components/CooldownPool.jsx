@@ -14,6 +14,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
   const mouseCoords = useRef(new THREE.Vector2());
   const raycaster = useRef(new THREE.Raycaster());
   const onWaterClickRef = useRef(null);
+  const pointerDownPos = useRef({ x: 0, y: 0 });
 
   const [loading, setLoading] = useState(true);
   const [isHoveringPool, setIsHoveringPool] = useState(false);
@@ -468,8 +469,8 @@ const CooldownPool = ({ darkMode, onClose }) => {
       if (intersects.length > 0) {
         const intersection = intersects[0];
         
-        // We only want to trigger ripples if we click/tap on the top surface
-        if (intersection.face && intersection.face.normal.y > 0.5) {
+        // We only want to trigger ripples if we click/tap on the top surface of the pool (world Y > 2.4)
+        if (intersection.point.y > 2.4) {
           const localPoint = waterMesh.worldToLocal(intersection.point.clone());
           
           const t = clock.getElapsedTime();
@@ -487,10 +488,10 @@ const CooldownPool = ({ darkMode, onClose }) => {
     const animate = () => {
       const time = clock.getElapsedTime();
 
-      // Update shader uniforms
+      // Update shader uniforms using cloned array to ensure Three.js re-uploads to GPU
       if (waterMaterial.userData.shader) {
         waterMaterial.userData.shader.uniforms.uTime.value = time;
-        waterMaterial.userData.shader.uniforms.uRipples.value = activeRipples;
+        waterMaterial.userData.shader.uniforms.uRipples.value = activeRipples.map(r => r.clone());
       }
 
       // Normal map offsets
@@ -537,6 +538,8 @@ const CooldownPool = ({ darkMode, onClose }) => {
 
   // Pointer interactions
   const handlePointerDown = (e) => {
+    pointerDownPos.current = { x: e.clientX, y: e.clientY };
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -567,8 +570,19 @@ const CooldownPool = ({ darkMode, onClose }) => {
     mouseCoords.current.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e) => {
     mouseRef.current.active = false;
+
+    // Only trigger water ripple click if pointer did not move much (i.e. click/tap, not drag to orbit)
+    const dx = e.clientX - pointerDownPos.current.x;
+    const dy = e.clientY - pointerDownPos.current.y;
+    const moveDist = Math.sqrt(dx * dx + dy * dy);
+
+    if (moveDist < 6) {
+      if (onWaterClickRef.current) {
+        onWaterClickRef.current(e);
+      }
+    }
   };
 
   // Keyboard shortcut listener (ESC exits cooldown)
@@ -583,6 +597,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
   return (
     <div 
       className="fixed inset-0 w-full h-full z-[100] overflow-hidden select-none bg-black animate-in fade-in duration-500"
+      style={{ touchAction: 'none' }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -598,6 +613,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
       <canvas 
         ref={glCanvasRef} 
         className="absolute inset-0 w-full h-full z-10 cursor-grab active:cursor-grabbing" 
+        style={{ touchAction: 'none' }}
       />
 
       {/* Loading Overlay */}

@@ -152,16 +152,15 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
 
       ctx.clearRect(0, 0, width, height);
 
-      const cols = Math.floor(width / 35) + 2;
-      const rows = Math.floor(height / 35) + 2;
+      const cellSize = isMobile ? 35 : 75;
+      const cols = Math.floor(width / cellSize) + 2;
+      const rows = Math.floor(height / cellSize) + 2;
 
-      ctx.lineWidth = 1.0;
-
-      // Draw horizontal lines
+      // 1. Pre-compute displacement array once to cut CPU math calculations in half!
+      const displacements = [];
       for (let r = 0; r < rows; r++) {
-        ctx.beginPath();
+        displacements[r] = [];
         const gy = (r / (rows - 1)) * height;
-
         for (let c = 0; c < cols; c++) {
           const gx = (c / (cols - 1)) * width;
 
@@ -179,9 +178,21 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             }
           }
 
-          const dy = (wave1 + wave2 + wave3 + mouseDist) * currentFade;
+          displacements[r][c] = (wave1 + wave2 + wave3 + mouseDist) * currentFade;
+        }
+      }
+
+      ctx.lineWidth = 1.0;
+
+      // 2. Draw horizontal lines
+      for (let r = 0; r < rows; r++) {
+        ctx.beginPath();
+        const gy = (r / (rows - 1)) * height;
+
+        for (let c = 0; c < cols; c++) {
+          const gx = (c / (cols - 1)) * width;
           const drawX = gx;
-          const drawY = gy + dy;
+          const drawY = gy + displacements[r][c];
 
           if (c === 0) {
             ctx.moveTo(drawX, drawY);
@@ -196,31 +207,15 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
         ctx.stroke();
       }
 
-      // Draw vertical lines
+      // 3. Draw vertical lines
       for (let c = 0; c < cols; c++) {
         ctx.beginPath();
         const gx = (c / (cols - 1)) * width;
 
         for (let r = 0; r < rows; r++) {
           const gy = (r / (rows - 1)) * height;
-
-          const wave1 = Math.sin(gx * 0.004 + gy * 0.003 + time * 1.2) * 22;
-          const wave2 = Math.cos(gx * 0.002 - gy * 0.005 + time * 0.8) * 14;
-          const wave3 = Math.sin(-gx * 0.006 + gy * 0.008 + time * 1.5) * 6;
-
-          let mouseDist = 0;
-          if (mouseRef.current.active) {
-            const dx = gx - mouseRef.current.x;
-            const dy2 = gy - mouseRef.current.y;
-            const dist = Math.sqrt(dx * dx + dy2 * dy2);
-            if (dist < 280) {
-              mouseDist = Math.sin(dist * 0.04 - time * 3.5) * 65 * (1 - dist / 280);
-            }
-          }
-
-          const dy = (wave1 + wave2 + wave3 + mouseDist) * currentFade;
           const drawX = gx;
-          const drawY = gy + dy;
+          const drawY = gy + displacements[r][c];
 
           if (r === 0) {
             ctx.moveTo(drawX, drawY);

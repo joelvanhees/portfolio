@@ -574,15 +574,10 @@ const App = () => {
       {!isMobile && (
         <div 
           ref={cursorRef}
-          className={`fixed w-12 h-12 rounded-full pointer-events-none z-[100] transition-colors duration-[1000ms] border shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_8px_32px_0_rgba(0,0,0,0.37)] flex items-center justify-center bg-white/[0.03]
-            ${darkMode ? 'border-white/15 bg-black/10' : 'border-black/15 bg-white/10'}`}
-          style={{ left: 0, top: 0, transform: 'translate3d(0px, 0px, 0) translate3d(-50%, -50%, 0)' }}
-        >
-          <div 
-            className={`w-2.5 h-2.5 rounded-full transition-colors duration-500
-              ${darkMode ? 'bg-[#00FF41] shadow-[0_0_10px_#00FF41]' : 'bg-[#0055FF] shadow-[0_0_10px_#0055FF]'}`}
-          />
-        </div>
+          className={`fixed w-2 h-2 rounded-full pointer-events-none z-[100] transition-colors duration-500 -translate-x-1/2 -translate-y-1/2
+            ${darkMode ? 'bg-[#00FF41] shadow-[0_0_8px_#00FF41]' : 'bg-[#0055FF] shadow-[0_0_8px_#0055FF]'}`}
+          style={{ left: 0, top: 0, transform: 'translate3d(0px, 0px, 0)' }}
+        />
       )}
     </div>
   );

@@ -21,13 +21,13 @@ function ScrambleText({ text, delay = 0, darkMode }) {
       started = true;
       let iteration = 0;
       const chars = text.split('');
-      const totalIterations = chars.length * 3;
+      const totalIterations = chars.length * 1.2;
 
       function tick() {
         setDisplayed(
           chars.map((char, i) => {
             if (char === ' ') return ' ';
-            const revealAt = i * 3;
+            const revealAt = i * 1.2;
             if (iteration >= revealAt) return char;
             return GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
           })
@@ -286,9 +286,9 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             </p>
 
             <h1 className="font-rubik leading-[0.82] md:leading-[0.78] tracking-tighter uppercase select-none w-full block">
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-left text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Visual" delay={300} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Story" delay={600} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-right text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Teller" delay={900} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-left text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Visual" delay={50} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Story" delay={150} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-right text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Teller" delay={250} darkMode={darkMode} /></div>
             </h1>
           </div>
 

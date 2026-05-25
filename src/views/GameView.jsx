@@ -4,8 +4,8 @@ import * as THREE from 'three';
 import { playUiSound } from '../utils/sounds';
 
 // --- GAME PARAMETERS ---
-const OUTER_RADIUS = 1.4;
-const INNER_RADIUS = 0.55;
+const OUTER_RADIUS = 1.0;
+const INNER_RADIUS = 0.45;
 const LANES = [-3.5, 0, 3.5]; // Left, Center, Right
 const TRACK_Y = -1.6;
 const BLOB_START_Y = TRACK_Y + OUTER_RADIUS; // Standing position
@@ -205,6 +205,8 @@ const GameView = ({ darkMode, onClose }) => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
+    const isMobile = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+
     // 1. Setup Scene
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x050505);
@@ -232,7 +234,7 @@ const GameView = ({ darkMode, onClose }) => {
     };
     setTimeout(updateSize, 0);
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setPixelRatio(isMobile ? 1.0 : Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
     rendererRef.current = renderer;
@@ -360,17 +362,24 @@ const GameView = ({ darkMode, onClose }) => {
     scene.add(rightBarrier);
 
     // 8. --- HIGH-END PHYSICS NEON BLOB (Optimized materials for zero context crashes!) ---
-    const outerGeometry = new THREE.SphereGeometry(OUTER_RADIUS, 96, 96);
+    const segments = isMobile ? 32 : 48;
+    const outerGeometry = new THREE.SphereGeometry(OUTER_RADIUS, segments, segments);
     const glassMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
-      metalness: 0.25,
-      roughness: 0.08,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.05,
+      color: 0xffffff, 
+      metalness: 0.05,
+      roughness: 0.12,
+      transmission: 1.0, 
+      thickness: 2.0,
+      ior: 1.5, 
+      dispersion: 0.1,
+      side: THREE.DoubleSide, 
+      clearcoat: 1.0, 
+      clearcoatRoughness: 0.1,
       transparent: true,
-      opacity: 0.6,
-      side: THREE.DoubleSide,
-      envMapIntensity: 1.5
+      envMapIntensity: 0.4,
+      iridescence: 0.2,
+      iridescenceIOR: 1.3, 
+      iridescenceThicknessRange: [100, 400] 
     });
 
     // Dynamic Shader Deformation Injection
@@ -407,17 +416,19 @@ const GameView = ({ darkMode, onClose }) => {
     scene.add(playerGroup);
 
     // Inner Core (Optimized emissive/transparent material)
-    const innerGeometry = new THREE.SphereGeometry(INNER_RADIUS, 96, 96);
+    const innerGeometry = new THREE.SphereGeometry(INNER_RADIUS, segments, segments);
     const liquidMaterial = new THREE.MeshPhysicalMaterial({
       color: 0xccffcc,
-      metalness: 0.1,
-      roughness: 0.1,
-      transparent: true,
-      opacity: 0.85,
+      metalness: 0.2,
+      roughness: 0.04,
+      transmission: 0.9,
+      thickness: 1.2,
+      attenuationDistance: 0.8,
+      ior: 1.4,
       side: THREE.DoubleSide,
       clearcoat: 1.0,
       emissive: 0x003311,
-      emissiveIntensity: 0.4
+      emissiveIntensity: 0.2
     });
 
     liquidMaterial.onBeforeCompile = (shader) => injectBlobShader(shader, 0.065, 1.4, 1.5, true);
@@ -430,24 +441,26 @@ const GameView = ({ darkMode, onClose }) => {
     // 9. Shared Obstacles & Crystals Templates
     obstacleGeom.current = new THREE.BoxGeometry(2.0, 1.6, 1.2);
     obstacleMat.current = new THREE.MeshPhysicalMaterial({
-      color: 0xff003c, // Glowing red warning barriers
+      color: 0xff0000, // Vibrant neon red
       metalness: 0.1,
-      roughness: 0.15,
+      roughness: 0.1,
       clearcoat: 1.0,
       transparent: true,
-      opacity: 0.8,
-      emissive: 0x550005,
-      emissiveIntensity: 0.5
+      opacity: 0.9,
+      emissive: 0xff0000, // Glow neon red
+      emissiveIntensity: 2.0
     });
 
     crystalGeom.current = new THREE.OctahedronGeometry(0.55, 0);
     crystalMat.current = new THREE.MeshPhysicalMaterial({
-      color: 0xffd700, // Shiny gold crystals
-      metalness: 0.9,
-      roughness: 0.08,
+      color: 0xffea00, // Vibrant bright gold crystals
+      metalness: 0.2,
+      roughness: 0.1,
       clearcoat: 1.0,
-      emissive: 0x775500,
-      emissiveIntensity: 0.5
+      transparent: true,
+      opacity: 0.95,
+      emissive: 0xffaa00, // Glow neon gold
+      emissiveIntensity: 2.0
     });
 
     // 10. Handle window resizing

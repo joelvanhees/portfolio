@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { Menu, X, Terminal } from 'lucide-react';
 
 import HomeView from './views/HomeView';
@@ -30,12 +30,10 @@ const App = () => {
   const [consoleOpen, setConsoleOpen] = useState(false);
   const [consoleMinimized, setConsoleMinimized] = useState(false);
   const [cooldownActive, setCooldownActive] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [trailPos, setTrailPos] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(true);
-  const [isHovering, setIsHovering] = useState(false);
   const [userName, setUserName] = useState('');
   const [awaitingName, setAwaitingName] = useState(true);
+  const cursorRef = useRef(null);
 
   const isOverlayOpen = useMemo(() => {
     return !!(selectedProject || (consoleOpen && !consoleMinimized) || cooldownActive || gameOpen || legalOpen);
@@ -61,45 +59,44 @@ const App = () => {
     checkMobile();
     window.addEventListener('resize', checkMobile);
 
-    const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-
-    const handleMouseOver = (e) => {
-      const target = e.target;
-      if (!target) return;
-      const isInteractive = target.closest('a, button, [role="button"], .cursor-pointer, input, textarea, select');
-      setIsHovering(!!isInteractive);
-    };
-    window.addEventListener('mouseover', handleMouseOver);
-
     return () => {
       window.removeEventListener('resize', checkMobile);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseover', handleMouseOver);
     };
   }, []);
 
   useEffect(() => {
     if (isMobile) return;
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let trailX = mouseX;
+    let trailY = mouseY;
     let animationId;
 
+    const handleMouseMove = (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    };
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+
     const updateTrail = () => {
-      setTrailPos((prev) => {
-        const dx = mousePos.x - prev.x;
-        const dy = mousePos.y - prev.y;
-        return {
-          x: prev.x + dx * 0.15,
-          y: prev.y + dy * 0.15,
-        };
-      });
+      const dx = mouseX - trailX;
+      const dy = mouseY - trailY;
+      trailX += dx * 0.15;
+      trailY += dy * 0.15;
+
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate3d(${trailX}px, ${trailY}px, 0) translate3d(-50%, -50%, 0)`;
+      }
       animationId = requestAnimationFrame(updateTrail);
     };
     updateTrail();
 
-    return () => cancelAnimationFrame(animationId);
-  }, [mousePos, isMobile]);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(animationId);
+    };
+  }, [isMobile]);
 
   useEffect(() => {
     if (darkMode) {
@@ -352,7 +349,7 @@ const App = () => {
         </div>
       )}
 
-      <div className={`transition-all duration-[600ms] cubic-bezier(0.16, 1, 0.3, 1) ${isOverlayOpen ? 'blur-[3px] opacity-40 scale-[0.99] pointer-events-none' : 'blur-0 opacity-100 scale-100'}`}>
+      <div className={`transition-all duration-[600ms] cubic-bezier(0.16, 1, 0.3, 1) ${isOverlayOpen ? 'opacity-30 scale-[0.995] pointer-events-none' : 'opacity-100 scale-100'}`}>
         {activePage === 'home' && <HomeView darkMode={darkMode} projects={projects} setSelectedProject={setSelectedProject} selectedProject={selectedProject} handleNav={handleNav} setCooldownActive={setCooldownActive} />}
         {activePage === 'work' && <WorkView darkMode={darkMode} />}
         {activePage === 'services' && <ServicesView darkMode={darkMode} />}
@@ -573,10 +570,16 @@ const App = () => {
       )}
       {!isMobile && (
         <div 
-          className={`fixed w-2 h-2 rounded-full pointer-events-none z-[100] transition-colors duration-500 -translate-x-1/2 -translate-y-1/2
-            ${darkMode ? 'bg-[#00FF41] shadow-[0_0_8px_#00FF41]' : 'bg-[#0055FF] shadow-[0_0_8px_#0055FF]'}`}
-          style={{ left: `${trailPos.x}px`, top: `${trailPos.y}px` }}
-        />
+          ref={cursorRef}
+          className={`fixed w-12 h-12 rounded-full pointer-events-none z-[100] transition-colors duration-[1000ms] border backdrop-blur-[6px] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_8px_32px_0_rgba(0,0,0,0.37)] flex items-center justify-center bg-white/[0.01]
+            ${darkMode ? 'border-white/10' : 'border-black/10'}`}
+          style={{ left: 0, top: 0, transform: 'translate3d(0px, 0px, 0) translate3d(-50%, -50%, 0)' }}
+        >
+          <div 
+            className={`w-2.5 h-2.5 rounded-full transition-colors duration-500
+              ${darkMode ? 'bg-[#00FF41] shadow-[0_0_10px_#00FF41]' : 'bg-[#0055FF] shadow-[0_0_10px_#0055FF]'}`}
+          />
+        </div>
       )}
     </div>
   );

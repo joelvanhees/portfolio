@@ -356,7 +356,7 @@ const App = () => {
         </div>
       )}
 
-      <div className={`transition-all duration-[600ms] cubic-bezier(0.16, 1, 0.3, 1) ${isOverlayOpen ? 'opacity-30 scale-[0.995] pointer-events-none' : 'opacity-100 scale-100'}`}>
+      <div className={`transition-[opacity,transform] duration-[600ms] cubic-bezier(0.16, 1, 0.3, 1) ${isOverlayOpen ? 'opacity-30 scale-[0.995] pointer-events-none' : 'opacity-100 scale-100'}`}>
         {activePage === 'home' && <HomeView darkMode={darkMode} projects={projects} setSelectedProject={setSelectedProject} selectedProject={selectedProject} handleNav={handleNav} setCooldownActive={setCooldownActive} />}
         {activePage === 'work' && <WorkView darkMode={darkMode} />}
         {activePage === 'services' && <ServicesView darkMode={darkMode} />}

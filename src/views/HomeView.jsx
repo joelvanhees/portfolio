@@ -10,39 +10,42 @@ import { playUiSound } from '../utils/sounds';
 
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*!?<>[]{}=/\\|~^';
 
-function ScrambleText({ text, delay = 0, darkMode }) {
-  const [displayed, setDisplayed] = useState(text.split('').map(() => GLYPHS[Math.floor(Math.random() * GLYPHS.length)]));
+function ScrambleText({ text, duration = 800, darkMode }) {
+  const chars = text.split('');
+  const [displayed, setDisplayed] = useState(() => 
+    chars.map(char => char === ' ' ? ' ' : GLYPHS[Math.floor(Math.random() * GLYPHS.length)])
+  );
   const [resolved, setResolved] = useState(false);
 
   useEffect(() => {
-    let started = false;
-    let iteration = 0;
-    const chars = text.split('');
+    const startTime = Date.now();
     let timer;
 
-    const startTimeout = setTimeout(() => {
-      started = true;
-      timer = setInterval(() => {
-        setDisplayed(() => 
+    timer = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      
+      if (elapsed >= duration) {
+        clearInterval(timer);
+        setDisplayed(chars);
+        setResolved(true);
+      } else {
+        const progress = elapsed / duration;
+        const numResolved = Math.floor(progress * chars.length);
+        
+        setDisplayed(
           chars.map((char, i) => {
             if (char === ' ') return ' ';
-            if (iteration >= 1) return char;
+            if (i < numResolved) return char;
             return GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
           })
         );
-        iteration++;
-        if (iteration >= 2) {
-          clearInterval(timer);
-          setResolved(true);
-        }
-      }, 40);
-    }, delay);
+      }
+    }, 40);
 
     return () => {
-      clearTimeout(startTimeout);
       if (timer) clearInterval(timer);
     };
-  }, [text, delay]);
+  }, [text, duration]);
 
   return (
     <span className={`transition-colors duration-500 ${resolved ? '' : (darkMode ? 'text-[#00FF41]' : 'text-[#0055FF]')}`}>
@@ -152,7 +155,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
 
       ctx.clearRect(0, 0, width, height);
 
-      const cellSize = isMobile ? 35 : 75;
+      const cellSize = isMobile ? 70 : 75;
       const cols = Math.floor(width / cellSize) + 2;
       const rows = Math.floor(height / cellSize) + 2;
 
@@ -278,9 +281,9 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             </p>
 
             <h1 className="font-rubik leading-[0.82] md:leading-[0.78] tracking-tighter uppercase select-none w-full block">
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-left text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Visual" delay={50} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Story" delay={150} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-right text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Teller" delay={250} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-left text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Visual" duration={350} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Story" duration={700} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-right text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Teller" duration={1050} darkMode={darkMode} /></div>
             </h1>
           </div>
 

@@ -13,38 +13,34 @@ const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*!?<>[]{}=/\\|~^';
 function ScrambleText({ text, delay = 0, darkMode }) {
   const [displayed, setDisplayed] = useState(text.split('').map(() => GLYPHS[Math.floor(Math.random() * GLYPHS.length)]));
   const [resolved, setResolved] = useState(false);
-  const frameRef = useRef(null);
 
   useEffect(() => {
     let started = false;
+    let iteration = 0;
+    const chars = text.split('');
+    let timer;
+
     const startTimeout = setTimeout(() => {
       started = true;
-      let iteration = 0;
-      const chars = text.split('');
-      const totalIterations = chars.length * 1.2;
-
-      function tick() {
-        setDisplayed(
+      timer = setInterval(() => {
+        setDisplayed(() => 
           chars.map((char, i) => {
             if (char === ' ') return ' ';
-            const revealAt = i * 1.2;
-            if (iteration >= revealAt) return char;
+            if (iteration >= 1) return char;
             return GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
           })
         );
         iteration++;
-        if (iteration <= totalIterations) {
-          frameRef.current = requestAnimationFrame(tick);
-        } else {
+        if (iteration >= 2) {
+          clearInterval(timer);
           setResolved(true);
         }
-      }
-      tick();
+      }, 40);
     }, delay);
 
     return () => {
       clearTimeout(startTimeout);
-      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+      if (timer) clearInterval(timer);
     };
   }, [text, delay]);
 
@@ -100,7 +96,6 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
   const canvasRef = useRef(null);
   const headerRef = useRef(null);
   const mouseRef = useRef({ x: 0, y: 0, active: false });
-  const [scrollFade, setScrollFade] = useState(1);
   const scrollFadeRef = useRef(1);
 
   useEffect(() => {
@@ -109,7 +104,9 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const fade = Math.max(0, 1 - totalScroll / (docHeight || 800));
       scrollFadeRef.current = fade;
-      setScrollFade(fade);
+      if (canvasRef.current) {
+        canvasRef.current.style.opacity = fade;
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -254,7 +251,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
       <canvas 
         ref={canvasRef} 
         className="fixed inset-0 w-full h-full pointer-events-none -z-10" 
-        style={{ opacity: scrollFade }}
+        style={{ opacity: 1 }}
       />
         <header 
           ref={headerRef}

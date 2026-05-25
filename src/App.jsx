@@ -19,7 +19,6 @@ import { playUiSound } from './utils/sounds';
 const App = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [selectedProject, setSelectedProject] = useState(null);
   const [activePage, setActivePage] = useState('home');
   const [gameOpen, setGameOpen] = useState(false);
@@ -34,6 +33,7 @@ const App = () => {
   const [userName, setUserName] = useState('');
   const [awaitingName, setAwaitingName] = useState(true);
   const cursorRef = useRef(null);
+  const scrollBarRef = useRef(null);
 
   const isOverlayOpen = useMemo(() => {
     return !!(selectedProject || (consoleOpen && !consoleMinimized) || cooldownActive || gameOpen || legalOpen);
@@ -43,12 +43,14 @@ const App = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const totalScroll = document.documentElement.scrollTop;
+      const totalScroll = document.documentElement.scrollTop || document.body.scrollTop;
       const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scroll = `${totalScroll / windowHeight}`;
-      setScrollProgress(Number(scroll));
+      const progress = windowHeight > 0 ? totalScroll / windowHeight : 0;
+      if (scrollBarRef.current) {
+        scrollBarRef.current.style.width = `${progress * 100}%`;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -212,8 +214,9 @@ const App = () => {
       <div className={`fixed inset-0 pointer-events-none opacity-[0.03] z-0 ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
 
       <div
+        ref={scrollBarRef}
         className={`fixed top-0 left-0 h-1 z-50 transition-all duration-100 ${darkMode ? 'bg-[#00FF41]' : 'bg-black'}`}
-        style={{ width: `${scrollProgress * 100}%` }}
+        style={{ width: '0%' }}
       />
 
       <nav className="fixed w-full z-[55] px-6 sm:px-12 lg:px-16 py-8 sm:py-6 md:py-8 flex justify-between items-center text-white bg-transparent pointer-events-none">
@@ -571,8 +574,8 @@ const App = () => {
       {!isMobile && (
         <div 
           ref={cursorRef}
-          className={`fixed w-12 h-12 rounded-full pointer-events-none z-[100] transition-colors duration-[1000ms] border backdrop-blur-[6px] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_8px_32px_0_rgba(0,0,0,0.37)] flex items-center justify-center bg-white/[0.01]
-            ${darkMode ? 'border-white/10' : 'border-black/10'}`}
+          className={`fixed w-12 h-12 rounded-full pointer-events-none z-[100] transition-colors duration-[1000ms] border shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_8px_32px_0_rgba(0,0,0,0.37)] flex items-center justify-center bg-white/[0.03]
+            ${darkMode ? 'border-white/15 bg-black/10' : 'border-black/15 bg-white/10'}`}
           style={{ left: 0, top: 0, transform: 'translate3d(0px, 0px, 0) translate3d(-50%, -50%, 0)' }}
         >
           <div 

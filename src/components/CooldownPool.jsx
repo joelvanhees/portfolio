@@ -3,7 +3,7 @@ import { X, Code, Shield, Eye, Layers, Info } from 'lucide-react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
-import { playUiSound } from '../utils/sounds';
+
 
 const CooldownPool = ({ darkMode, onClose }) => {
   const canvasRef = useRef(null);
@@ -562,7 +562,6 @@ const CooldownPool = ({ darkMode, onClose }) => {
                 onClick={() => {
                   setInfoClosed(true);
                   setInfoOpenManual(false);
-                  playUiSound('close');
                 }}
                 className="w-6 h-6 md:w-3.5 md:h-3.5 rounded-full bg-[#FF5F56] hover:bg-[#E0443E] transition-all cursor-pointer border-none p-0 flex items-center justify-center pointer-events-auto text-black/60 font-bold active:scale-90"
                 title="Schließen"
@@ -604,7 +603,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
       {/* Action panel at the bottom */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-3">
         <button
-          onClick={() => { onClose(); playUiSound('close'); }}
+          onClick={onClose}
           className={`px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-bold border transition-all cursor-pointer hover:shadow-2xl active:scale-95 shadow-lg
             ${darkMode 
               ? 'border-[#00FF41] text-black bg-[#00FF41] hover:bg-transparent hover:text-[#00FF41] hover:shadow-[0_0_20px_rgba(0,255,65,0.35)] shadow-black/60' 
@@ -619,7 +618,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
         onClick={() => {
           setInfoOpenManual(prev => !prev);
           setInfoClosed(false);
-          playUiSound('click');
+
         }}
         title="Details anzeigen"
         className={`absolute bottom-6 left-6 p-4 rounded-full border shadow-2xl z-40 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer flex items-center justify-center
@@ -632,7 +631,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
 
       {/* Top right close button */}
       <button 
-        onClick={() => { onClose(); playUiSound('close'); }}
+        onClick={onClose}
         title="Exit Cooldown (ESC)"
         className={`absolute top-6 right-6 p-3 rounded-full border z-40 transition-all hover:scale-110 active:scale-95 shadow-lg cursor-pointer
           ${darkMode 

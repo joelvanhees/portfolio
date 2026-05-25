@@ -1,9 +1,21 @@
+let audioCtx = null;
+
 // Minimalist premium UI Sound Synthesizer using Web Audio API (Zero lag, zero network requests)
 export const playUiSound = (type = 'click') => {
   try {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (!AudioContextClass) return;
-    const ctx = new AudioContextClass();
+    
+    if (!audioCtx) {
+      audioCtx = new AudioContextClass();
+    }
+    
+    // Resume context if suspended (autoplay policies)
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    
+    const ctx = audioCtx;
     
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();

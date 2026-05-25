@@ -69,34 +69,15 @@ const App = () => {
   useEffect(() => {
     if (isMobile) return;
 
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let trailX = mouseX;
-    let trailY = mouseY;
-    let animationId;
-
     const handleMouseMove = (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate3d(-50%, -50%, 0)`;
+      }
     };
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-    const updateTrail = () => {
-      const dx = mouseX - trailX;
-      const dy = mouseY - trailY;
-      trailX += dx * 0.15;
-      trailY += dy * 0.15;
-
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate3d(${trailX}px, ${trailY}px, 0) translate3d(-50%, -50%, 0)`;
-      }
-      animationId = requestAnimationFrame(updateTrail);
-    };
-    updateTrail();
-
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animationId);
     };
   }, [isMobile]);
 

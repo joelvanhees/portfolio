@@ -15,6 +15,13 @@
   scroll-behavior: smooth;
 }
 
+/* Hide native cursor on desktop (custom green dot replaces it) */
+@media (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -25,5 +32,5 @@ body {
   width: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden; /* Verhindert horizontales Scrollen global */
+  overflow-x: hidden;
 }

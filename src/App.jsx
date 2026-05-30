@@ -617,7 +617,7 @@ const App = () => {
             </button>
             
             <iframe 
-              src={secretBypass ? "/secret-mixer.html?bypass=true&v=5" : "/secret-mixer.html?v=5"}
+              src={secretBypass ? "/secret-mixer.html?bypass=true&v=6" : "/secret-mixer.html?v=6"}
               className="w-full h-full border-none"
               title="Skin Bar - Mixer Rezeptbuch"
             />

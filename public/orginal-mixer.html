@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>01 / Aloe Vera Ananas Hydrator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --ink:#0A0A0A;
+    --ink-soft:#444240;
+    --line:#0A0A0A;
+    --pad:20px;
+    /* default = Smoothies */
+    --c-ing:#1B3FD6;
+    --c-rec:#0FB5A8;
+    --bg1:#EEEAE2;
+    --bg2:#E4E8E6;
+    /* aliases used throughout */
+    --paper:#F2EFE8;
+  }
+  /* ===== 7 KATEGORIE-FARBSETS ===== */
+  /* 1 Smoothies — Cream / Königsblau + Türkis */
+  [data-cat="smoothies"]{--c-ing:#1B3FD6;--c-rec:#0FB5A8;--bg1:#EEEAE2;--bg2:#E2EAE8;}
+  /* 2 Heilende Getränke — Mint-Weiß / Tannengrün + Salbei */
+  [data-cat="heilend"]{--c-ing:#1E7A5E;--c-rec:#7FA86B;--bg1:#E7EEE7;--bg2:#DDE9E2;}
+  /* 3 Matcha Rituale — Jade / Matcha + Bronze */
+  [data-cat="matcha"]{--c-ing:#5A8F2B;--c-rec:#A8731F;--bg1:#ECEEE0;--bg2:#E4E9D6;}
+  /* 4 Mahlzeit Ersatz — Sand / Terrakotta + Olive */
+  [data-cat="mahlzeit"]{--c-ing:#B5532A;--c-rec:#6E7A2E;--bg1:#F0EADF;--bg2:#E9E0D0;}
+  /* 5 Spaßgetränke — Flieder / Violett + Magenta */
+  [data-cat="spass"]{--c-ing:#6B3FCF;--c-rec:#C73E8E;--bg1:#ECE7F0;--bg2:#E6DEEC;}
+  /* 6 Suppen & Dips — Greige / Rostrot + Senf */
+  [data-cat="suppen"]{--c-ing:#C99A1E;--c-rec:#8A6D14;--bg1:#F0EBDD;--bg2:#EAE2CC;}
+  /* 7 Skin Booster — Rosé / Pflaume + Koralle */
+  [data-cat="skin"]{--c-ing:#9B2F6E;--c-rec:#E0623F;--bg1:#F0E7EB;--bg2:#EBDEE3;}
+
+  *{margin:0;padding:0;box-box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;-webkit-font-smoothing:antialiased;position:relative;
+    background:#E9E5DD;
+  }
+  /* Kategorie-Hintergrund (erbt --bg1/--bg2 von .app[data-cat]) */
+  .bg-layer{
+    position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(60% 40% at 18% 8%, rgba(255,255,255,0.78), transparent 70%),
+      radial-gradient(50% 35% at 88% 30%, rgba(255,255,255,0.5), transparent 70%),
+      radial-gradient(55% 40% at 30% 72%, rgba(255,255,255,0.42), transparent 72%),
+      radial-gradient(45% 35% at 80% 92%, rgba(255,255,255,0.5), transparent 70%),
+      linear-gradient(160deg, var(--bg1) 0%, var(--bg2) 52%, var(--bg1) 100%);
+    transition:background .6s ease;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    backdrop-filter:blur(40px) saturate(130%);
+    -webkit-backdrop-filter:blur(40px) saturate(130%);
+    background:rgba(236,232,224,0.14);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0.045;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;z-index:1;padding-bottom:100px;}
+
+  /* ===== GLASS TOPBAR ===== */
+  .topbar{
+    position:sticky;top:0;z-index:60;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px var(--pad);
+    background:rgba(233,229,221,0.6);
+    backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+    border-bottom:1px solid rgba(10,10,10,0.12);
+  }
+  .topbar .brand{display:flex;align-items:center;gap:8px;cursor:pointer;}
+  .topbar .logo-mixer{width:auto;height:36px;display:block;}
+  .topbar .back-arrow{font-size:20px;font-weight:700;line-height:1;display:none;}
+  .topbar .brand.show-back .back-arrow{display:block;}
+  /* cart icon */
+  .cart-btn{
+    position:relative;width:42px;height:42px;border:none;cursor:pointer;
+    border-radius:14px;background:rgba(255,255,255,0.35);
+    border:1px solid rgba(10,10,10,0.18);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08), inset 0 1px 1px rgba(255,255,255,0.6);
+    transition:transform .25s;
+  }
+  .cart-btn:active{transform:scale(0.92);}
+  .cart-btn svg{width:21px;height:21px;}
+  .cart-badge{
+    position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;padding:0 5px;
+    background:var(--c-rec);color:#fff;border-radius:10px;
+    font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;
+    border:2px solid var(--paper);transform:scale(0);transition:transform .3s cubic-bezier(.3,1.4,.5,1);
+  }
+  .cart-badge.show{transform:scale(1);}
+
+  /* ===== TABS ===== */
+  .tabs{
+    display:flex;gap:8px;padding:14px var(--pad) 4px;overflow-x:auto;scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{
+    flex:0 0 auto;padding:9px 16px;border-radius:100px;cursor:pointer;
+    font-size:12px;font-weight:700;letter-spacing:0.04em;white-space:nowrap;
+    background:rgba(255,255,255,0.3);border:1px solid rgba(10,10,10,0.16);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    box-shadow:inset 0 1px 1px rgba(255,255,255,0.5);
+    transition:all .2s;
+  }
+  .tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+  /* ===== HERO ===== */
+  .hero{padding:18px var(--pad) 0;position:relative;}
+  .index-row{
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:16px;
+  }
+  .idx{font-family:'Archivo Black';font-size:12px;letter-spacing:0.02em;}
+  .cat{font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;}
+  .index-row .cat:first-child{color:var(--c-ing);font-weight:800;}
+
+  .title{
+    font-family:'Anton';text-transform:uppercase;
+    position:relative;
+    padding:22px 0 14px;
+  }
+  /* VERA+HYDRATOR Block rechts vom ALOE */
+  .title .stack{display:block;padding-left:var(--aloe-pad,92px);}
+  /* ALOE — vertikal, oben+unten bündig zum Block, leuchtet in Kategoriefarbe */
+  .title .aloe{
+    position:absolute;left:0;top:16px;bottom:16px;
+    writing-mode:vertical-rl;transform:rotate(180deg);
+    line-height:1;letter-spacing:0.01em;
+    color:var(--c-ing);
+    font-size:var(--aloe-size,86px);
+    display:flex;align-items:flex-start;justify-content:flex-start;
+    text-shadow:0 0 28px color-mix(in srgb, var(--c-ing) 45%, transparent);
+  }
+  .title .vera{
+    display:block;text-align:left;
+    font-size:var(--vera-size,140px);line-height:0.78;
+    letter-spacing:-0.03em;margin-right:-14px;
+    color:var(--c-ing);
+    text-shadow:0 0 34px color-mix(in srgb, var(--c-ing) 42%, transparent);
+  }
+  .title .hydra{
+    display:block;text-align:left;
+    font-size:var(--hydra-size,72px);line-height:0.82;
+    letter-spacing:-0.03em;margin-top:26px;
+    margin-right:-14px;
+    color:var(--c-rec);
+    text-shadow:0 0 30px color-mix(in srgb, var(--c-rec) 45%, transparent);
+  }
+  .focusword{filter:blur(16px);opacity:0;animation:focusin 1.2s cubic-bezier(.2,.7,.2,1) .25s forwards;}
+  @keyframes focusin{to{filter:blur(0);opacity:1;}}
+  /* Eiskaffee-Fall: zwei horizontale Wörter untereinander */
+  .title.twoword .stack{padding-left:0;}
+  .title.twoword .aloe{
+    position:static;writing-mode:horizontal-tb;transform:none;
+    display:block;text-align:left;line-height:0.82;margin-right:-14px;
+  }
+  .title.twoword .vera{display:none;}
+
+  .subline{
+    text-align:left;margin:28px 0 0;
+    font-size:16px;line-height:1.5;font-weight:500;
+  }
+
+  /* ===== SPEC STRIP (glass card) ===== */
+  .spec{
+    display:grid;grid-template-columns:repeat(3,1fr);margin:26px var(--pad) 0;
+    border-radius:20px;overflow:hidden;
+    background:rgba(255,255,255,0.32);border:1px solid rgba(10,10,10,0.16);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    box-shadow:0 6px 22px rgba(0,0,0,0.07), inset 0 1px 1px rgba(255,255,255,0.6);
+  }
+  .spec .cell{padding:16px 14px;text-align:center;border-right:1px solid rgba(10,10,10,0.13);cursor:pointer;transition:background .2s;}
+  .spec .cell:last-child{border-right:none;}
+  .spec .cell:active{background:rgba(10,10,10,0.05);}
+  .spec .k{font-size:9px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:5px;}
+  .spec .v{font-family:'Anton';font-size:32px;line-height:1;display:flex;align-items:center;justify-content:center;min-height:42px;margin-top:4px;}
+  .spec .v small{font-size:12px;font-family:'Inter';font-weight:700;}
+
+  /* ===== SPLIT-FLAP (SOLARI) ===== */
+  .flap-group{display:inline-flex;gap:3px;perspective:300px;vertical-align:middle;}
+  .flap{
+    position:relative;display:inline-flex;justify-content:center;align-items:center;
+    width:26px;height:38px;
+    background:linear-gradient(180deg,#1c1c1c 0%,#0a0a0a 49%,#000 51%,#161616 100%);
+    color:#F4F1EA;
+    font-family:'Anton',sans-serif;font-size:30px;line-height:1;
+    border-radius:5px;overflow:hidden;
+    box-shadow:inset 0 1px 1px rgba(255,255,255,0.22), inset 0 -2px 4px rgba(0,0,0,0.6), 0 3px 8px rgba(0,0,0,0.35);
+    transform-style:preserve-3d;
+  }
+  .flap::after{
+    content:"";position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+    height:2px;background:rgba(0,0,0,0.9);
+    box-shadow:0 1px 0 rgba(255,255,255,0.08);z-index:4;
+  }
+  .flap.flipping{animation:flap-roll 0.16s cubic-bezier(.4,0,.6,1);}
+  @keyframes flap-roll{
+    0%{transform:rotateX(0deg);}
+    49%{transform:rotateX(-88deg);filter:brightness(0.35);}
+    50%{transform:rotateX(-92deg);filter:brightness(0.35);}
+    100%{transform:rotateX(0deg);filter:brightness(1);}
+  }
+  .flap-unit{
+    font-size:13px;font-family:'Inter',sans-serif;font-weight:800;
+    color:var(--ink);margin-left:4px;vertical-align:middle;display:inline-block;
+    transform:translateY(2px);letter-spacing:0.02em;
+  }
+
+  /* ===== SECTION LABEL ===== */
+  .science{padding:30px var(--pad) 6px;}
+  .sectlabel{font-size:10px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+  .sectlabel::after{content:"";flex:1;height:1px;background:var(--line);opacity:0.35;}
+  .science p{font-size:15px;line-height:1.55;}
+
+  /* ===== ACCORDIONS ===== */
+  .acc{padding:24px var(--pad) 0;display:flex;flex-direction:column;gap:14px;}
+  .acc-item{
+    border-radius:22px;overflow:hidden;
+    background:rgba(255,255,255,0.3);
+    border:1px solid rgba(10,10,10,0.14);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:0 6px 22px rgba(0,0,0,0.06), inset 0 1px 1px rgba(255,255,255,0.55);
+  }
+  .acc-item.blue{box-shadow:0 8px 26px rgba(27,63,214,0.16), inset 0 1px 1px rgba(255,255,255,0.55);}
+  .acc-item.orange{box-shadow:0 8px 26px rgba(15,181,168,0.18), inset 0 1px 1px rgba(255,255,255,0.55);}
+  .acc-head{
+    width:100%;background:none;border:none;cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:20px 20px;text-align:left;
+  }
+  .acc-head h3{font-family:'Anton';font-size:34px;text-transform:uppercase;letter-spacing:-0.01em;line-height:0.9;}
+  .blue .acc-head h3{color:var(--c-ing);}
+  .orange .acc-head h3{color:var(--c-rec);}
+  .acc-head .count{display:block;font-size:11px;font-weight:700;letter-spacing:0.06em;color:var(--ink-soft);margin-top:8px;}
+  .acc-head .sign{
+    width:34px;height:34px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .4s cubic-bezier(.3,.7,.2,1);flex:0 0 auto;
+    color:#fff;position:relative;
+  }
+  .acc-head .sign::before,
+  .acc-head .sign::after{
+    content:"";position:absolute;top:50%;left:50%;background:#fff;border-radius:2px;
+    transform:translate(-50%,-50%);
+  }
+  .acc-head .sign::before{width:14px;height:2.4px;}
+  .acc-head .sign::after{width:2.4px;height:14px;}
+  .blue .acc-head .sign{background:var(--c-ing);}
+  .orange .acc-head .sign{background:var(--c-rec);}
+  .acc-item.open .sign{transform:rotate(135deg);}
+  .acc-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.3,.7,.2,1);}
+  .acc-item.open .acc-body{max-height:1400px;}
+  .acc-inner{padding:0 20px 22px;}
+
+  /* Ingredients with + */
+  .ing{list-style:none;}
+  .ing li{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 0;border-bottom:1px solid rgba(10,10,10,0.12);
+  }
+  .ing li:last-child{border-bottom:none;}
+  .ing .amt{font-family:'Archivo Black';font-size:14px;white-space:nowrap;min-width:60px;color:var(--c-ing);}
+  .ing .name{font-size:14px;line-height:1.3;font-weight:600;flex:1;}
+  .ing .name small{display:block;font-size:11px;color:var(--ink-soft);font-weight:400;margin-top:2px;}
+  .add-btn{
+    width:34px;height:34px;border-radius:12px;flex:0 0 auto;cursor:pointer;
+    background:var(--c-ing);border:none;color:#fff;
+    font-size:20px;font-weight:700;line-height:1;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 3px 10px rgba(27,63,214,0.3);transition:all .25s;
+    font-family:'Inter',sans-serif;padding:0;
+  }
+  .add-btn span{display:block;transform:translateY(-1px);}
+  .add-btn:active{transform:scale(0.85);}
+  .add-btn.added{background:var(--ink);}
+
+  /* Steps */
+  .steps{counter-reset:s;list-style:none;}
+  .steps li{position:relative;padding:0 0 20px 48px;}
+  .steps li:last-child{padding-bottom:0;}
+  .steps li::before{
+    counter-increment:s;content:counter(s,decimal-leading-zero);
+    position:absolute;left:0;top:-3px;font-family:'Anton';font-size:26px;line-height:1;color:var(--c-rec);
+  }
+  .steps li p{font-size:14px;line-height:1.5;}
+  .steps li .tech{
+    display:inline-block;margin-top:9px;font-size:10px;font-weight:800;letter-spacing:0.1em;
+    text-transform:uppercase;background:var(--c-rec);color:#fff;padding:5px 11px;border-radius:8px;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer{
+    padding:34px var(--pad) 36px;margin-top:14px;
+    display:flex;justify-content:space-between;align-items:flex-end;
+    border-top:1px solid var(--line);
+  }
+  .footer .big{font-family:'Anton';font-size:54px;line-height:0.8;}
+  .footer .big small{font-size:14px;font-family:'Inter';font-weight:700;}
+  .footer .tag{font-size:10px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;text-align:right;color:var(--ink-soft);}
+
+  /* ===== CART SHEET ===== */
+  .overlay{
+    position:fixed;inset:0;z-index:200;background:rgba(20,18,15,0.22);
+    backdrop-filter:blur(8px) saturate(120%);-webkit-backdrop-filter:blur(8px) saturate(120%);
+    opacity:0;pointer-events:none;transition:opacity .4s;
+  }
+  .overlay.open{opacity:1;pointer-events:auto;}
+  .sheet{
+    position:fixed;left:0;right:0;bottom:0;z-index:201;max-width:480px;margin:0 auto;
+    background:rgba(244,241,234,0.62);
+    backdrop-filter:blur(50px) saturate(180%);-webkit-backdrop-filter:blur(50px) saturate(180%);
+    border-radius:32px 32px 0 0;
+    border-top:1.5px solid rgba(255,255,255,0.7);
+    box-shadow:0 -12px 50px rgba(0,0,0,0.22), inset 0 1px 2px rgba(255,255,255,0.7);
+    transform:translateY(100%);transition:transform .46s cubic-bezier(.3,.85,.2,1);
+    max-height:82vh;display:flex;flex-direction:column;
+  }
+  .sheet.open{transform:translateY(0);}
+  .sheet .grab{width:42px;height:5px;border-radius:3px;background:rgba(10,10,10,0.22);margin:12px auto 6px;}
+  .sheet .sheet-head{padding:8px 22px 16px;border-bottom:1px solid rgba(10,10,10,0.1);position:relative;}
+  .sheet-close{position:absolute;right:22px;top:10px;width:34px;height:34px;border:none;background:rgba(255,255,255,0.5);border:1px solid rgba(10,10,10,0.1);border-radius:50%;font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--ink);transition:background .2s,transform .2s;backdrop-filter:blur(10px);}
+  .sheet-close:active{transform:scale(0.9);background:rgba(255,255,255,0.7);}
+  .sheet .sheet-head h2{font-family:'Anton';font-size:42px;text-transform:uppercase;line-height:0.9;}
+  .sheet .sheet-head .sub{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px;}
+  .cart-list{list-style:none;overflow-y:auto;padding:8px 22px;flex:1;}
+  .cart-list li{
+    display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(10,10,10,0.1);
+  }
+  .cart-list .amt{font-family:'Archivo Black';font-size:13px;min-width:58px;color:var(--c-ing);}
+  .cart-list .name{flex:1;font-size:14px;font-weight:600;}
+  .cart-list .src{display:block;font-size:10px;color:var(--ink-soft);font-weight:400;margin-top:2px;}
+  .cart-list .rm{width:30px;height:30px;border:none;background:rgba(10,10,10,0.08);border-radius:9px;font-size:16px;cursor:pointer;color:var(--ink);}
+  .cart-empty{padding:50px 22px;text-align:center;color:var(--ink-soft);font-weight:500;}
+  .cart-actions{padding:16px 22px calc(22px + env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;border-top:1px solid rgba(10,10,10,0.1);}
+  .cart-actions button{
+    padding:14px 6px;border-radius:18px;border:1px solid rgba(255,255,255,0.5);cursor:pointer;
+    font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;
+    background:rgba(255,255,255,0.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    box-shadow:inset 0 1px 1px rgba(255,255,255,0.7);
+    display:flex;flex-direction:column;align-items:center;gap:6px;transition:transform .2s;
+  }
+  .cart-actions button:active{transform:scale(0.94);}
+  .cart-actions button.primary{background:rgba(10,10,10,0.88);color:var(--paper);border-color:rgba(10,10,10,0.9);}
+  .cart-actions svg{width:20px;height:20px;}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1);}
+  .reveal.in{opacity:1;transform:none;}
+
+  /* ===== MIXER SYMBOL ===== */
+  .mixer-mark{
+    display:flex;justify-content:center;align-items:center;
+    padding:18px 0 6px;
+  }
+  .mixer-wrap{
+    width:150px;
+    filter:drop-shadow(0 10px 22px rgba(0,0,0,0.18));
+    animation:mixfloat 4.5s ease-in-out infinite;
+  }
+  .mixer-wrap svg{display:block;width:100%;height:auto;}
+  @keyframes mixfloat{
+    0%,100%{transform:translateY(0) rotate(-1.5deg);}
+    50%{transform:translateY(-9px) rotate(1.5deg);}
+  }
+  /* ===== INDEX VIEW — Glass Dropdown Bars ===== */
+  .view{display:none;}
+  .view.active{display:block;}
+  .cat-list{padding:18px var(--pad) 60px;display:flex;flex-direction:column;gap:14px;}
+  .cat-bar{
+    border-radius:22px;overflow:hidden;
+    background:rgba(255,255,255,0.3);
+    border:1px solid rgba(10,10,10,0.14);
+    backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);
+    box-shadow:0 6px 22px rgba(0,0,0,0.06), inset 0 1px 1px rgba(255,255,255,0.55);
+    transition:box-shadow .35s;
+  }
+  .cat-bar.open{box-shadow:0 10px 30px color-mix(in srgb, var(--c-ing) 22%, transparent), inset 0 1px 1px rgba(255,255,255,0.6);}
+  .cat-bar-head{
+    width:100%;background:none;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 22px;text-align:left;gap:14px;
+  }
+  .cat-bar-title{font-family:'Anton';font-size:27px;text-transform:uppercase;letter-spacing:-0.01em;line-height:0.9;color:var(--c-ing);}
+  .cat-bar-meta{display:flex;align-items:center;gap:14px;flex:0 0 auto;}
+  .cat-bar-ct{font-size:9px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-soft);}
+  .cat-sign{
+    width:30px;height:30px;border-radius:50%;flex:0 0 auto;position:relative;
+    background:var(--c-ing);transition:transform .4s cubic-bezier(.3,.7,.2,1);
+  }
+  .cat-sign::before,.cat-sign::after{content:"";position:absolute;top:50%;left:50%;background:#fff;border-radius:2px;transform:translate(-50%,-50%);}
+  .cat-sign::before{width:12px;height:2.2px;}
+  .cat-sign::after{width:2.2px;height:12px;}
+  .cat-bar.open .cat-sign{transform:rotate(135deg);}
+  .cat-bar-body{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.3,.7,.2,1);}
+  .cat-bar.open .cat-bar-body{max-height:800px;}
+  .cat-bar-inner{padding:0 22px 14px;}
+  .rec-row{
+    display:flex;align-items:center;gap:12px;width:100%;background:none;border:none;cursor:pointer;
+    padding:16px 0;border-top:1px solid rgba(10,10,10,0.1);text-align:left;
+  }
+  .rec-row .rt{
+    flex:1;font-size:15px;font-weight:700;
+    color:color-mix(in srgb, var(--c-ing) calc(78% + var(--rowshift,0%)), var(--ink) 22%);
+  }
+  .rec-row[disabled] .rt{color:var(--ink-soft);opacity:0.6;font-weight:600;}
+  .rec-row .ra{font-size:18px;font-weight:700;color:var(--c-rec);transition:transform .2s;}
+  .rec-row:active{opacity:0.6;}
+  .rec-row:active .ra{transform:translateX(5px);}
+
+  /* ===== SECURITY CODE SCREEN ===== */
+  .code-screen{
+    position:fixed;inset:0;z-index:2000;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:#0A0A0A;
+    transition:opacity .6s ease, visibility .6s;
+  }
+  .code-screen.hide{opacity:0;visibility:hidden;pointer-events:none;}
+  .code-mixer{
+    width:72px;height:auto;margin-bottom:44px;
+    filter:drop-shadow(0 0 15px rgba(255,255,255,0.08));
+  }
+  .code-title{
+    font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;
+    color:#7F7C77;margin-bottom:28px;font-family:'Inter',sans-serif;
+  }
+  .pin-wrapper{
+    position:relative;display:flex;flex-direction:column;align-items:center;
+  }
+  .pin-boxes{
+    display:flex;gap:14px;margin-bottom:30px;cursor:pointer;
+  }
+  .pin-box{
+    width:50px;height:62px;border-radius:12px;
+    border:1px solid rgba(255,255,255,0.15);
+    background:rgba(255,255,255,0.03);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Inter',sans-serif;font-size:24px;font-weight:700;color:#FFF;
+    transition:border-color .2s, box-shadow .2s, background-color .2s;
+  }
+  .pin-box.active{
+    border-color:#FFF;
+    background:rgba(255,255,255,0.07);
+    box-shadow:0 0 10px rgba(255,255,255,0.12);
+  }
+  .pin-box.filled{border-color:rgba(255,255,255,0.45);}
+  .pin-box.error{
+    border-color:#FF453A;
+    box-shadow:0 0 12px rgba(255,69,58,0.3);
+    background:rgba(255,69,58,0.05);
+  }
+  #pin-input{
+    position:absolute;opacity:0;top:0;left:0;width:100%;height:100%;
+    cursor:pointer;z-index:10;
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    20%,60%{transform:translateX(-10px);}
+    40%,80%{transform:translateX(10px);}
+  }
+  .pin-wrapper.shake{animation:shake 0.4s ease-in-out;}
+
+  /* ===== LOADING SCREEN ===== */
+  .loader{
+    position:fixed;inset:0;z-index:1000;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:#FFFFFF; /* Rein weißer Hintergrund */
+    transition:opacity .6s ease, visibility .6s;
+  }
+  .loader.hide{opacity:0;visibility:hidden;}
+  .loader-glass{
+    position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(60% 50% at 50% 50%, rgba(245,245,245,0.8), transparent 80%);
+  }
+  .loader-mixer{
+    position:relative;z-index:2;width:84px;
+    filter:drop-shadow(0 12px 28px rgba(0,0,0,0.12));
+    animation:loadshake 1.1s ease-in-out infinite;transform-origin:50% 90%;
+  }
+  .loader-mixer svg{display:block;width:100%;height:auto;}
+  @keyframes loadshake{
+    0%,100%{transform:rotate(-7deg) translateY(0);}
+    25%{transform:rotate(6deg) translateY(-3px);}
+    50%{transform:rotate(-5deg) translateY(0);}
+    75%{transform:rotate(7deg) translateY(-2px);}
+  }
+  /* Elegant brand footer at bottom */
+  .loader-footer{
+    position:absolute;bottom:50px;left:50%;transform:translateX(-50%);
+    font-family:'Inter',sans-serif;font-size:13px;font-weight:800;
+    letter-spacing:0.4em;color:#0A0A0A;text-transform:uppercase;
+    z-index:10;white-space:nowrap;
+  }
+
+  .toast{
+    position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);
+    background:var(--ink);color:var(--paper);padding:13px 22px;border-radius:100px;
+    font-size:13px;font-weight:700;z-index:300;opacity:0;transition:all .35s cubic-bezier(.3,1,.4,1);
+    box-shadow:0 8px 30px rgba(0,0,0,0.3);white-space:nowrap;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+</style>
+</head>
+<body>
+
+<!-- PIN CODE ENTRY SCREEN -->
+<div class="code-screen" id="code-screen">
+  <div class="code-mixer">
+    <svg viewBox="0 0 40 56" fill="none">
+      <rect x="11" y="2" width="18" height="4" rx="2" fill="#FFFFFF"/>
+      <path d="M12 7 L28 7 L26 27 L14 27 Z" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M28 9 q6 1 5.5 9 q-0.5 8 -5.5 10" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+      <line x1="16" y1="13" x2="20" y2="13" stroke="#FFFFFF" stroke-width="1.4"/>
+      <line x1="16" y1="18" x2="19" y2="18" stroke="#FFFFFF" stroke-width="1.4"/>
+      <path d="M20 25 L16 22 M20 25 L24 22" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"/>
+      <rect x="13" y="29" width="14" height="3" rx="1.5" fill="#FFFFFF"/>
+      <path d="M11 33 L29 33 L30 52 q0 2 -2 2 L13 54 q-2 0 -2 -2 Z" fill="#FFFFFF"/>
+      <circle cx="20" cy="45" r="6" fill="none" stroke="#0A0A0A" stroke-width="2"/>
+    </svg>
+  </div>
+  <div class="code-title">Code eingeben</div>
+  <div class="pin-wrapper" id="pin-wrapper">
+    <input type="tel" id="pin-input" maxlength="4" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
+    <div class="pin-boxes" onclick="focusPinInput()">
+      <div class="pin-box active" id="box-0"></div>
+      <div class="pin-box" id="box-1"></div>
+      <div class="pin-box" id="box-2"></div>
+      <div class="pin-box" id="box-3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING SCREEN (Shown after correct PIN entry, pure white background, shaking mixer only, brand footer) -->
+<div class="loader hide" id="loader">
+  <div class="loader-glass"></div>
+  <div class="loader-mixer">
+    <svg viewBox="0 0 40 56" fill="none">
+      <rect x="11" y="2" width="18" height="4" rx="2" fill="#0A0A0A"/>
+      <path d="M12 7 L28 7 L26 27 L14 27 Z" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M28 9 q6 1 5.5 9 q-0.5 8 -5.5 10" fill="none" stroke="#0A0A0A" stroke-width="2"/>
+      <line x1="16" y1="13" x2="20" y2="13" stroke="#0A0A0A" stroke-width="1.4"/>
+      <line x1="16" y1="18" x2="19" y2="18" stroke="#0A0A0A" stroke-width="1.4"/>
+      <path d="M20 25 L16 22 M20 25 L24 22" stroke="#0A0A0A" stroke-width="1.6" stroke-linecap="round"/>
+      <rect x="13" y="29" width="14" height="3" rx="1.5" fill="#0A0A0A"/>
+      <path d="M11 33 L29 33 L30 52 q0 2 -2 2 L13 54 q-2 0 -2 -2 Z" fill="#0A0A0A"/>
+      <circle cx="20" cy="45" r="6" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+    </svg>
+  </div>
+  <div class="loader-footer">VAN HEES</div>
+</div>
+
+<div class="app" data-cat="smoothies">
+  <div class="bg-layer"></div>
+
+  <div class="topbar">
+    <div class="brand" id="brandBtn" onclick="goIndex()">
+      <span class="back-arrow" id="backArrow">←</span>
+      <svg class="logo-mixer" viewBox="0 0 40 56" fill="none" aria-label="Skin Bar">
+        <rect x="11" y="2" width="18" height="4" rx="2" fill="var(--ink)"/>
+        <path d="M12 7 L28 7 L26 27 L14 27 Z" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M28 9 q6 1 5.5 9 q-0.5 8 -5.5 10" fill="none" stroke="var(--ink)" stroke-width="2"/>
+        <line x1="16" y1="13" x2="20" y2="13" stroke="var(--ink)" stroke-width="1.4"/>
+        <line x1="16" y1="18" x2="19" y2="18" stroke="var(--ink)" stroke-width="1.4"/>
+        <path d="M20 25 L16 22 M20 25 L24 22" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/>
+        <rect x="13" y="29" width="14" height="3" rx="1.5" fill="var(--ink)"/>
+        <path d="M11 33 L29 33 L30 52 q0 2 -2 2 L13 54 q-2 0 -2 -2 Z" fill="var(--ink)"/>
+        <circle cx="20" cy="45" r="6" fill="none" stroke="var(--bg1)" stroke-width="2"/>
+      </svg>
+    </div>
+    <button class="cart-btn" onclick="openCart()" aria-label="Einkaufsliste">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+      <span class="cart-badge" id="badge">0</span>
+    </button>
+  </div>
+
+  <!-- ===== INDEX VIEW ===== -->
+  <div class="view active" id="view-index">
+    <div class="cat-list" id="catList"></div>
+  </div>
+
+  <!-- ===== RECIPE VIEW ===== -->
+  <div class="view" id="view-recipe">
+  <header class="hero">
+    <div class="index-row">
+      <span class="cat" id="rCatName">Skin Booster</span>
+      <span class="cat" id="rTagline">Hydration · Glow</span>
+    </div>
+    <h1 class="title">
+      <span class="aloe" id="rT1">Aloe</span>
+      <span class="stack">
+        <span class="vera" id="rT2">Vera</span>
+        <span class="hydra focusword" id="rT3">Hydrator</span>
+      </span>
+    </h1>
+    <p class="subline" id="rSub">Beschleunigte Regeneration der epidermalen Barriere. Interzelluläre Wasserspeicherung.</p>
+
+    <div class="mixer-mark"><div class="mixer-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 620" font-family="Arial, sans-serif"><defs><linearGradient id="egg-glass" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#dfe6ea" stop-opacity="0.55"/><stop offset="18%" stop-color="#f4f8fa" stop-opacity="0.25"/><stop offset="50%" stop-color="#ffffff" stop-opacity="0.12"/><stop offset="82%" stop-color="#f4f8fa" stop-opacity="0.25"/><stop offset="100%" stop-color="#cfd8dd" stop-opacity="0.6"/></linearGradient><linearGradient id="egg-base" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0e0e0e"/><stop offset="35%" stop-color="#2a2a2a"/><stop offset="60%" stop-color="#1c1c1c"/><stop offset="100%" stop-color="#070707"/></linearGradient><linearGradient id="egg-lid" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#1a1a1a"/><stop offset="50%" stop-color="#333"/><stop offset="100%" stop-color="#101010"/></linearGradient><linearGradient id="egg-chrome" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#888"/><stop offset="25%" stop-color="#f0f0f0"/><stop offset="50%" stop-color="#c4c4c4"/><stop offset="75%" stop-color="#fafafa"/><stop offset="100%" stop-color="#7a7a7a"/></linearGradient><radialGradient id="egg-knob" cx="40%" cy="35%" r="70%"><stop offset="0%" stop-color="#fdfdfd"/><stop offset="55%" stop-color="#c8c8c8"/><stop offset="100%" stop-color="#6e6e6e"/></radialGradient></defs><path d="M118 110 L282 110 L268 360 L132 360 Z" fill="url(#egg-glass)" stroke="#9aa7ad" stroke-width="1.5"/><path d="M118 110 q-14 4 -16 18 q10 -2 16 -6 Z" fill="url(#egg-glass)" stroke="#9aa7ad" stroke-width="1"/><path d="M282 118 q60 6 58 80 q-2 70 -56 92 l-4 -16 q40 -18 42 -76 q2 -52 -44 -58 Z"fill="#161616" stroke="#000" stroke-width="1"/><path d="M138 116 L150 116 L142 352 L132 352 Z" fill="#ffffff" opacity="0.35"/><path d="M260 116 L268 116 L262 352 L254 352 Z" fill="#ffffff" opacity="0.18"/><g stroke="#5e6a70" stroke-width="1" font-size="9" fill="#5e6a70"><line x1="150" y1="160" x2="166" y2="160"/><text x="170" y="163">2000 Max</text><line x1="150" y1="185" x2="162" y2="185"/><text x="170" y="188">1750</text><line x1="150" y1="210" x2="166" y2="210"/><text x="170" y="213">1500</text><line x1="150" y1="235" x2="162" y2="235"/><text x="170" y="238">1250</text><line x1="150" y1="260" x2="166" y2="260"/><text x="170" y="263">1000</text><line x1="152" y1="285" x2="162" y2="285"/><text x="170" y="288">750</text><line x1="153" y1="310" x2="167" y2="310"/><text x="172" y="313">500</text><line x1="155" y1="335" x2="165" y2="335"/><text x="172" y="338">250</text></g><text x="146" y="148" font-size="9" fill="#5e6a70">ml</text><g fill="#9aa7ad" stroke="#6e7a80" stroke-width="0.8"><path d="M200 350 L168 332 L200 340 Z"/><path d="M200 350 L232 332 L200 340 Z"/><path d="M200 350 L176 360 L200 344 Z"/><path d="M200 350 L224 360 L200 344 Z"/></g><circle cx="200" cy="350" r="5" fill="#6e7a80"/><rect x="110" y="92" width="180" height="22" rx="8" fill="url(#egg-lid)" stroke="#000" stroke-width="1"/><rect x="150" y="100" width="100" height="9" rx="3" fill="#0c0c0c"/><rect x="126" y="360" width="148" height="20" rx="4" fill="url(#egg-glass)" stroke="#9aa7ad" stroke-width="1"/><rect x="138" y="380" width="124" height="22" rx="6" fill="url(#egg-chrome)" stroke="#555" stroke-width="0.8"/><path d="M120 402 L280 402 L286 580 q0 14 -14 14 L134 594 q-14 0 -14 -14 Z"fill="url(#egg-base)" stroke="#000" stroke-width="1.5"/><g font-size="7" fill="#cfcfcf" text-anchor="middle"><text x="148" y="437">On/Off</text><text x="188" y="437">Smoothie</text><text x="228" y="437">Ice Crush</text><text x="266" y="437">Clean</text></g><g fill="#3a3a3a"><rect x="134" y="444" width="28" height="4" rx="2"/><rect x="170" y="444" width="36" height="4" rx="2"/><rect x="212" y="444" width="34" height="4" rx="2"/><rect x="252" y="444" width="26" height="4" rx="2"/></g><g font-size="9" fill="#dcdcdc" text-anchor="middle"><text x="158" y="505">1</text><text x="152" y="488">2</text><text x="158" y="473">3</text><text x="172" y="464">4</text><text x="190" y="460">5</text><text x="208" y="460">6</text><text x="226" y="464">7</text><text x="240" y="473">8</text><text x="246" y="488">9</text><text x="248" y="505">10</text></g><text x="150" y="560" font-size="9" fill="#dcdcdc" text-anchor="middle">Pulse</text><circle cx="200" cy="510" r="40" fill="#0c0c0c" stroke="#000" stroke-width="1"/><circle cx="200" cy="510" r="32" fill="url(#egg-knob)" stroke="#555" stroke-width="1"/><g stroke="#9a9a9a" stroke-width="0.6" opacity="0.6"><line x1="200" y1="481" x2="200" y2="487"/><line x1="222" y1="490" x2="218" y2="494"/><line x1="229" y1="510" x2="223" y2="510"/></g><text x="200" y="575" text-anchor="middle" font-size="8" letter-spacing="0.5" fill="#bdbdbd">PRECISION SPEED CONTROL</text></svg></div></div>
+
+    <div class="spec">
+      <div class="cell" onclick="animateCell(this)"><div class="k">Stufe</div><div class="v" id="rStufe" data-val="9" data-unit=""></div></div>
+      <div class="cell" onclick="animateCell(this)"><div class="k">Dauer</div><div class="v" id="rDauer" data-val="45" data-unit="s"></div></div>
+      <div class="cell" onclick="animateCell(this)"><div class="k">Energie</div><div class="v" id="rKcal" data-val="135" data-unit="kcal"></div></div>
+    </div>
+  </header>
+
+  <section class="science reveal">
+    <div class="sectlabel">Wirkung</div>
+    <p id="rScience">Studien belegen: die orale Aufnahme von Aloe Vera Sterolen verbessert die Elastizität der Gesichtshaut signifikant. Sie stimulieren die hauteigene Feuchtigkeitsproduktion.</p>
+  </section>
+
+  <div class="acc reveal">
+
+    <div class="acc-item blue">
+      <button class="acc-head" onclick="tog(this)">
+        <div><h3>Zutaten</h3><span class="count" id="rIngCount">4 Komponenten · 1 Portion</span></div>
+        <span class="sign"></span>
+      </button>
+      <div class="acc-body">
+        <div class="acc-inner">
+          <ul class="ing" id="ingList"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item orange">
+      <button class="acc-head" onclick="tog(this)">
+        <div><h3>Rezept</h3><span class="count" id="rStepCount">3 Schritte</span></div>
+        <span class="sign"></span>
+      </button>
+      <div class="acc-body">
+        <div class="acc-inner">
+          <ol class="steps" id="stepList"></ol>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer reveal">
+    <div class="big" id="rFootKcal">135<small> kcal</small></div>
+    <div class="tag" id="rFootTag">Aloe Vera Ananas<br>Hydrator</div>
+  </div>
+  </div><!-- /view-recipe -->
+
+</div>
+
+<!-- CART -->
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+<div class="sheet" id="sheet">
+  <div class="grab"></div>
+  <div class="sheet-head">
+    <h2>Einkauf</h2>
+    <div class="sub" id="cartCount">0 Zutaten gespeichert</div>
+    <button class="sheet-close" onclick="closeCart()" aria-label="Schließen">×</button>
+  </div>
+  <ul class="cart-list" id="cartList"></ul>
+  <div class="cart-actions">
+    <button class="primary" onclick="exportPDF()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      PDF
+    </button>
+    <button onclick="printList()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Drucken
+    </button>
+    <button onclick="toNotes()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+      Notizen
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Hinzugefügt</div>
+
+<script>
+  /* ===== PERSISTENT CART ===== */
+  let cart = loadCart();
+
+  function loadCart(){
+    try{ return JSON.parse(localStorage.getItem('skinbar_cart')||'[]'); }
+    catch(e){ return []; }
+  }
+  function saveCart(){
+    try{ localStorage.setItem('skinbar_cart', JSON.stringify(cart)); }catch(e){}
+    renderCart();
+  }
+
+  let currentRecipe=null;
+  let indexScrollY=0;
+  function tog(btn){ btn.closest('.acc-item').classList.toggle('open'); }
+
+  function addItem(btn){
+    const li=btn.closest('li');
+    const src=currentRecipe ? (currentRecipe.t1+' '+currentRecipe.t2+' '+currentRecipe.t3).replace(/\s+/g,' ').trim() : '';
+    const item={amt:li.dataset.amt,name:li.dataset.name,src:src};
+    if(cart.find(c=>c.name===item.name && c.amt===item.amt && c.src===item.src)){
+      showToast('Schon in der Liste'); return;
+    }
+    cart.push(item);
+    btn.classList.add('added'); btn.innerHTML='<span>✓</span>';
+    showToast(item.name+' hinzugefügt');
+    saveCart();
+  }
+
+  function renderCart(){
+    const n=cart.length;
+    const badge=document.getElementById('badge');
+    badge.textContent=n; badge.classList.toggle('show',n>0);
+    document.getElementById('cartCount').textContent=n+(n===1?' Zutat':' Zutaten')+' gespeichert';
+    const list=document.getElementById('cartList');
+    if(n===0){ list.innerHTML='<div class="cart-empty">Noch leer. Tippe das + bei einer Zutat.</div>'; return; }
+    list.innerHTML=cart.map((c,i)=>`<li><span class="amt">${c.amt}</span><span class="name">${c.name}<span class="src">${c.src}</span></span><button class="rm" onclick="rm(${i})">×</button></li>`).join('');
+  }
+  function rm(i){ cart.splice(i,1); saveCart(); }
+
+  function openCart(){ document.getElementById('overlay').classList.add('open'); document.getElementById('sheet').classList.add('open'); }
+  function closeCart(){ document.getElementById('overlay').classList.remove('open'); document.getElementById('sheet').classList.remove('open'); }
+
+  function listText(){
+    return 'EINKAUFSLISTE — VAN HEES\n\n'+cart.map(c=>`[ ] ${c.amt}  ${c.name}`).join('\n');
+  }
+
+  function exportPDF(){
+    if(!cart.length){showToast('Liste ist leer');return;}
+    const jspdfLib = window.jspdf && window.jspdf.jsPDF;
+    if(!jspdfLib){ printList(); return; }
+    try{
+      const {jsPDF}=window.jspdf; const doc=new jsPDF();
+      doc.setFont('helvetica','bold'); doc.setFontSize(26); doc.text('EINKAUFSLISTE',20,28);
+      doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.text('VAN HEES · Mixer Rezeptbuch',20,36);
+      doc.setDrawColor(0); doc.line(20,42,190,42);
+      let y=56; doc.setFontSize(13);
+      cart.forEach(c=>{ doc.rect(20,y-4,5,5); doc.setFont('helvetica','bold'); doc.text(String(c.amt),30,y); doc.setFont('helvetica','normal'); doc.text(String(c.name),62,y); y+=12; if(y>270){doc.addPage();y=28;} });
+      doc.save('einkaufsliste.pdf'); showToast('PDF erstellt');
+    }catch(e){ printList(); }
+  }
+
+  function buildPrintHTML(){
+    const rows=cart.map(c=>`<li><span class="b">${escapeHTML(c.amt)}</span> ${escapeHTML(c.name)}<em>${escapeHTML(c.src||'')}</em></li>`).join('');
+    return '<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Einkaufsliste — VAN HEES</title><style>body{font-family:-apple-system,Helvetica,Arial,sans-serif;padding:40px 28px;color:#0a0a0a;}h1{font-size:30px;letter-spacing:1px;margin:0;}p.s{color:#666;font-size:12px;letter-spacing:1px;text-transform:uppercase;margin:4px 0 18px;}hr{border:none;border-top:1.5px solid #0a0a0a;margin-bottom:18px;}ul{list-style:none;padding:0;margin:0;}li{font-size:16px;padding:11px 0;border-bottom:1px solid #ddd;}li:before{content:"\\2610";margin-right:12px;}.b{font-weight:800;display:inline-block;min-width:64px;}em{display:block;font-style:normal;font-size:11px;color:#888;margin-left:76px;margin-top:2px;}@media print{body{padding:16px;}}</style></head><body><h1>EINKAUFSLISTE</h1><p class="s">VAN HEES · Mixer Rezeptbuch</p><hr><ul>'+rows+'</ul><script>window.onload=function(){setTimeout(function(){window.print();},250);}<\/script></body></html>';
+  }
+  function escapeHTML(s){ return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  function printList(){
+    if(!cart.length){showToast('Liste ist leer');return;}
+    const html=buildPrintHTML();
+    const w=window.open('','_blank');
+    if(w){ w.document.open(); w.document.write(html); w.document.close(); }
+    else {
+      const blob=new Blob([html],{type:'text/html'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),4000);
+      showToast('Liste geöffnet');
+    }
+  }
+
+  async function toNotes(){
+    if(!cart.length){showToast('Liste ist leer');return;}
+    const txt=listText();
+    if(navigator.share){
+      try{ await navigator.share({title:'Einkaufsliste — VAN HEES',text:txt}); return; }
+      catch(e){ if(e && e.name==='AbortError') return; }
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      try{ await navigator.clipboard.writeText(txt); showToast('In Zwischenablage kopiert'); return; }
+      catch(e){}
+    }
+    try{
+      const ta=document.createElement('textarea'); ta.value=txt;
+      ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta);
+      ta.focus(); ta.select(); document.execCommand('copy'); ta.remove();
+      showToast('In Zwischenablage kopiert');
+    }catch(e){ showToast('Kopieren nicht möglich'); }
+  }
+
+  let toastT;
+  function showToast(msg){
+    const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+    clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),1800);
+  }
+
+  function syncButtons(){
+    document.querySelectorAll('#ingList li').forEach(li=>{
+      if(cart.find(c=>c.name===li.dataset.name && c.amt===li.dataset.amt)){
+        const b=li.querySelector('.add-btn'); b.classList.add('added'); b.innerHTML='<span>✓</span>';
+      }
+    });
+  }
+
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // ===== RECIPE DATABASE =====
+  const RECIPES = [{"cat": "smoothies", "program": "Smoothie · Vollwert", "tagline": "Stoffwechsel · Immun", "t1": "Grüner", "t2": "Faser", "t3": "Dynamo", "sub": "Vitalisierung des Stoffwechsels und Aktivierung der darmassoziierten Immunbarriere.", "science": "Die mechanische Zerkleinerungskraft setzt intrazelluläres Magnesium und Eisen aus den harten Faserstrukturen des Grünkohls frei. Das Apfelpektin wirkt als Präbiotikum zur Stabilisierung der Mikrobiombarriere. Hanfsamen liefern Omega-Fettsäuren für die Zellmembranflexibilität.", "stufe": "Auto", "dauer": "Zyklus", "kcal": "290", "ingredients": [{"amt": "80 g", "name": "Frischer Grünkohl", "note": "ohne harten Strunk"}, {"amt": "50 g", "name": "Babyspinat"}, {"amt": "1", "name": "Grüner Apfel", "note": "mit Schale"}, {"amt": "1", "name": "Reife Banane"}, {"amt": "2 EL", "name": "Geschälte Hanfsamen"}, {"amt": "250 ml", "name": "Gefiltertes Wasser"}], "steps": [{"t": "Den Apfel waschen, entkernen und in grobe Stücke schneiden."}, {"t": "Den Grünkohl vom harten Mittelstrunk befreien und grob zerkleinern."}, {"t": "Das Wasser zuerst in den Mixbehälter füllen."}, {"t": "Grünkohl, Spinat, Apfel, Banane und Hanfsamen hinzugeben."}, {"t": "Das Smoothie Programm aktivieren und den Zyklus vollständig durchlaufen lassen.", "tech": "Smoothie · Auto"}]}, {"cat": "smoothies", "program": "Stufe 10 · 60s", "tagline": "Ausdauer · Energie", "t1": "Rote", "t2": "Beete", "t3": "Booster", "sub": "Steigerung der mitochondrialen Effizienz und der Sauerstoffnutzung.", "science": "Rote Beete und Himbeeren liefern anorganisches Nitrat, das im vaskulären System zu Stickstoffmonoxid umgewandelt wird. Es optimiert den mitochondrialen Sauerstoffverbrauch bei Belastung. Die Gingerole des Ingwers stimulieren den Energieumsatz.", "stufe": "10", "dauer": "60s", "kcal": "195", "ingredients": [{"amt": "100 g", "name": "Rote Beete", "note": "geschält und gewürfelt"}, {"amt": "100 g", "name": "Gefrorene Himbeeren"}, {"amt": "1 cm", "name": "Frischer Ingwer"}, {"amt": "1 EL", "name": "Leinsamen"}, {"amt": "250 ml", "name": "Gekühltes Kokoswasser"}], "steps": [{"t": "Die geschälte rote Beete in zentimetergroße Stücke schneiden."}, {"t": "Den Ingwer dünn schälen."}, {"t": "Das Kokoswasser in den Mixbehälter gießen."}, {"t": "Rote Beete, Himbeeren, Ingwer und Leinsamen hinzufügen."}, {"t": "Den Regler langsam auf Stufe 10 drehen und 60 Sekunden glatt emulgieren.", "tech": "Stufe 10 · 60 Sek"}]}, {"cat": "smoothies", "program": "Stufe 9 · 45s", "tagline": "Verdauung · Enzyme", "t1": "Tropischer", "t2": "Faser", "t3": "Traum", "sub": "Unterstützung der enzymatischen Proteinspaltung und gastrointestinalen Passage.", "science": "Das Enzym Bromelain im frischen Ananasgewebe katalysiert den peptischen Abbau von Nahrungsproteinen. Die Quellstoffe der Chiasamen absorbieren Wasser im Verdauungstrakt und regulieren die Transitzeit des Speisebreis.", "stufe": "9", "dauer": "45s", "kcal": "215", "ingredients": [{"amt": "150 g", "name": "Frische Ananas", "note": "ohne harten Kern"}, {"amt": "100 g", "name": "Reifes Mangofruchtfleisch"}, {"amt": "1 EL", "name": "Chiasamen"}, {"amt": "5", "name": "Frische Minzblätter"}, {"amt": "200 ml", "name": "Kaltes Wasser"}], "steps": [{"t": "Die Ananas und die Mango in grobe Würfel schneiden."}, {"t": "Das kalte Wasser in den Mixbehälter einfüllen."}, {"t": "Fruchtstücke, Chiasamen und Minzblätter hinzugeben."}, {"t": "Auf Stufe 9 für 45 Sekunden zu einer feinen Textur verarbeiten.", "tech": "Stufe 9 · 45 Sek"}, {"t": "Vor dem Verzehr zwei Minuten ruhen lassen, um die Quellung der Chiasamen zu aktivieren."}]}, {"cat": "smoothies", "program": "Smoothie · Auto", "tagline": "Antioxidantien · Gefäße", "t1": "Beeren", "t2": "Anti", "t3": "Oxidant", "sub": "Neutralisierung freier Sauerstoffradikale und Festigung der vaskulären Endothelien.", "science": "Die konzentrierten Anthocyane im Beerenobst neutralisieren freie Radikale und schützen die DNA der Gefäßzellen vor oxidativem Stress. Das Mandelmus liefert Vitamin E zur Stabilisierung der Lipidschichten der Zellmembranen.", "stufe": "Auto", "dauer": "Zyklus", "kcal": "210", "ingredients": [{"amt": "150 g", "name": "Heidelbeeren"}, {"amt": "1 EL", "name": "Goldene Leinsamen"}, {"amt": "1 EL", "name": "Weißes Mandelmus"}, {"amt": "250 ml", "name": "Ungesüßte Mandelmilch"}, {"amt": "1 TL", "name": "Ahornsirup"}], "steps": [{"t": "Die Heidelbeeren gründlich waschen."}, {"t": "Die Mandelmilch in den Mixbehälter gießen."}, {"t": "Heidelbeeren, Leinsamen, Mandelmus und Ahornsirup hinzufügen."}, {"t": "Den Mixbehälter auf die Basis aufsetzen."}, {"t": "Das Smoothie Programm aktivieren und automatisch beenden lassen.", "tech": "Smoothie · Auto"}]}, {"cat": "smoothies", "program": "Stufe 10 · 60s", "tagline": "Immun · Schleimhaut", "t1": "Zitrus", "t2": "Ingwer", "t3": "Kraftstoff", "sub": "Schleimhautprotektion und zelluläre Abwehrstimulation.", "science": "Natürliches Beta-Carotin aus Karotten schützt die epithelialen Schleimhäute der oberen Atemwege. Das hochdosierte Vitamin C der Orange beschleunigt die zelluläre Immunantwort.", "stufe": "10", "dauer": "60s", "kcal": "135", "ingredients": [{"amt": "2", "name": "Mittelgroße Karotten"}, {"amt": "1", "name": "Orange", "note": "vollständig geschält"}, {"amt": "1 cm", "name": "Frischer Ingwer"}, {"amt": "1 TL", "name": "Kurkumapulver"}, {"amt": "200 ml", "name": "Gefiltertes Wasser"}], "steps": [{"t": "Die Karotten waschen und in zwei Zentimeter lange Stücke schneiden."}, {"t": "Die geschälte Orange in Segmente teilen."}, {"t": "Das Wasser in den Mixbehälter gießen."}, {"t": "Karotten, Orangen, Ingwer und Kurkumapulver hinzufügen."}, {"t": "Auf Stufe 10 für 60 Sekunden zu einem faserfreien Vollwertsaft verarbeiten.", "tech": "Stufe 10 · 60 Sek"}]}, {"cat": "smoothies", "program": "Stufe 8 · 45s", "tagline": "Neuro · Elektrolyte", "t1": "Cremiger", "t2": "Kakao", "t3": "Shake", "sub": "Neuroprotektion und Wiederherstellung des Elektrolytgleichgewichts bei Stress.", "science": "Roher Kakao enthält Flavanole, die die zerebrale Perfusion steigern, sowie hochdosiertes Magnesium zur Entspannung der neuromuskulären Endplatten. Die reife Banane liefert schnell verfügbares Kalium zur Stabilisierung des Membranpotenzials.", "stufe": "8", "dauer": "45s", "kcal": "460", "ingredients": [{"amt": "2", "name": "Reife Bananen"}, {"amt": "2 EL", "name": "Rohes Kakaopulver"}, {"amt": "1 EL", "name": "Naturbelassenes Erdnussmus"}, {"amt": "300 ml", "name": "Ungesüßte Hafermilch"}], "steps": [{"t": "Die Bananen schälen und in groben Stücken in den Mixbehälter geben."}, {"t": "Kakaopulver und Erdnussmus hinzufügen."}, {"t": "Mit der ungesüßten Hafermilch aufgießen."}, {"t": "Den Regler langsam auf Stufe 8 stellen."}, {"t": "Die Mischung für 45 Sekunden intensiv cremig schlagen.", "tech": "Stufe 8 · 45 Sek"}]}, {"cat": "heilend", "program": "Stufe 10 · 90s", "tagline": "Detox · 7-Tage-Kur", "t1": "Grüne", "t2": "Detox", "t3": "Matrix", "sub": "Sieben Tage Kur zur Stimulierung der hepatischen Entgiftungsphasen und Gewebereinigung.", "science": "Diese Master Matrix optimiert die Biotransformation in der Leber. Die faserhaltigen Blätter werden zuerst isoliert aufgeschlossen, um Stückigkeit zu vermeiden. Staudensellerie liefert aktive Flavonoide, die Gurke unterstützt die renale Ausscheidung.", "stufe": "10", "dauer": "90s", "kcal": "185", "ingredients": [{"amt": "100 g", "name": "Frischer Grünkohl", "note": "ohne harten Strunk"}, {"amt": "½", "name": "Salatgurke"}, {"amt": "2 St.", "name": "Staudensellerie"}, {"amt": "1", "name": "Grüner Apfel"}, {"amt": "½", "name": "Zitrone", "note": "Saft"}, {"amt": "1 cm", "name": "Frischer Ingwer"}, {"amt": "1 EL", "name": "Chiasamen"}, {"amt": "300 ml", "name": "Gefiltertes Wasser"}], "steps": [{"t": "Grünkohl, Gurke und Sellerie waschen und grob zerkleinern."}, {"t": "Wasser und Grünkohl in den Behälter geben und auf Stufe 10 für 30 Sekunden verflüssigen.", "tech": "Stufe 10 · 30 Sek"}, {"t": "Gurke, Sellerie, Apfel, Zitronensaft und Ingwer hinzugeben."}, {"t": "Auf Stufe 10 für weitere 60 Sekunden zu einer homogenen Matrix verarbeiten.", "tech": "Stufe 10 · 60 Sek"}, {"t": "Im Rahmen einer siebentägigen Kur jeden Morgen auf leeren Magen frisch konsumieren."}]}, {"cat": "heilend", "program": "Stufe 9 · 50s", "tagline": "TCM · Lungen-Yin", "t1": "TCM", "t2": "Birnen", "t3": "Trank", "sub": "Befeuchtung des respiratorischen Epithels und Hitzeelimination nach TCM Richtlinien.", "science": "Dieses klassische TCM-Rezept generiert Körpersäfte. Die Williams Christ Birne kühlt pathogene Hitze in der Lunge. Die Schale transportiert die Feuchtigkeit physiologisch zum Dickdarm ab. Mandeln befeuchten die Atemwege.", "stufe": "9", "dauer": "50s", "kcal": "295", "ingredients": [{"amt": "1", "name": "Williams Christ Birne", "note": "reif, mit Schale"}, {"amt": "2 EL", "name": "Weißes Mandelmus"}, {"amt": "4", "name": "Getrocknete rote Datteln", "note": "Jujuben"}, {"amt": "1 Pr.", "name": "Gemahlener Kardamom"}, {"amt": "250 ml", "name": "Warmes Wasser", "note": "ca. 50 °C"}], "steps": [{"t": "Die Birne waschen, das Kerngehäuse entfernen und das Fruchtfleisch samt Schale würfeln."}, {"t": "Die roten Datteln entkernen und im warmen Wasser für zehn Minuten einweichen."}, {"t": "Alle Zutaten zusammen mit dem warmen Wasser in den Mixbehälter einfüllen."}, {"t": "Den Regler auf Stufe 9 stellen und 50 Sekunden cremig emulgieren.", "tech": "Stufe 9 · 50 Sek"}, {"t": "Vorzugsweise am späten Nachmittag warm verzehren, wenn das Lungen Yin ansteigt."}]}, {"cat": "heilend", "program": "Stufe 10 · 60s", "tagline": "Ayurveda · Ojas", "t1": "Goldenes", "t2": "Ojas", "t3": "Elixier", "sub": "Nährstoffaufbau der tiefen Gewebeschichten und Stabilisierung der neurologischen Resilienz.", "science": "Dieses ayurvedische Elixier baut die Lebenskraft (Ojas) auf. Die Synergie aus gereinigten Mandeln, Ghee und Safran nährt das Nervensystem und gleicht vaskuläre Spannungszustände aus.", "stufe": "10", "dauer": "60s", "kcal": "315", "ingredients": [{"amt": "10", "name": "Mandeln", "note": "über Nacht eingeweicht und geschält"}, {"amt": "3", "name": "Getrocknete Datteln", "note": "entkernt"}, {"amt": "1 TL", "name": "Ghee"}, {"amt": "¼ TL", "name": "Ingwerpulver"}, {"amt": "1 Pr.", "name": "Safranfäden"}, {"amt": "1 Pr.", "name": "Zimt"}, {"amt": "250 ml", "name": "Warme Hafermilch"}], "steps": [{"t": "Die über Nacht eingeweichten Mandeln vollständig enthäuten."}, {"t": "Die entkernten Datteln grob hacken."}, {"t": "Die warme Hafermilch in den Mixbehälter gießen."}, {"t": "Mandeln, Datteln, Ghee und die Gewürze hinzugeben."}, {"t": "Auf Stufe 10 für 60 Sekunden zu einer fein emulgierten Schaumkrone aufschlagen.", "tech": "Stufe 10 · 60 Sek"}]}, {"cat": "heilend", "program": "Stufe 8 · 30s", "tagline": "TCM · Abwehr-Qi", "t1": "Huang", "t2": "Qi", "t3": "Krafttrank", "sub": "Protektion der Körperoberfläche und Stärkung des Abwehr Qi nach TCM Richtlinien.", "science": "Dieses Rezept extrahiert die wasserlöslichen Polysaccharide der Astragaluswurzel (Huang Qi). In Kombination mit roten Datteln wird das funktionelle Milz Qi gestärkt und die zelluläre Schutzbarriere gegen äußere pathogene Faktoren gefestigt.", "stufe": "8", "dauer": "30s", "kcal": "125", "ingredients": [{"amt": "10 g", "name": "Getrocknete Astragalusscheiben"}, {"amt": "5", "name": "Getrocknete rote Datteln"}, {"amt": "1 EL", "name": "Goji Beeren"}, {"amt": "3 Sch.", "name": "Frischer Ingwer"}, {"amt": "500 ml", "name": "Wasser"}, {"amt": "1 EL", "name": "Honig"}], "steps": [{"t": "Astragalusscheiben, Datteln und Ingwer im Wasser für 45 Minuten sanft sieden lassen."}, {"t": "Die faserigen Astragalusscheiben und den Ingwer vollständig abseihen und entsorgen."}, {"t": "Die warme Auszugskochung mit den weichen Datteln und den Goji Beeren in den Mixer füllen."}, {"t": "Den Honig hinzufügen und auf Stufe 8 für 30 Sekunden schaumig schlagen.", "tech": "Stufe 8 · 30 Sek"}, {"t": "Vorzugsweise morgens eine Tasse vor dem Frühstück warm einnehmen."}]}, {"cat": "heilend", "program": "Stufe 5 · 15s", "tagline": "Atemwege · Spasmolyse", "t1": "Thymian", "t2": "Honig", "t3": "Löser", "sub": "Spasmolyse der Bronchialmuskulatur und physikalische Reizlinderung bei Atemwegsinfekten.", "science": "Die ätherischen Öle des Thymians wirken antibakteriell und krampflösend auf die glatte Bronchialmuskulatur. Buchweizenhonig lindert Hustenreiz hocheffektiv. Der Zitronensaft liefert antioxidatives Vitamin C.", "stufe": "5", "dauer": "15s", "kcal": "135", "ingredients": [{"amt": "1 EL", "name": "Getrockneter Thymian"}, {"amt": "1", "name": "Bio Zitrone", "note": "Saft"}, {"amt": "2 EL", "name": "Roher Buchweizenhonig"}, {"amt": "300 ml", "name": "Kochendes Wasser"}], "steps": [{"t": "Den Thymian mit kochendem Wasser übergießen und abgedeckt für 15 Minuten infundieren lassen."}, {"t": "Den Aufguss durch ein feines Sieb gießen und auf unter 40 °C abkühlen lassen."}, {"t": "Lauwarmen Aufguss, frisch gepressten Zitronensaft und Honig in den Mixer geben."}, {"t": "Auf Stufe 5 für 15 Sekunden emulgieren.", "tech": "Stufe 5 · 15 Sek"}, {"t": "Den Hustenlöser über den Tag verteilt teelöffelweise verabreichen."}]}, {"cat": "heilend", "program": "Stufe 10 · 60s", "tagline": "Entwässerung · Niere", "t1": "Basischer", "t2": "Sellerie", "t3": "Trunk", "sub": "Entwässerung des Interstitiums und Optimierung des renalen Säure Base Ausgleichs.", "science": "Die hohe Konzentration an bioaktivem Kalium im Staudensellerie stimuliert den renalen Flüssigkeitsdurchsatz und entlastet das interstitielle Gewebe. Die frische Petersilie liefert Apigenin zur Hemmung entzündlicher Enzymkaskaden.", "stufe": "10", "dauer": "60s", "kcal": "75", "ingredients": [{"amt": "4 St.", "name": "Frischer Staudensellerie"}, {"amt": "½", "name": "Salatgurke"}, {"amt": "1 Hd.", "name": "Frische Petersilie"}, {"amt": "1", "name": "Limette", "note": "Saft"}, {"amt": "150 ml", "name": "Eiskaltes Wasser"}], "steps": [{"t": "Das Gemüse waschen und in grobe Stücke schneiden."}, {"t": "Das kalte Wasser in den Mixbehälter gießen."}, {"t": "Sellerie, Gurke, Petersilie und den Limettensaft hinzugeben."}, {"t": "Den Regler direkt auf Stufe 10 drehen."}, {"t": "Die Mischung für 60 Sekunden zu einem faserfreien Trunk verarbeiten.", "tech": "Stufe 10 · 60 Sek"}]}, {"cat": "matcha", "program": "Stufe 9 · 45s", "tagline": "Fokus · Blutzucker", "t1": "Matcha", "t2": "Avocado", "t3": "Fusion", "sub": "Kognitive Leistungssteigerung und Stabilisierung des Blutzuckerspiegels.", "science": "Die Kombination aus L-Theanin und Koffein im Matcha fördert Alphawellen im Gehirn und stabilisiert die mentale Fokussierung ohne Erregungsspitzen. Die ungesättigten Fettsäuren der Avocado dämpfen den glykämischen Koeffizienten.", "stufe": "9", "dauer": "45s", "kcal": "345", "ingredients": [{"amt": "1 TL", "name": "Biologisches Matchapulver"}, {"amt": "½", "name": "Reife Avocado"}, {"amt": "1", "name": "Reife Banane"}, {"amt": "1 EL", "name": "Chiasamen"}, {"amt": "250 ml", "name": "Ungesüßte Mandelmilch"}], "steps": [{"t": "Die Avocado entkernen und das Fruchtfleisch heraustrennen."}, {"t": "Die Banane schälen und grob zerteilen."}, {"t": "Mandelmilch, Matchapulver, Avocado, Banane und Chiasamen in den Mixer füllen."}, {"t": "Auf Stufe 9 für 45 Sekunden zu einer cremigen Emulsion verarbeiten.", "tech": "Stufe 9 · 45 Sek"}, {"t": "Unverzüglich servieren, um die Oxidation der Avocadolipide zu verhindern."}]}, {"cat": "matcha", "program": "Schichten · Stufe 5–8", "tagline": "Antioxidativ · Fusion", "t1": "Iced", "t2": "Mango", "t3": "Latte", "sub": "Zelluläre Protektion durch antioxidative Fusionssynergien.", "science": "Die Vitamine der Mango verbessern die intestinale Resorption der im Matcha enthaltenen Epigallocatechingallate (EGCG). Das Kokosfett liefert leicht verdauliche mittelkettige Lipide für den zellulären Energiehaushalt.", "stufe": "5–8", "dauer": "50s", "kcal": "185", "ingredients": [{"amt": "½", "name": "Mango", "note": "reifes Fruchtfleisch"}, {"amt": "1 TL", "name": "Matchapulver"}, {"amt": "150 ml", "name": "Leichte Kokosmilch"}, {"amt": "100 ml", "name": "Warmes Wasser", "note": "ca. 80 °C"}, {"amt": "5", "name": "Eiswürfel"}], "steps": [{"t": "Das Mangofleisch auf Stufe 8 für 30 Sekunden glatt pürieren und ins Glas füllen.", "tech": "Stufe 8 · 30 Sek"}, {"t": "Den Mixbehälter kurz mit kaltem Wasser ausspülen."}, {"t": "Matchapulver und warmes Wasser auf Stufe 5 für 20 Sekunden schaumig schlagen.", "tech": "Stufe 5 · 20 Sek"}, {"t": "Eiswürfel und Kokosmilch vorsichtig auf das Mangopüree schichten."}, {"t": "Das aufgeschlagene Matchagetränk als oberste Schicht einfüllen."}]}, {"cat": "matcha", "program": "Ice Crush", "tagline": "Thermogenese · Frische", "t1": "Matcha", "t2": "Minz", "t3": "Eisfrische", "sub": "Thermische Regulation des Organismus und Erhöhung des basalen Energieumsatzes.", "science": "Der im Messerzentrum erzeugte Eisschnee kühlt den Organismus sofort ab. Die Katechine des Matchas steigern in Kombination mit dem Menthol der Minze die metabolische Aktivität.", "stufe": "Ice Crush", "dauer": "Auto", "kcal": "65", "ingredients": [{"amt": "1 TL", "name": "Matchapulver"}, {"amt": "1 Hd.", "name": "Frische Minzblätter"}, {"amt": "1", "name": "Limette", "note": "Saft"}, {"amt": "1 EL", "name": "Agavendicksaft"}, {"amt": "200 g", "name": "Feste Eiswürfel"}, {"amt": "100 ml", "name": "Kaltes Wasser"}], "steps": [{"t": "Wasser, Limettensaft, Agavendicksaft, Matcha und Minzblätter in den Mixer füllen."}, {"t": "Die harten Eiswürfel hinzufügen."}, {"t": "Das Ice Crush Programm aktivieren.", "tech": "Ice Crush · Auto"}, {"t": "Arbeiten lassen, bis die harten Eisstrukturen vollständig pulverisiert sind."}, {"t": "Sofort in ein gekühltes Glas umfüllen und mit einem Löffel verzehren."}]}, {"cat": "matcha", "program": "Stufe 10 · 60s", "tagline": "Regeneration · Protein", "t1": "Matcha", "t2": "Pistazien", "t3": "Traum", "sub": "Postnatale Regeneration des Muskelgewebes durch essentielle pflanzliche Aminosäuren.", "science": "Pistazien liefern ein vollständiges Aminosäureprofil zur Förderung der Proteingeweberegeneration. Das asymmetrische Messersystem zerkleinert die Nusskerne rückstandslos zu einer feinen Milch.", "stufe": "10", "dauer": "60s", "kcal": "365", "ingredients": [{"amt": "1 TL", "name": "Matchapulver"}, {"amt": "30 g", "name": "Ungesalzene Pistazienkerne"}, {"amt": "1", "name": "Reife Banane"}, {"amt": "1 EL", "name": "Ahornsirup"}, {"amt": "250 ml", "name": "Ungesüßte Hafermilch"}], "steps": [{"t": "Die Pistazienkerne trocken in den Mixbehälter geben."}, {"t": "Auf Stufe 10 für 15 Sekunden zu feinstem Nussmehl verarbeiten.", "tech": "Stufe 10 · 15 Sek"}, {"t": "Matchapulver, Banane, Ahornsirup und Hafermilch hinzufügen."}, {"t": "Auf Stufe 10 für weitere 45 Sekunden zu einer samtigen Konsistenz emulgieren.", "tech": "Stufe 10 · 45 Sek"}, {"t": "In ein Glas füllen und kühl genießen."}]}, {"cat": "matcha", "program": "Stufe 9 · 45s", "tagline": "Verdauung · Vegetativ", "t1": "Warmes", "t2": "Matcha", "t3": "Tonikum", "sub": "Stimulierung der gastrointestinalen Durchblutung und Aktivierung des vegetativen Nervensystems.", "science": "Die Scharfstoffe des Ingwers regen die Durchblutung der Magenschleimhaut an. Die Aminosäure L-Theanin im Matcha sorgt für eine verzögerte, magenschonende Freisetzung des Koffeins.", "stufe": "9", "dauer": "45s", "kcal": "115", "ingredients": [{"amt": "1 TL", "name": "Matchapulver"}, {"amt": "½ cm", "name": "Frischer Ingwer"}, {"amt": "1 TL", "name": "Kokosblütenzucker"}, {"amt": "300 ml", "name": "Warme Mandelmilch", "note": "ca. 70 °C"}], "steps": [{"t": "Den frischen Ingwer schälen und fein reiben."}, {"t": "Die warme Mandelmilch in den Mixbehälter einfüllen."}, {"t": "Matchapulver, Ingwer und Kokosblütenzucker hinzufügen."}, {"t": "Auf Stufe 9 für 45 Sekunden aufschlagen, bis ein feinporiger Schaum entsteht.", "tech": "Stufe 9 · 45 Sek"}, {"t": "Das heiße Getränk durch ein feines Sieb direkt in eine Tasse gießen."}]}, {"cat": "mahlzeit", "program": "Stufe 10 · 60s", "tagline": "Trinkmahlzeit · Glukose", "t1": "Schoko", "t2": "Hafer", "t3": "Sättigung", "sub": "Vollwertige Trinkmahlzeit zur langfristigen Stabilisierung der Glukosekurve.", "science": "Dieses Rezept repliziert das Makronährstoffverhältnis einer vollbilanzierten Trinkmahlzeit. Haferflocken liefern komplexe Kohlenhydrate zur Verhinderung von Insulinspitzen. Das Hanfprotein deckt den Aminosäurebedarf.", "stufe": "10", "dauer": "60s", "kcal": "550", "ingredients": [{"amt": "50 g", "name": "Feine Haferflocken"}, {"amt": "30 g", "name": "Hanfproteinpulver"}, {"amt": "1", "name": "Reife Banane"}, {"amt": "2 EL", "name": "Naturbelassenes Mandelmus"}, {"amt": "1 EL", "name": "Rohes Kakaopulver"}, {"amt": "350 ml", "name": "Ungesüßte Sojamilch"}], "steps": [{"t": "Die Haferflocken trocken auf Stufe 10 für 10 Sekunden zu feinem Mehl mahlen.", "tech": "Stufe 10 · 10 Sek"}, {"t": "Proteinpulver, Banane, Mandelmus and Kakaopulver dazugeben."}, {"t": "Mit der ungesüßten Sojamilch vollständig aufgießen."}, {"t": "Den Regler auf Stufe 10 stellen und für 60 Sekunden emulgieren.", "tech": "Stufe 10 · 60 Sek"}, {"t": "Den cremigen Shake als vollständigen Mahlzeitenersatz trinken."}]}, {"cat": "mahlzeit", "program": "Stufe 10 · 50s", "tagline": "Aminosäuren · Darm", "t1": "Beeren", "t2": "Joghurt", "t3": "Mahlzeit", "sub": "Langsame Aminosäurefreisetzung und Unterstützung der darmassoziierten Barriere.", "science": "Das Caseinprotein des griechischen Joghurts sorgt für kontinuierliche Freisetzung freier Aminosäuren über mehrere Stunden. Haferkleie liefert wertvolle Beta-Glucane zur Unterstützung des Lipidstoffwechsels.", "stufe": "10", "dauer": "50s", "kcal": "440", "ingredients": [{"amt": "150 g", "name": "Gefrorene Heidelbeeren"}, {"amt": "150 g", "name": "Griechischer Joghurt", "note": "vollfett"}, {"amt": "30 g", "name": "Erbsenproteinpulver"}, {"amt": "2 EL", "name": "Haferkleie"}, {"amt": "1 EL", "name": "Leinöl"}, {"amt": "200 ml", "name": "Gefiltertes Wasser"}], "steps": [{"t": "Joghurt, Wasser und Leinöl zuerst in den Mixbehälter geben."}, {"t": "Das Erbsenproteinpulver und die Haferkleie hinzufügen."}, {"t": "Die gefrorenen Heidelbeeren als letzte Zutat einfüllen."}, {"t": "Auf Stufe 10 für 50 Sekunden betreiben, bis die Beeren vollständig zerkleinert sind.", "tech": "Stufe 10 · 50 Sek"}, {"t": "Sofort verzehren, um die Viskosität stabil zu halten."}]}, {"cat": "mahlzeit", "program": "Stufe 10 · 45s", "tagline": "Ketogen · MCT", "t1": "Nuss", "t2": "Kern", "t3": "Power", "sub": "Ketogener Mahlzeitenersatz zur Erhöhung der metabolischen Flexibilität.", "science": "Die mittelkettigen Triglyceride (MCT) des Öls werden direkt in der Leber zu Ketonkörpern konvertiert und liefern schnelle Energie ohne Insulinausschüttung. Die Kürbiskerne liefern Zink zur Regulation hormoneller Kaskaden.", "stufe": "10", "dauer": "45s", "kcal": "510", "ingredients": [{"amt": "30 g", "name": "Cashewkerne"}, {"amt": "20 g", "name": "Kürbiskerne"}, {"amt": "30 g", "name": "Reisproteinpulver"}, {"amt": "1 EL", "name": "Reines MCT Öl"}, {"amt": "300 ml", "name": "Ungesüßte Kokosmilch"}], "steps": [{"t": "Cashewkerne und Kürbiskerne trocken in den Mixer füllen."}, {"t": "Auf Stufe 10 für 15 Sekunden zu feinstem Mehl verarbeiten.", "tech": "Stufe 10 · 15 Sek"}, {"t": "Reisprotein, MCT Öl und Kokosmilch dazugeben."}, {"t": "Auf Stufe 10 für 45 Sekunden zu einer cremigen Emulsion verbinden.", "tech": "Stufe 10 · 45 Sek"}, {"t": "Direkt nach der Zubereitung als Mahlzeit verzehren."}]}, {"cat": "mahlzeit", "program": "Stufe 9 · 45s", "tagline": "Lipolyse · Frühstück", "t1": "Kaffee", "t2": "Protein", "t3": "Kick", "sub": "Frühstücksersatz zur Stimulierung der Lipolyse und Aufrechterhaltung der Proteinsynthese.", "science": "Das Koffein regt die Lipolyse an. Die Kombination aus Haferflocken und Erdnussbutter liefert langanhaltende Energie. Das Proteinpulver schützt das Muskelgewebe vor katabolen Prozessen.", "stufe": "9", "dauer": "45s", "kcal": "460", "ingredients": [{"amt": "1 Tasse", "name": "Kalter Espresso"}, {"amt": "40 g", "name": "Feine Haferflocken"}, {"amt": "30 g", "name": "Veganes Vanilleproteinpulver"}, {"amt": "1 EL", "name": "Erdnussbutter"}, {"amt": "1", "name": "Reife Banane"}, {"amt": "200 ml", "name": "Ungesüßte Hafermilch"}], "steps": [{"t": "Die Haferflocken trocken auf Stufe 10 fein mahlen.", "tech": "Stufe 10 · mahlen"}, {"t": "Banane, Proteinpulver und Erdnussbutter dazugeben."}, {"t": "Mit kaltem Espresso und Hafermilch aufgießen."}, {"t": "Auf Stufe 9 für 45 Sekunden homogen aufschlagen.", "tech": "Stufe 9 · 45 Sek"}, {"t": "Als energetisierenden Frühstücksersatz konsumieren."}]}, {"cat": "mahlzeit", "program": "Stufe 10 · 55s", "tagline": "Zellmembran · Lipide", "t1": "Grüner", "t2": "Avocado", "t3": "Kraftshake", "sub": "Lipid und Nährstoffzufuhr zur strukturellen Regeneration der Zellmembranen.", "science": "Die Avocado liefert einfach ungesättigte Fettsäuren, welche die Absorption der fettlöslichen Vitamine des Spinats optimieren. Die Aminosäuren des Reisproteins unterstützen die Zellerneuerung.", "stufe": "10", "dauer": "55s", "kcal": "430", "ingredients": [{"amt": "½", "name": "Reife Avocado"}, {"amt": "1 Hd.", "name": "Frischer Babyspinat"}, {"amt": "30 g", "name": "Reisproteinpulver"}, {"amt": "1 EL", "name": "Chiasamen"}, {"amt": "½", "name": "Banane"}, {"amt": "300 ml", "name": "Ungesüßte Mandelmilch"}], "steps": [{"t": "Den Babyspinat gründlich reinigen."}, {"t": "Die Avocado entkernen und das Fruchtfleisch herauslösen."}, {"t": "Alle Zutaten nacheinander in den Mixbehälter einfüllen."}, {"t": "Auf Stufe 10 für 55 Sekunden cremig emulgieren.", "tech": "Stufe 10 · 55 Sek"}, {"t": "Unverzüglich nach der Zubereitung trinken."}]}, {"cat": "mahlzeit", "program": "Stufe 9 · 45s", "tagline": "Sättigung · Quellstoff", "t1": "Tropen", "t2": "Kokos", "t3": "Sättigung", "sub": "Erhöhung des Magenfüllungsvolumens zur Aktivierung der Dehnungsrezeptoren.", "science": "Die Flohsamenschalen besitzen ein hohes Quellvermögen, dehnen die Magenwand sanft und signalisieren dem Hypothalamus Sättigung. Das Proteinpulver liefert Aminosäuren für die Stickstoffbilanz.", "stufe": "9", "dauer": "45s", "kcal": "440", "ingredients": [{"amt": "100 g", "name": "Mango Fruchtfleisch"}, {"amt": "50 g", "name": "Frische Ananas"}, {"amt": "30 g", "name": "Veganes Proteinpulver", "note": "neutral"}, {"amt": "1 TL", "name": "Flohsamenschalen"}, {"amt": "150 ml", "name": "Leichte Kokosmilch"}, {"amt": "150 ml", "name": "Wasser"}], "steps": [{"t": "Die Mango und die Ananas grob würfeln."}, {"t": "Obst, Proteinpulver und Flohsamenschalen in den Mixer geben."}, {"t": "Mit Kokosmilch und Wasser aufgießen."}, {"t": "Auf Stufe 9 für 45 Sekunden intensiv durchmixen.", "tech": "Stufe 9 · 45 Sek"}, {"t": "Vor dem Verzehr drei Minuten quellen lassen, bis eine dicke Konsistenz erreicht ist."}]}, {"cat": "spass", "program": "Ice Crush", "tagline": "Frost · Vitamin C", "t1": "Erdbeer", "t2": "Minz", "t3": "Frost", "sub": "Kalorienarme Erfrischung mit stabiler Schneetextur durch hocheffiziente Eiszerkleinerung.", "science": "Die asymmetrischen Edelstahlklingen pulverisieren harte Eiswürfel innerhalb von Sekunden zu feinstem Eisschnee. Die Erdbeeren liefern bioaktives Vitamin C und Antioxidantien.", "stufe": "Ice Crush", "dauer": "Auto", "kcal": "45", "ingredients": [{"amt": "150 g", "name": "Frische Erdbeeren"}, {"amt": "1 Hd.", "name": "Frische Minzblätter"}, {"amt": "1", "name": "Limette", "note": "Saft"}, {"amt": "2 EL", "name": "Erythrit"}, {"amt": "250 g", "name": "Feste Eiswürfel"}], "steps": [{"t": "Die Erdbeeren waschen und den grünen Strunk entfernen."}, {"t": "Erdbeeren, Minze, Limettensaft und Erythrit in den Mixbehälter geben."}, {"t": "Die harten Eiswürfel hinzufügen."}, {"t": "Das Ice Crush Programm aktivieren, bis kein Eisklirren mehr hörbar ist.", "tech": "Ice Crush · Auto"}, {"t": "In ein gekühltes Glas füllen und sofort mit einem Löffel servieren."}]}, {"cat": "spass", "program": "Stufe 10 · 45s", "tagline": "Lassi · Mikrobiom", "t1": "Rosen", "t2": "Kardamom", "t3": "Lassi", "sub": "Beruhigung der Magen Darm Peristaltik und Förderung der intestinalen Mikrobiomdichte.", "science": "Griechischer Joghurt liefert dichte Milchsäurebakterien zur Unterstützung der Darmflora. Das reine Rosenwasser wirkt in Verbindung mit Kardamom kühlend und mindert gastrointestinale Reizzustände.", "stufe": "10", "dauer": "45s", "kcal": "225", "ingredients": [{"amt": "300 g", "name": "Griechischer Joghurt"}, {"amt": "1 TL", "name": "Reines Rosenwasser"}, {"amt": "½ TL", "name": "Gemahlener Kardamom"}, {"amt": "1 EL", "name": "Honig"}, {"amt": "1 Pr.", "name": "Salz"}, {"amt": "8", "name": "Feste Eiswürfel"}], "steps": [{"t": "Joghurt, Rosenwasser, Kardamom, Honig und Salz in den Behälter füllen."}, {"t": "Die Eiswürfel dazugeben."}, {"t": "Auf Stufe 10 für 45 Sekunden mixen, bis eine ausgeprägte Schaumkrone entsteht.", "tech": "Stufe 10 · 45 Sek"}, {"t": "Das gekühlte Lassi in zwei Gläser portionieren."}, {"t": "Nach Wunsch mit getrockneten Rosenblüten dekorieren."}]}, {"cat": "spass", "program": "Stufe 10 · 40s", "tagline": "Fusion · Enzyme", "t1": "Mango", "t2": "Safran", "t3": "Lassi", "sub": "Exotisches Fusionsgetränk zur enzymatischen Unterstützung der Nährstoffaufspaltung.", "science": "Die Mango liefert Verdauungsenzyme und antioxidatives Vitamin A. Safran enthält Crocin, das beruhigend auf das zentrale Nervensystem wirkt. Das Kokoswasser spendet essentielle Elektrolyte.", "stufe": "10", "dauer": "40s", "kcal": "245", "ingredients": [{"amt": "1", "name": "Reife Mango", "note": "Fruchtfleisch"}, {"amt": "200 g", "name": "Naturjoghurt", "note": "vollfett"}, {"amt": "100 ml", "name": "Kokoswasser"}, {"amt": "1 Pr.", "name": "Echte Safranfäden"}, {"amt": "¼ TL", "name": "Gemahlener Kardamom"}, {"amt": "6", "name": "Eiswürfel"}], "steps": [{"t": "Die Safranfäden in einem Esslöffel warmem Wasser für fünf Minuten einweichen."}, {"t": "Mangofleisch, Joghurt, Kokoswasser, Kardamom und Safranwasser in den Mixer geben."}, {"t": "Die Eiswürfel hinzufügen."}, {"t": "Auf Stufe 10 für 40 Sekunden cremig aufschlagen.", "tech": "Stufe 10 · 40 Sek"}, {"t": "Sofort kühl servieren."}]}, {"cat": "spass", "program": "Stufe 10 · 30s", "tagline": "Frappé · Schaum", "t1": "Eiskaffee", "t2": "", "t3": "Frappé", "sub": "Belebender Nachmittagskick mit stabiler Proteinstruktur.", "science": "Die mechanische Rotationskraft emulgiert die Milchproteine an der Oberfläche und erzeugt eine langanhaltende Schaumkrone. Dattelsirup liefert komplexe Mineralstoffe.", "stufe": "10", "dauer": "30s", "kcal": "165", "ingredients": [{"amt": "2 Tassen", "name": "Espresso", "note": "vollständig abgekühlt"}, {"amt": "150 ml", "name": "Kalte Vollmilch"}, {"amt": "2 EL", "name": "Dattelsirup"}, {"amt": "1 Pr.", "name": "Bourbon Vanille"}, {"amt": "200 g", "name": "Feste Eiswürfel"}], "steps": [{"t": "Espresso, kalte Vollmilch, Dattelsirup und Vanille in den Mixbehälter füllen."}, {"t": "Die Eiswürfel dazugeben."}, {"t": "Auf Stufe 10 für 30 Sekunden aufschlagen, bis ein stabiler dicker Schaum entsteht.", "tech": "Stufe 10 · 30 Sek"}, {"t": "In ein hohes Glas gießen und mit einem Löffel servieren."}]}, {"cat": "spass", "program": "Ice Crush", "tagline": "Granita · Rehydration", "t1": "Melonen", "t2": "Limetten", "t3": "Granita", "sub": "Rasche Rehydratation der Gewebezellen und oxidative Protektion.", "science": "Die Wassermelone liefert natürliches L-Citrullin zur Entlastung der Muskulatur. Das Kokoswasser gleicht den Elektrolytverlust nach hoher Anstrengung aus.", "stufe": "Ice Crush", "dauer": "Auto", "kcal": "95", "ingredients": [{"amt": "300 g", "name": "Wassermelone", "note": "entkernt"}, {"amt": "2", "name": "Limetten", "note": "Saft"}, {"amt": "1 EL", "name": "Ahornsirup"}, {"amt": "200 g", "name": "Feste Eiswürfel"}], "steps": [{"t": "Die Wassermelone grob würfeln."}, {"t": "Melonenstücke, Limettensaft und Ahornsirup in den Mixer geben."}, {"t": "Die Eiswürfel hinzufügen."}, {"t": "Das Ice Crush Programm aktivieren, bis eine kristalline Granitakonsistenz erreicht ist.", "tech": "Ice Crush · Auto"}, {"t": "In flache Gläser füllen und eiskalt servieren."}]}, {"cat": "suppen", "program": "Stufe 10 · 6 Min", "tagline": "Reibungshitze · Lycopin", "t1": "Heiße", "t2": "Tomaten", "t3": "Suppe", "sub": "Dampfende Gemüsesuppe direkt aus dem Mixbehälter durch reine Reibungswärme.", "science": "Die hohe Umdrehungszahl der Klingen erhitzt die rohen Zutaten in sechs Minuten auf Serviertemperatur. Das in den Tomaten enthaltene Lycopin wird durch die Erwärmung biochemisch aktiviert.", "stufe": "10", "dauer": "6 Min", "kcal": "195", "ingredients": [{"amt": "500 g", "name": "Reife Strauchtomaten"}, {"amt": "½", "name": "Rote Paprika"}, {"amt": "1", "name": "Kleine Karotte"}, {"amt": "1", "name": "Knoblauchzehe"}, {"amt": "1 Hd.", "name": "Frische Basilikumblätter"}, {"amt": "2 EL", "name": "Kaltgepresstes Olivenöl"}, {"amt": "1 TL", "name": "Meersalz"}, {"amt": "1 Pr.", "name": "Schwarzer Pfeffer"}, {"amt": "200 ml", "name": "Kochendes Wasser"}], "steps": [{"t": "Die Tomaten und die Paprika waschen und grob zerkleinern."}, {"t": "Gemüse, Knoblauch, Gewürze, Olivenöl und heißes Wasser in den Mixer geben."}, {"t": "Den belüfteten Deckel fest aufsetzen, um den Dampfdruck kontrolliert abzulassen."}, {"t": "Auf Stufe 10 für exakt sechs Minuten mixen, bis heißer Dampf aus dem Ventil entweicht.", "tech": "Stufe 10 · 6 Min"}, {"t": "Das Basilikum hinzufügen und auf Stufe 3 für 10 Sekunden grob untermischen.", "tech": "Stufe 3 · 10 Sek"}]}, {"cat": "suppen", "program": "Stufe 10 · 5 Min", "tagline": "Thermogenese · Carotinoide", "t1": "Cremige", "t2": "Karotten", "t3": "Suppe", "sub": "Aktivierung der thermogenen Durchblutung und Versorgung mit Carotinoiden.", "science": "Die vorgedämpften Karotten und Süßkartoffeln werden mit Kokosmilch cremig emulgiert. Der Ingwer reizt die Thermorezeptoren des Magens und regt den Energieumsatz an.", "stufe": "10", "dauer": "5 Min", "kcal": "245", "ingredients": [{"amt": "300 g", "name": "Karotten"}, {"amt": "150 g", "name": "Süßkartoffeln"}, {"amt": "1 cm", "name": "Frischer Ingwer"}, {"amt": "1", "name": "Knoblauchzehe"}, {"amt": "200 ml", "name": "Kokosmilch"}, {"amt": "200 ml", "name": "Heiße Gemüsebrühe"}, {"amt": "1 TL", "name": "Salz"}, {"amt": "1 Pr.", "name": "Geriebene Muskatnuss"}], "steps": [{"t": "Karotten und Süßkartoffeln schälen, würfeln und für 10 Minuten dämpfen."}, {"t": "Gedämpftes Gemüse mit Ingwer, Knoblauch, Kokosmilch, Brühe und Gewürzen in den Mixer geben."}, {"t": "Den belüfteten Deckel fest verschließen, um Spritzer zu verhindern."}, {"t": "Auf Stufe 10 für fünf Minuten mixen, bis die Suppe durch Reibung dampfend heiß ist.", "tech": "Stufe 10 · 5 Min"}, {"t": "Heiß in tiefen Tellern servieren."}]}, {"cat": "suppen", "program": "Stufe 10 · 4 Min", "tagline": "Vasoprotektion · Schwefel", "t1": "Seidige", "t2": "Bärlauch", "t3": "Suppe", "sub": "Vasoprotektion und Förderung der Schwefelmetabolisierung durch frischen Bärlauch.", "science": "Die Schwefelverbindungen des Bärlauchs unterstützen die körpereigene Abwehr. Die Kartoffelstärke bindet die Suppe beim Hochgeschwindigkeitsmixen zu einer seidigen Emulsion.", "stufe": "10", "dauer": "4 Min", "kcal": "215", "ingredients": [{"amt": "100 g", "name": "Frischer Bärlauch"}, {"amt": "1", "name": "Zwiebel", "note": "angeschwitzt"}, {"amt": "2", "name": "Gekochte Kartoffeln"}, {"amt": "150 ml", "name": "Sahne"}, {"amt": "400 ml", "name": "Heiße Gemüsebrühe"}, {"amt": "n. B.", "name": "Salz, Pfeffer, Muskatnuss"}], "steps": [{"t": "Die angeschwitzte Zwiebel und die gekochten Kartoffeln in den Mixbehälter geben."}, {"t": "Die heiße Gemüsebrühe, die Sahne und die Gewürze hinzufügen."}, {"t": "Den gereinigten Bärlauch als letzte Zutat in den Mixer füllen."}, {"t": "Auf Stufe 10 für vier Minuten mixen, bis eine sämige Konsistenz erreicht ist.", "tech": "Stufe 10 · 4 Min"}, {"t": "Sofort dampfend servieren."}]}, {"cat": "suppen", "program": "Stufe 10 · 60s", "tagline": "Dip · Emulsion", "t1": "Samtiger", "t2": "Tahini", "t3": "Hummus", "sub": "Hocheffiziente Protein und Lipidemulgierung für eine samtige Dipstruktur.", "science": "Die mechanische Klingenkraft emulgiert die Proteine der Kichererbsen und die Lipide des Sesammus zu einer homogenen Struktur. Dies verhindert das Absetzen von Ölphasen.", "stufe": "10", "dauer": "60s", "kcal": "325", "ingredients": [{"amt": "400 g", "name": "Kichererbsen", "note": "abgetropft"}, {"amt": "120 g", "name": "Hochwertiges Tahini"}, {"amt": "1", "name": "Zitrone", "note": "Saft"}, {"amt": "1", "name": "Knoblauchzehe"}, {"amt": "1 TL", "name": "Kreuzkümmel"}, {"amt": "1 TL", "name": "Salz"}, {"amt": "50 ml", "name": "Eiskaltes Wasser"}], "steps": [{"t": "Zitronensaft, Tahini, Salz und Knoblauch auf Stufe 8 für 30 Sekunden cremig aufschlagen.", "tech": "Stufe 8 · 30 Sek"}, {"t": "Die Kichererbsen und den Kreuzkümmel in den Mixbehälter geben."}, {"t": "Den Mixer auf Stufe 10 starten."}, {"t": "Das eiskalte Wasser langsam bei laufendem Betrieb durch die Deckelöffnung einfließen lassen."}, {"t": "Für 60 Sekunden mixen, bis eine extrem luftige Konsistenz erreicht ist.", "tech": "Stufe 10 · 60 Sek"}]}, {"cat": "suppen", "program": "Impuls + Stufe 6", "tagline": "Dip · Monolipide", "t1": "Avocado", "t2": "Koriander", "t3": "Dip", "sub": "Zufuhr essentieller Monolipide zur Unterstützung des kardiovaskulären Systems.", "science": "Die einfach ungesättigten Fettsäuren der Avocado regulieren das vaskuläre Cholesteringleichgewicht. Die ätherischen Öle des Korianders wirken spasmolytisch im Magen-Trakt.", "stufe": "6", "dauer": "20s", "kcal": "185", "ingredients": [{"amt": "2", "name": "Reife Avocados"}, {"amt": "1", "name": "Limette", "note": "Saft"}, {"amt": "1 Hd.", "name": "Frischer Koriander"}, {"amt": "½", "name": "Jalapeño", "note": "entkernt"}, {"amt": "1 EL", "name": "Kaltgepresstes Olivenöl"}, {"amt": "1 Pr.", "name": "Meersalz"}], "steps": [{"t": "Die Avocados halbieren, den Kern entfernen und das Fruchtfleisch heraustrennen."}, {"t": "Alle Zutaten in den Mixbehälter einfüllen."}, {"t": "Die Impulsfunktion mehrmals kurz aktivieren, um die festen Bestandteile vorzuzerkleinern.", "tech": "Impuls"}, {"t": "Anschließend auf Stufe 6 für 20 Sekunden zu einem dicken, leicht stückigen Dip verarbeiten.", "tech": "Stufe 6 · 20 Sek"}, {"t": "Mit Korianderblättern garniert servieren."}]}, {"cat": "skin", "program": "Stufe 10 + 4", "tagline": "Kollagen · Vitamin C", "t1": "Rotes", "t2": "Granatapfel", "t3": "Elixier", "sub": "Stabilisierung des kutanen Kollagengerüsts und Hemmung kollagenabbauender Enzyme.", "science": "Das hochdosierte Vitamin C verbessert die Einlagerung von Kollagenfasern in die extrazelluläre Matrix der Haut. Granatapfelpolyphenole schützen das Bindegewebe vor enzymatischem Abbau.", "stufe": "10/4", "dauer": "55s", "kcal": "115", "ingredients": [{"amt": "150 g", "name": "Frische Granatapfelkerne"}, {"amt": "1 EL", "name": "Reines Kollagenhydrolysat"}, {"amt": "1 cm", "name": "Frischer Ingwer"}, {"amt": "200 ml", "name": "Gefiltertes Wasser"}], "steps": [{"t": "Granatapfelkerne, Ingwer und Wasser in den Mixbehälter geben."}, {"t": "Auf Stufe 10 für 45 Sekunden intensiv mixen, um die harten Kerne aufzuschließen.", "tech": "Stufe 10 · 45 Sek"}, {"t": "Das Kollagenpulver in den Mixer geben."}, {"t": "Auf Stufe 4 für 10 Sekunden kurz untermischen, um Luftblasenbildung zu minimieren.", "tech": "Stufe 4 · 10 Sek"}, {"t": "Das Elixier durch ein feines Sieb abseihen und sofort verzehren."}]}, {"cat": "skin", "program": "Stufe 10 + 5", "tagline": "Anti-Aging · Beta-Carotin", "t1": "Karotten", "t2": "Orangen", "t3": "Hautglow", "sub": "Prävention lichtbedingter Alterungsprozesse und Optimierung des epidermalen Teints.", "science": "Das Beta-Carotin lagert sich in den lipidhaltigen Schichten der Haut an und absorbiert schädliche Strahlungsspektren. Vitamin C stimuliert die Zellerneuerung in der Basalschicht.", "stufe": "10/5", "dauer": "75s", "kcal": "195", "ingredients": [{"amt": "2", "name": "Frische Karotten"}, {"amt": "2", "name": "Orangen", "note": "Saft"}, {"amt": "1 EL", "name": "Kollagenhydrolysat"}, {"amt": "1 EL", "name": "Kaltgepresstes Leinöl"}, {"amt": "150 ml", "name": "Gefiltertes Wasser"}], "steps": [{"t": "Die Karotten waschen und in grobe Stücke schneiden."}, {"t": "Karotten, frisch gepressten Orangensaft und Wasser in den Mixer füllen."}, {"t": "Auf Stufe 10 für 60 Sekunden zu einem faserfreien Saft verarbeiten.", "tech": "Stufe 10 · 60 Sek"}, {"t": "Das Kollagenpulver und das Leinöl dazugeben."}, {"t": "Auf Stufe 5 für 15 Sekunden homogen verrühren und kühl trinken.", "tech": "Stufe 5 · 15 Sek"}]}, {"cat": "skin", "program": "Stufe 9 · 45s", "tagline": "Hydration · Glow", "t1": "Aloe", "t2": "Vera", "t3": "Hydrator", "sub": "Beschleunigte Regeneration der epidermalen Barriere und interzelluläre Wasserspeicherung.", "science": "Studien belegen: die orale Aufnahme von Aloe Vera Sterolen verbessert die Elastizität der Gesichtshaut signifikant. Sie stimulieren die hauteigene Feuchtigkeitsproduktion.", "stufe": "9", "dauer": "45s", "kcal": "135", "ingredients": [{"amt": "50 g", "name": "Frisches Aloe Vera Gel", "note": "lebensmittelecht, aus dem Blattinneren"}, {"amt": "150 g", "name": "Frische Ananasstücke"}, {"amt": "250 ml", "name": "Biologisches Kokoswasser"}, {"amt": "1 Hd.", "name": "Frische Minzblätter"}], "steps": [{"t": "Das Aloe Vera Gel sorgfältig herausschneiden, sodass keine aloinhaltigen Blattelemente verbleiben."}, {"t": "Aloe Vera Gel, Ananasstücke, Kokoswasser und Minze in den Mixer geben."}, {"t": "Auf Stufe 9 für 45 Sekunden intensiv pürieren.", "tech": "Stufe 9 · 45 Sek"}, {"t": "Gekühlt in einem weiten Glas servieren."}, {"t": "Unverzüglich trinken, um die enzymatische Aktivität vollständig zu nutzen."}]}, {"cat": "skin", "program": "Stufe 10 + 4", "tagline": "Anti-Aging · Mikrozirkulation", "t1": "Rote Beete", "t2": "Beeren", "t3": "Saft", "sub": "Erhöhung des kapillaren Blutflusses und Schutz der extrazellulären Matrix.", "science": "Rote-Beete-Nitrate steigern die Mikrozirkulation in den kutanen Kapillaren und verbessern die Nährstoffversorgung der Zellen. Beerenphenole blockieren kollagenabbauende Metalloproteinasen.", "stufe": "10/4", "dauer": "60s", "kcal": "165", "ingredients": [{"amt": "½", "name": "Rote Beete", "note": "roh und geschält"}, {"amt": "100 g", "name": "Heidelbeeren & Brombeeren"}, {"amt": "½", "name": "Roter Apfel", "note": "mit Schale"}, {"amt": "1 EL", "name": "Kollagenhydrolysat"}, {"amt": "150 ml", "name": "Kokoswasser"}], "steps": [{"t": "Die rote Beete und den Apfel in grobe Würfel schneiden."}, {"t": "Die präparierten Zutaten mit den Beeren und dem Kokoswasser in den Mixer geben."}, {"t": "Auf Stufe 10 für 50 Sekunden zu einem feinen Saft zerkleinern.", "tech": "Stufe 10 · 50 Sek"}, {"t": "Das Kollagenpulver dazugeben."}, {"t": "Auf Stufe 4 für 10 Sekunden unterrühren, bis das Pulver gelöst ist.", "tech": "Stufe 4 · 10 Sek"}]}, {"cat": "skin", "program": "Stufe 10 · 45s", "tagline": "Kollagen · Vitamin C", "t1": "Sanddorn", "t2": "Orange", "t3": "Booster", "sub": "Stabilisierung der Kollagen Triplehelix und Schutz vor oxidativem photischen Zellverfall.", "science": "Der Sanddornsaft liefert eine extrem dichte Vitamin-C-Konzentration, essenziell für die Quervernetzung der neu gebildeten Kollagenfasern im Corium.", "stufe": "10", "dauer": "45s", "kcal": "180", "ingredients": [{"amt": "50 ml", "name": "Sanddorn Muttersaft", "note": "ungesüßt"}, {"amt": "1", "name": "Orange", "note": "Saft"}, {"amt": "½", "name": "Reife Mango", "note": "Fruchtfleisch"}, {"amt": "1 EL", "name": "Chiasamen"}, {"amt": "150 ml", "name": "Wasser"}], "steps": [{"t": "Die Mango schälen und das Fruchtfleisch grob zerkleinern."}, {"t": "Sanddornsaft, Orangensaft, Mangostücke, Chiasamen und Wasser in den Mixer geben."}, {"t": "Auf Stufe 10 für 45 Sekunden emulgieren.", "tech": "Stufe 10 · 45 Sek"}, {"t": "Den Saft vor dem Verzehr fünf Minuten ruhen lassen."}, {"t": "Trinken, sobald die Chiasamen die Flüssigkeit leicht gebunden haben."}]}, {"cat": "skin", "program": "Stufe 10 + 5", "tagline": "Sauerstoff · Lipide", "t1": "Grüner", "t2": "Glow", "t3": "Booster", "sub": "Sauerstoffanreicherung des Gewebes und Festigung der epidermalen Lipidschichten.", "science": "Das dichte Chlorophyll des Spinats steigert den Sauerstofftransport im Gewebe. Die Avocado liefert Vitamin E zur Stabilisierung der zellulären Phospholipide gegen oxidativen Stress.", "stufe": "10/5", "dauer": "70s", "kcal": "295", "ingredients": [{"amt": "1 Hd.", "name": "Frischer Babyspinat"}, {"amt": "½", "name": "Reife Avocado"}, {"amt": "1", "name": "Grüner Apfel"}, {"amt": "1 EL", "name": "Chiasamen"}, {"amt": "1 EL", "name": "Kollagenhydrolysat"}, {"amt": "250 ml", "name": "Kokoswasser"}], "steps": [{"t": "Den grünen Apfel entkernen und in grobe Stücke schneiden."}, {"t": "Spinat, Avocado, Apfel, Chiasamen und Kokoswasser in den Mixbehälter geben."}, {"t": "Auf Stufe 10 für 60 Sekunden cremig schlagen, bis die Chiasamen zerkleinert sind.", "tech": "Stufe 10 · 60 Sek"}, {"t": "Das Kollagenpulver dazugeben."}, {"t": "Auf Stufe 5 für 10 Sekunden kurz vermengen und sofort trinken.", "tech": "Stufe 5 · 10 Sek"}]}, {"cat": "skin", "program": "Stufe 10 + 4", "tagline": "Radikalenschutz · Feuchtigkeit", "t1": "Blaubeer", "t2": "Kokos", "t3": "Elastizität", "sub": "Radikalenschutz der Hautzellen und Auffüllung der epidermalen Feuchtigkeitsdepots.", "science": "Blaubeerantioxidantien fangen freie Radikale ab. Die im Kokoswasser enthaltenen Mineralien stellen das osmotische Gleichgewicht in den Gewebezellen wieder her.", "stufe": "10/4", "dauer": "55s", "kcal": "145", "ingredients": [{"amt": "150 g", "name": "Frische Heidelbeeren"}, {"amt": "250 ml", "name": "Biologisches Kokoswasser"}, {"amt": "1 EL", "name": "Goldene Leinsamen"}, {"amt": "1 EL", "name": "Kollagenhydrolysat"}], "steps": [{"t": "Die Heidelbeeren waschen."}, {"t": "Heidelbeeren, Leinsamen und Kokoswasser in den Mixbehälter einfüllen."}, {"t": "Auf Stufe 10 für 45 Sekunden mixen, um die Leinsamen aufzuschließen.", "tech": "Stufe 10 · 45 Sek"}, {"t": "Das Kollagenpulver in den Mixer geben."}, {"t": "Auf Stufe 4 für 10 Sekunden kurz einrühren.", "tech": "Stufe 4 · 10 Sek"}]}];
+  const CAT_META = {
+    smoothies:{name:"Smoothies",ct:"Alltag · Energie"},
+    heilend:{name:"Heilende Getränke",ct:"Detox · Immun"},
+    matcha:{name:"Matcha Rituale",ct:"Fusion · Fokus"},
+    mahlzeit:{name:"Mahlzeit Ersatz",ct:"Sättigung · Protein"},
+    spass:{name:"Spaßgetränke",ct:"Slush · Lassi"},
+    suppen:{name:"Suppen & Dips",ct:"Textur · Hitze"},
+    skin:{name:"Skin Booster",ct:"Kollagen · Glow"}
+  };
+  const CAT_ORDER = ["smoothies","heilend","matcha","mahlzeit","spass","suppen","skin"];
+
+  // build index dropdown bars
+  function buildIndex(){
+    const list=document.getElementById('catList');
+    let html='';
+    CAT_ORDER.forEach(cat=>{
+      const meta=CAT_META[cat];
+      const recs=RECIPES.map((r,i)=>({r,i})).filter(o=>o.r.cat===cat);
+      let rows='';
+      const n=recs.length;
+      recs.forEach((o,k)=>{
+        const shift = (k/(Math.max(n-1,1)) - 0.5) * 26; // -13%..+13%
+        const title=(o.r.t1+' '+o.r.t2+' '+o.r.t3).replace(/\s+/g,' ').trim();
+        rows+='<button class="rec-row" style="--rowshift:'+shift.toFixed(1)+'%" onclick="openRecipe('+o.i+')"><span class="rt">'+title+'</span><span class="ra">→</span></button>';
+      });
+      html+='<div class="cat-bar" data-cat="'+cat+'">'
+        +'<button class="cat-bar-head" onclick="togCat(this)">'
+        +'<span class="cat-bar-title">'+meta.name+'</span>'
+        +'<span class="cat-bar-meta"><span class="cat-bar-ct">'+meta.ct+'</span><span class="cat-sign"></span></span>'
+        +'</button>'
+        +'<div class="cat-bar-body"><div class="cat-bar-inner">'+rows+'</div></div>'
+        +'</div>';
+    });
+    list.innerHTML=html;
+  }
+
+  function fillSpec(el,val,unit){
+    if(unit){ el.innerHTML=val+'<small>'+unit+'</small>'; }
+    else { el.textContent=val; }
+  }
+
+  // open a recipe by index
+  function openRecipe(idx){
+    const r=RECIPES[idx];
+    if(!r) return;
+    indexScrollY=window.scrollY;
+    currentRecipe=r;
+    document.querySelector('.app').setAttribute('data-cat',r.cat);
+    document.getElementById('rCatName').textContent=CAT_META[r.cat].name;
+    document.getElementById('rTagline').textContent=r.tagline;
+    document.getElementById('rT1').textContent=r.t1;
+    const t2=document.getElementById('rT2'); const t3=document.getElementById('rT3');
+    t2.textContent=r.t2; t3.textContent=r.t3;
+    t2.style.display=r.t2? 'block':'none';
+    document.getElementById('rSub').textContent=r.sub;
+    document.getElementById('rScience').textContent=r.science;
+    setSpec('rStufe', r.stufe, '');
+    let dV=r.dauer, dU='';
+    const m=/^([0-9]+)s$/.exec(r.dauer);
+    if(m){ dV=m[1]; dU='s'; }
+    setSpec('rDauer', dV, dU);
+    setSpec('rKcal', r.kcal, 'kcal');
+    // ingredients
+    const src=(r.t1+' '+r.t2+' '+r.t3).replace(/\s+/g,' ').trim();
+    const ing=document.getElementById('ingList');
+    ing.innerHTML=r.ingredients.map(it=>{
+      const note=it.note?'<small>'+it.note+'</small>':'';
+      return '<li data-amt="'+it.amt+'" data-name="'+it.name.replace(/"/g,'&quot;')+'"><span class="amt">'+it.amt+'</span><span class="name">'+it.name+note+'</span><button class="add-btn" onclick="addItem(this)"><span>+</span></button></li>';
+    }).join('');
+    document.getElementById('rIngCount').textContent=r.ingredients.length+' Komponenten · 1 Portion';
+    // steps
+    const st=document.getElementById('stepList');
+    st.innerHTML=r.steps.map(s=>{
+      const tech=s.tech?'<span class="tech">'+s.tech+'</span>':'';
+      return '<li><p>'+s.t+'</p>'+tech+'</li>';
+    }).join('');
+    document.getElementById('rStepCount').textContent=r.steps.length+' Schritte';
+    // footer
+    document.getElementById('rFootKcal').innerHTML=r.kcal+'<small> kcal</small>';
+    document.getElementById('rFootTag').innerHTML=src;
+    document.querySelectorAll('#view-recipe .acc-item').forEach(a=>a.classList.remove('open'));
+    t3.classList.remove('focusword'); void t3.offsetWidth; t3.classList.add('focusword');
+    // switch view
+    document.getElementById('view-index').classList.remove('active');
+    document.getElementById('view-recipe').classList.add('active');
+    document.getElementById('brandBtn').classList.add('show-back');
+    syncButtons();
+    window.scrollTo(0,0);
+    fitTitle(idx);
+    triggerAllFlaps();
+  }
+
+  function goIndex(){
+    document.querySelector('.app').setAttribute('data-cat','smoothies');
+    document.getElementById('view-recipe').classList.remove('active');
+    document.getElementById('view-index').classList.add('active');
+    document.getElementById('brandBtn').classList.remove('show-back');
+    window.scrollTo(0,indexScrollY);
+  }
+
+  function togCat(btn){ btn.closest('.cat-bar').classList.toggle('open'); }
+
+  function fitTitle(idx){
+    const title=document.querySelector('#view-recipe .title');
+    if(!title) return;
+    const aloe=document.getElementById('rT1');
+    const vera=document.getElementById('rT2');
+    const hydra=document.getElementById('rT3');
+    const stack=title.querySelector('.stack');
+    const cw=title.clientWidth;
+
+    const twoWord = !vera.textContent.trim();
+    if(twoWord){
+      title.classList.add('twoword');
+      aloe.style.fontSize='';
+      const seedA=((idx*37)%7)/3 - 1;
+      let h1=92+seedA*6, h2=70+seedA*5;
+      const maxW=cw;
+      aloe.style.position='static'; aloe.style.writingMode='horizontal-tb'; aloe.style.transform='none';
+      aloe.style.display='block'; aloe.style.fontSize=h1+'px';
+      let g=0; while(aloe.scrollWidth>maxW && h1>40 && g<60){ h1-=3; aloe.style.fontSize=h1+'px'; g++; }
+      title.style.setProperty('--aloe-pad','0px');
+      hydra.style.fontSize=h2+'px'; let g2=0;
+      while(hydra.scrollWidth>maxW && h2>34 && g2<60){ h2-=3; hydra.style.fontSize=h2+'px'; g2++; }
+      return;
+    } else {
+      title.classList.remove('twoword');
+      aloe.style.position=''; aloe.style.writingMode=''; aloe.style.transform=''; aloe.style.display='';
+    }
+
+    const titleTop=title.getBoundingClientRect().top;
+    const titleBottom=title.getBoundingClientRect().bottom;
+    const limitTop=titleTop+26;
+    const limitBottom=titleBottom-16;
+
+    const seed=((idx*37)%7)/3 - 1;
+    const seed2=((idx*53)%5)/2 - 1;
+    let aBase = 86 + seed*7;
+    let vBase = 126 + seed2*9;
+    let hBase = 65 + seed*5;
+
+    aloe.style.fontSize=aBase+'px';
+    let g=0;
+    function aloeOver(){
+      const r=aloe.getBoundingClientRect();
+      return r.top < limitTop-1 || r.bottom > limitBottom+1;
+    }
+    while(aloeOver() && aBase>46 && g<80){ aBase-=2; aloe.style.fontSize=aBase+'px'; g++; }
+    const aloeW=Math.ceil(aloe.getBoundingClientRect().width)+12;
+    title.style.setProperty('--aloe-pad', aloeW+'px');
+
+    const maxW = cw - aloeW + 14;
+    function fitWord(el, base, min){
+      if(!el.textContent){ return; }
+      let s=base; el.style.fontSize=s+'px';
+      let gg=0;
+      while(el.scrollWidth>maxW && s>min && gg<70){ s-=3; el.style.fontSize=s+'px'; gg++; }
+    }
+    fitWord(vera, vBase, 44);
+    fitWord(hydra, hBase, 34);
+  }
+
+  function setSpec(id, val, unit){
+    const el=document.getElementById(id);
+    el.dataset.val=String(val);
+    el.dataset.unit=unit||'';
+  }
+
+  function flipElement(vEl){
+    if(vEl.classList.contains('is-flipping')) return;
+    const targetStr=String(vEl.dataset.val||'');
+    const unit=vEl.dataset.unit||'';
+    if(!/^[0-9]+$/.test(targetStr)){
+      vEl.innerHTML=targetStr+(unit?'<small>'+unit+'</small>':'');
+      return;
+    }
+    vEl.classList.add('is-flipping');
+    vEl.innerHTML='';
+    const group=document.createElement('span'); group.className='flap-group';
+    const targetChars=targetStr.split('');
+    const flaps=targetChars.map(()=>{
+      const f=document.createElement('span'); f.className='flap'; f.textContent='0'; group.appendChild(f); return f;
+    });
+    vEl.appendChild(group);
+    if(unit){ const u=document.createElement('small'); u.className='flap-unit'; u.textContent=unit; vEl.appendChild(u); }
+    flaps.forEach((flap,idx)=>{
+      const target=targetChars[idx];
+      let cur=Math.floor(Math.random()*10), step=0; const total=10+(idx*6);
+      flap.textContent=cur;
+      const iv=setInterval(()=>{
+        flap.classList.remove('flipping'); void flap.offsetWidth; flap.classList.add('flipping');
+        if(step<total){ cur=(cur+1)%10; flap.textContent=cur; step++; }
+        else { clearInterval(iv); flap.textContent=target; flap.classList.remove('flipping');
+          if(idx===flaps.length-1) vEl.classList.remove('is-flipping'); }
+      }, 75);
+    });
+  }
+
+  function triggerAllFlaps(){ document.querySelectorAll('#view-recipe .spec .v').forEach(flipElement); }
+  function animateCell(cell){ const v=cell.querySelector('.v'); if(v) flipElement(v); }
+
+  // ===== SECURITY & PIN ENGINE =====
+  const pinInput = document.getElementById('pin-input');
+  const pinBoxes = document.querySelectorAll('.pin-box');
+  const pinWrapper = document.getElementById('pin-wrapper');
+
+  // Autofocus Security Field on load
+  setTimeout(() => { pinInput.focus(); }, 400);
+
+  function focusPinInput() {
+    if (!pinInput.disabled) {
+      pinInput.focus();
+    }
+  }
+
+  pinInput.addEventListener('input', (e) => {
+    let val = e.target.value.replace(/[^0-9]/g, '');
+    e.target.value = val;
+
+    pinBoxes.forEach((box, idx) => {
+      if (idx < val.length) {
+        box.textContent = val[idx];
+        box.classList.add('filled');
+        box.classList.remove('active');
+      } else {
+        box.textContent = '';
+        box.classList.remove('filled');
+        if (idx === val.length) {
+          box.classList.add('active');
+        } else {
+          box.classList.remove('active');
+        }
+      }
+    });
+
+    if (val.length === 4) {
+      if (val === '7620') {
+        // Correct pin entered successfully
+        pinInput.blur();
+        pinInput.disabled = true;
+
+        // Animate security lock fading out
+        document.getElementById('code-screen').classList.add('hide');
+
+        // Reveal beautiful white brand loader
+        const loader = document.getElementById('loader');
+        loader.classList.remove('hide');
+
+        // Loader runs for exactly 3 seconds, then fades to open the app
+        setTimeout(() => {
+          loader.classList.add('hide');
+        }, 3000);
+
+      } else {
+        // Incorrect Code Animation
+        pinWrapper.classList.add('shake');
+        pinBoxes.forEach(box => box.classList.add('error'));
+
+        setTimeout(() => {
+          pinWrapper.classList.remove('shake');
+          pinBoxes.forEach(box => {
+            box.classList.remove('error');
+            box.classList.remove('filled');
+            box.textContent = '';
+          });
+          pinInput.value = '';
+          pinInput.focus();
+          pinBoxes[0].classList.add('active');
+        }, 650);
+      }
+    }
+  });
+
+  // Re-focus on screen click if screen is still active
+  document.getElementById('code-screen').addEventListener('click', () => {
+    focusPinInput();
+  });
+
+  buildIndex();
+  renderCart();
+  syncButtons();
+
+</script>
+</body>
+</html>

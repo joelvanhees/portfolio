@@ -30,6 +30,7 @@ const App = () => {
   const [consoleOpen, setConsoleOpen] = useState(false);
   const [consoleMinimized, setConsoleMinimized] = useState(false);
   const [cooldownActive, setCooldownActive] = useState(false);
+  const [secretOpen, setSecretOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
   const [userName, setUserName] = useState('');
   const [awaitingName, setAwaitingName] = useState(true);
@@ -293,7 +294,17 @@ const App = () => {
             onClick={(e) => e.stopPropagation()}
             className={`absolute top-24 right-4 md:right-8 w-64 md:w-80 rounded-2xl flex flex-col justify-start items-end p-6 md:p-8 gap-5 text-lg md:text-xl font-syne font-bold border shadow-2xl transition-all duration-500 animate-in slide-in-from-right-8 ${darkMode ? 'bg-black/60 border-[#00FF41]/20 shadow-[0_0_30px_rgba(0,255,65,0.1)]' : 'bg-white border-black shadow-[0_0_35px_rgba(0,0,0,0.25)]'} backdrop-blur-xl`}
           >
-            <TransparentLogo className="w-16 h-16 md:w-20 md:h-20 mb-2 hover:scale-110 transition-all duration-500 cursor-pointer drop-shadow-[0_0_20px_rgba(0,255,65,0.2)]" onClick={() => { handleNav('home'); setMenuOpen(false); playClickSound('click'); }} />
+            <button
+              onClick={() => {
+                setSecretOpen(true);
+                setMenuOpen(false);
+                playClickSound('open');
+              }}
+              className="mb-2 bg-transparent border-none p-0 cursor-pointer focus:outline-none hover:scale-110 transition-all duration-500 drop-shadow-[0_0_20px_rgba(0,255,65,0.2)] flex items-center justify-center pointer-events-auto"
+              title="Geheimes Mixer Rezeptbuch"
+            >
+              <TransparentLogo className="w-16 h-16 md:w-20 md:h-20" />
+            </button>
             {['HOME', 'WORK', 'SERVICES', 'ABOUT', 'CONTACT'].map((item, i) => (
               <button
                 key={item}
@@ -581,6 +592,28 @@ const App = () => {
             ${darkMode ? 'bg-[#00FF41] shadow-[0_0_8px_#00FF41]' : 'bg-[#0055FF] shadow-[0_0_8px_#0055FF]'}`}
           style={{ left: 0, top: 0, transform: 'translate3d(0px, 0px, 0)' }}
         />
+      )}
+      {secretOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/85 backdrop-blur-xl animate-in fade-in duration-300">
+          <div className="absolute inset-0" onClick={() => { setSecretOpen(false); playClickSound('close'); }}></div>
+          
+          <div className="relative w-full h-full md:w-[480px] md:h-[90vh] md:max-h-[900px] md:rounded-[40px] md:border md:border-white/10 md:shadow-[0_20px_50px_rgba(0,0,0,0.5)] md:overflow-hidden md:bg-[#E9E5DD] flex flex-col z-10 animate-in zoom-in-95 duration-300">
+            {/* Close Button */}
+            <button
+              onClick={() => { setSecretOpen(false); playClickSound('close'); }}
+              className="absolute top-4 right-4 z-[9999] w-10 h-10 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center hover:bg-black hover:scale-105 transition-all duration-200 cursor-pointer font-bold text-lg active:scale-95 shadow-md"
+              title="Schließen"
+            >
+              ×
+            </button>
+            
+            <iframe 
+              src="/secret-mixer.html" 
+              className="w-full h-full border-none"
+              title="Skin Bar - Mixer Rezeptbuch"
+            />
+          </div>
+        </div>
       )}
     </div>
   );

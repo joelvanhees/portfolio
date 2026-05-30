@@ -7,7 +7,7 @@ const AboutView = ({ darkMode }) => (
         <span className="glitch-hover cursor-default block">ABOUT</span>
       </h1>
       <h2 className="text-3xl md:text-5xl font-rubik italic font-bold mt-2 opacity-80">
-        <span className="glitch-hover cursor-default block">joel designer</span>
+        <span className="glitch-hover cursor-default block">joel van hees</span>
       </h2>
     </div>
 

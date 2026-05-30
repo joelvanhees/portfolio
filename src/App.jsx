@@ -31,6 +31,7 @@ const App = () => {
   const [consoleMinimized, setConsoleMinimized] = useState(false);
   const [cooldownActive, setCooldownActive] = useState(false);
   const [secretOpen, setSecretOpen] = useState(false);
+  const [secretBypass, setSecretBypass] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
   const [userName, setUserName] = useState('');
   const [awaitingName, setAwaitingName] = useState(true);
@@ -103,15 +104,15 @@ const App = () => {
     document.documentElement.style.scrollBehavior = 'auto';
     
     // Scroll immediately and instantly
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    document.documentElement.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    document.body.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.documentElement.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.body.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 
     // Reinforce scroll in the next frame to prevent browser layout jumping
     const handle = requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-      document.documentElement.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-      document.body.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      document.documentElement.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      document.body.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       
       // Restore smooth scroll behavior in the next cycle
       setTimeout(() => {
@@ -128,12 +129,20 @@ const App = () => {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '').toLowerCase();
-      const validPages = ['home', 'work', 'services', 'about', 'contact', 'game'];
+      const validPages = ['home', 'work', 'services', 'about', 'contact', 'game', 'secret', 'mixer', 'skinbar'];
       if (validPages.includes(hash)) {
         if (hash === 'game') {
           setGameOpen(true);
           setActivePage((prev) => {
             const pageToSet = prev === 'game' ? 'home' : prev;
+            window.history.replaceState(null, '', `#${pageToSet}`);
+            return pageToSet;
+          });
+        } else if (hash === 'secret' || hash === 'mixer' || hash === 'skinbar') {
+          setSecretOpen(true);
+          setSecretBypass(true);
+          setActivePage((prev) => {
+            const pageToSet = (prev === 'secret' || prev === 'mixer' || prev === 'skinbar') ? 'home' : prev;
             window.history.replaceState(null, '', `#${pageToSet}`);
             return pageToSet;
           });
@@ -595,12 +604,12 @@ const App = () => {
       )}
       {secretOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/85 backdrop-blur-xl animate-in fade-in duration-300">
-          <div className="absolute inset-0" onClick={() => { setSecretOpen(false); playClickSound('close'); }}></div>
+          <div className="absolute inset-0" onClick={() => { setSecretOpen(false); setSecretBypass(false); playClickSound('close'); }}></div>
           
           <div className="relative w-full h-full md:w-[480px] md:h-[90vh] md:max-h-[900px] md:rounded-[40px] md:border md:border-white/10 md:shadow-[0_20px_50px_rgba(0,0,0,0.5)] md:overflow-hidden md:bg-[#E9E5DD] flex flex-col z-10 animate-in zoom-in-95 duration-300">
             {/* Close Button */}
             <button
-              onClick={() => { setSecretOpen(false); playClickSound('close'); }}
+              onClick={() => { setSecretOpen(false); setSecretBypass(false); playClickSound('close'); }}
               className="absolute top-4 right-4 z-[9999] w-10 h-10 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center hover:bg-black hover:scale-105 transition-all duration-200 cursor-pointer font-bold text-lg active:scale-95 shadow-md"
               title="Schließen"
             >
@@ -608,7 +617,7 @@ const App = () => {
             </button>
             
             <iframe 
-              src="/secret-mixer.html" 
+              src={secretBypass ? "/secret-mixer.html?bypass=true" : "/secret-mixer.html"}
               className="w-full h-full border-none"
               title="Skin Bar - Mixer Rezeptbuch"
             />

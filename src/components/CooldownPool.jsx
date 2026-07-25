@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { X, Code, Shield, Eye, Layers, Info } from 'lucide-react';
 import * as THREE from 'three';
+import { createRendererSafely } from '../utils/webgl';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { playClickSound } from '../utils/clickSound';
@@ -250,7 +251,9 @@ const CooldownPool = ({ darkMode, onClose }) => {
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(0, 7, 13);
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    const renderer = createRendererSafely(() => new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }));
+    // No context on this machine: leave the slot empty rather than throw.
+    if (!renderer) return undefined;
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import { createRendererSafely } from '../../utils/webgl';
 
 const BufferOverflowVisual = () => {
   const mountRef = useRef(null);
@@ -44,7 +45,9 @@ const BufferOverflowVisual = () => {
     camera.add(camLight);
     scene.add(camera);
 
-    let renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
+    let renderer = createRendererSafely(() => new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' }));
+    // No context on this machine: leave the slot empty rather than throw.
+    if (!renderer) return undefined;
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     mountRef.current.appendChild(renderer.domElement);

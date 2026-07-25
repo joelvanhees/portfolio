@@ -33,6 +33,9 @@ const HoverVideoPlayer = ({ src }) => {
           loop
           muted
           playsInline
+          // Nothing is fetched until the visitor actually hovers, so a page
+          // full of these does not queue several megabytes on arrival.
+          preload="none"
         />
       )}
 

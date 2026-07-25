@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import { createRendererSafely } from '../../utils/webgl';
 
 const TypographicClockVisual = () => {
   const mountRef = useRef(null);
@@ -37,7 +38,9 @@ const TypographicClockVisual = () => {
     const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 2000);
     camera.position.z = 20;
 
-    let renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    let renderer = createRendererSafely(() => new THREE.WebGLRenderer({ antialias: true, alpha: true }));
+    // No context on this machine: leave the slot empty rather than throw.
+    if (!renderer) return undefined;
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     mountRef.current.appendChild(renderer.domElement);

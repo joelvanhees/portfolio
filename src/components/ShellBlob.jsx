@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
+import { createRendererSafely } from '../utils/webgl';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
 let globalCachedEnvMap = null;
@@ -16,7 +17,9 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
     const scene = new THREE.Scene();
 
     // Make background transparent so it blends into the UI
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+    const renderer = createRendererSafely(() => new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" }));
+    // No context on this machine: leave the slot empty rather than throw.
+    if (!renderer) return undefined;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
@@ -134,11 +137,15 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
     if (globalCachedEnvMap) {
       scene.environment = globalCachedEnvMap;
     } else {
+      // Corporate networks block third-party CDNs; the blob simply keeps its
+      // lighting rather than the load failing loudly.
       new RGBELoader().load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/studio_small_09_1k.hdr', (texture) => {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         globalCachedEnvMap = texture;
         scene.environment = texture; 
         scene.environment.blur = 0.8; 
+      }, undefined, () => {
+        // Blocked or offline: the lights already in the scene carry it.
       });
     }
 

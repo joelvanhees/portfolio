@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import { createRendererSafely } from '../../utils/webgl';
 
 const SpiralTimeSphere = () => {
   const mountRef = useRef(null);
@@ -59,7 +60,9 @@ const SpiralTimeSphere = () => {
       returnTransitionStartFrame: -1,
     };
 
-    let renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    let renderer = createRendererSafely(() => new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' }));
+    // No context on this machine: leave the slot empty rather than throw.
+    if (!renderer) return undefined;
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);

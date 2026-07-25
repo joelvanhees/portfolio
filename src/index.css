@@ -78,6 +78,22 @@
 }
 
 /*
+ * The display face is a halftone: each glyph is built from dots with gaps
+ * between them. Light dots on Carbon read as solid, but the same dots in dark
+ * ink on Paper leave the word looking thin and washed out. A hairline shadow
+ * in the ink's own colour closes the gaps just enough to give the word its
+ * mass back, without turning it into a solid letterform.
+ */
+.hero-ink {
+  /* Only the shadow — setting a colour here would sit after the Tailwind
+     utilities and override the accent on the middle line. currentColor keeps
+     the thickening tied to whatever ink the line is actually using. */
+  text-shadow:
+    0 0 1px currentColor,
+    0 0 3px currentColor;
+}
+
+/*
  * Liquid glass panel — the surface used for the skill map's node info.
  *
  * It is a real glass sheet, not a dark box: the map keeps showing through it,

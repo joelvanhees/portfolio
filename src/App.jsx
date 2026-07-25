@@ -8,6 +8,7 @@ import AboutView from './views/AboutView';
 import ContactView from './views/ContactView';
 import GameView from './views/GameView';
 import FloatingConsole from './components/FloatingConsole';
+import ErrorBoundary from './components/ErrorBoundary';
 import { BrandLockup, BrandMark } from './components/BrandLogo';
 
 const ProjectModal = lazy(() => import('./components/ProjectModal'));
@@ -98,8 +99,8 @@ const App = () => {
       document.body.style.color = '#E0E0E0';
     } else {
       document.documentElement.classList.remove('dark');
-      document.body.style.backgroundColor = '#FFFFFF';
-      document.body.style.color = '#000000';
+      document.body.style.backgroundColor = '#F3F0E8';
+      document.body.style.color = '#050505';
     }
   }, [darkMode]);
 
@@ -359,11 +360,11 @@ const App = () => {
         </div>
       )}
 
-      {activePage === 'home' && <HomeView darkMode={darkMode} projects={projects} setSelectedProject={setSelectedProject} selectedProject={selectedProject} handleNav={handleNav} setCooldownActive={setCooldownActive} />}
-      {activePage === 'work' && <WorkView darkMode={darkMode} />}
-      {activePage === 'services' && <ServicesView darkMode={darkMode} />}
-      {activePage === 'about' && <AboutView darkMode={darkMode} />}
-      {activePage === 'contact' && <ContactView darkMode={darkMode} />}
+      {activePage === 'home' && <ErrorBoundary label="home view"><HomeView darkMode={darkMode} projects={projects} setSelectedProject={setSelectedProject} selectedProject={selectedProject} handleNav={handleNav} setCooldownActive={setCooldownActive} /></ErrorBoundary>}
+      {activePage === 'work' && <ErrorBoundary label="work view"><WorkView darkMode={darkMode} /></ErrorBoundary>}
+      {activePage === 'services' && <ErrorBoundary label="services view"><ServicesView darkMode={darkMode} /></ErrorBoundary>}
+      {activePage === 'about' && <ErrorBoundary label="about view"><AboutView darkMode={darkMode} /></ErrorBoundary>}
+      {activePage === 'contact' && <ErrorBoundary label="contact view"><ContactView darkMode={darkMode} /></ErrorBoundary>}
       {gameOpen && (
         <GameView 
           darkMode={darkMode} 
@@ -569,7 +570,7 @@ const App = () => {
           title={consoleMinimized ? "Restore System Shell" : "Open System Shell"}
           className="fixed bottom-6 right-6 z-[90] cursor-pointer transition-all duration-300 hover:scale-110 hover:-translate-y-2 flex items-center justify-center border-none bg-transparent outline-none drop-shadow-2xl"
         >
-          <ShellBlob isThinking={false} darkMode={darkMode} className="w-32 h-32 md:w-44 md:h-44 pointer-events-none" />
+          <ErrorBoundary label="shell blob"><ShellBlob isThinking={false} darkMode={darkMode} className="w-32 h-32 md:w-44 md:h-44 pointer-events-none" /></ErrorBoundary>
         </button>
       )}
       {cooldownActive && (

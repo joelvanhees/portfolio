@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { X, Trophy, Zap, Play, Lock, Heart, RefreshCw } from 'lucide-react';
 import * as THREE from 'three';
+import { createRendererSafely } from '../utils/webgl';
 import { playClickSound } from '../utils/clickSound';
 
 // --- GAME PARAMETERS ---
@@ -59,6 +60,7 @@ const GameView = ({ darkMode, onClose }) => {
   const canvasRef = useRef(null);
 
   // React Game states
+  const [webglFailed, setWebglFailed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
@@ -226,11 +228,16 @@ const GameView = ({ darkMode, onClose }) => {
     cameraRef.current = camera;
 
     // 3. Setup Renderer
-    const renderer = new THREE.WebGLRenderer({
+    const renderer = createRendererSafely(() => new THREE.WebGLRenderer({
       canvas: canvasRef.current,
       antialias: true,
       powerPreference: "high-performance"
-    });
+    }));
+    // No context on this machine: the game cannot run, but the page must.
+    if (!renderer) {
+      setWebglFailed(true);
+      return undefined;
+    }
     const updateSize = () => {
       if (!containerRef.current) return;
       const width = containerRef.current.clientWidth;
@@ -1007,8 +1014,33 @@ const GameView = ({ darkMode, onClose }) => {
     }
   };
 
+  // Machines with WebGL switched off get a plain explanation and a way out,
+  // rather than an empty overlay they cannot dismiss.
+  if (webglFailed) {
+    return (
+      <div
+        className="fixed inset-0 z-[100] flex items-center justify-center p-8 font-meta bg-black/90 backdrop-blur-xl text-white"
+        onClick={handleExit}
+      >
+        <div className="max-w-sm text-center">
+          <p className="font-display font-bold uppercase text-lg mb-3">3D not available</p>
+          <p className="text-sm opacity-70 leading-relaxed mb-6">
+            This device has WebGL disabled, so the game cannot run here. Everything else on the
+            site works as normal.
+          </p>
+          <button
+            onClick={handleExit}
+            className="px-5 py-2 rounded-full border border-white/30 hover:bg-white hover:text-black transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div 
+    <div
       className="fixed inset-0 w-full h-full z-[100] flex items-center justify-center p-4 sm:p-8 touch-none font-meta bg-black/75 backdrop-blur-xl animate-in fade-in duration-300"
       onClick={handleExit}
     >

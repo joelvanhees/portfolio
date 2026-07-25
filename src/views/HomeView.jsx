@@ -280,9 +280,14 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             </p>
 
             <h1 className="font-rubik leading-[0.82] md:leading-[0.78] tracking-tighter uppercase select-none w-full block">
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-left text-[18vw] md:text-[min(12.5vw,21rem)] w-full"><ScrambleText text="Visual" duration={350} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[18vw] md:text-[min(12.5vw,21rem)] w-full"><ScrambleText text="Story" duration={700} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-right text-[18vw] md:text-[min(12.5vw,21rem)] w-full"><ScrambleText text="Teller" duration={1050} darkMode={darkMode} /></div>
+              {/* Rubik80sFade is a halftone face: on Carbon the light dots carry
+                  real mass, on Paper the same dots lose it and the word thins
+                  out. Light mode therefore drops the opacity step, thickens the
+                  dots with a hairline shadow, and gives the middle line Signal
+                  Blue so the accent does the work the weight no longer does. */}
+              <div className={`glitch-hover cursor-default transition-colors block whitespace-nowrap text-left text-[18vw] md:text-[min(12.5vw,21rem)] w-full ${darkMode ? '' : 'hero-ink'}`}><ScrambleText text="Visual" duration={350} darkMode={darkMode} /></div>
+              <div className={`glitch-hover cursor-default transition-colors block whitespace-nowrap text-center text-[18vw] md:text-[min(12.5vw,21rem)] w-full ${darkMode ? 'opacity-80' : 'hero-ink text-[#0055FF]'}`}><ScrambleText text="Story" duration={700} darkMode={darkMode} /></div>
+              <div className={`glitch-hover cursor-default transition-colors block whitespace-nowrap text-right text-[18vw] md:text-[min(12.5vw,21rem)] w-full ${darkMode ? '' : 'hero-ink'}`}><ScrambleText text="Teller" duration={1050} darkMode={darkMode} /></div>
             </h1>
           </div>
 

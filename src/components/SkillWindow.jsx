@@ -21,7 +21,7 @@ const Light = ({ colour, hover, label, onClick }) => (
   />
 );
 
-const SkillWindow = ({ darkMode, activeRole, title = 'SYSTEM_MAP', className = '', frame = true }) => {
+const SkillWindow = ({ darkMode, activeRole, title = 'SYSTEM_MAP', className = '', frame = true, onModeChange }) => {
   const [mode, setMode] = useState('normal'); // normal | minimized | fullscreen | closed
   const [seenRole, setSeenRole] = useState(activeRole);
 
@@ -32,6 +32,13 @@ const SkillWindow = ({ darkMode, activeRole, title = 'SYSTEM_MAP', className = '
     setSeenRole(activeRole);
     if (mode === 'closed') setMode('normal');
   }
+
+  // The host reserves the height for the map, so it has to know when the
+  // window no longer needs it — otherwise minimising shrinks the content
+  // inside a box that stays exactly as tall as before.
+  useEffect(() => {
+    onModeChange?.(mode);
+  }, [mode, onModeChange]);
 
   // Escape leaves fullscreen rather than trapping the visitor there.
   useEffect(() => {
@@ -109,7 +116,7 @@ const SkillWindow = ({ darkMode, activeRole, title = 'SYSTEM_MAP', className = '
   return (
     <div className={`${frame ? shell : ''} ${className} flex flex-col`}>
       {bar}
-      <div className={`relative flex-1 ${frame ? 'min-h-[52vh] md:min-h-[60vh]' : ''}`}>
+      <div className="relative flex-1 min-h-[52vh] md:min-h-[60vh]">
         <SkillNetwork
           darkMode={darkMode}
           activeRole={activeRole}

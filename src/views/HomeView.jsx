@@ -65,6 +65,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
   // Exactly one role can be active, and none is active to begin with — the
   // map then shows the full overview. Tapping the active role clears it.
   const [activeRole, setActiveRole] = useState(null);
+  const [mapMode, setMapMode] = useState('normal');
 
   // Lights the capability row the page is currently level with.
   const capabilities = useScrollActive(homeCapabilities.length);
@@ -369,7 +370,9 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
           </div>
 
           <div data-reveal style={{ '--reveal-delay': '80ms' }} className="flex flex-col gap-8">
-            <div className={`p-6 rounded-lg font-meta text-xs md:text-sm leading-6 shadow-2xl overflow-hidden relative transition-all duration-1000 ${darkMode ? 'bg-[#0A0A0A] border border-acid-deep/50' : 'bg-white border border-gray-200'} flex items-center justify-center min-h-[60vh]`}>
+            <div className={`p-6 rounded-lg font-meta text-xs md:text-sm leading-6 shadow-2xl overflow-hidden relative transition-all duration-500 ${darkMode ? 'bg-[#0A0A0A] border border-acid-deep/50' : 'bg-white border border-gray-200'} flex items-center justify-center ${
+              !bootComplete || mapMode === 'normal' || mapMode === 'fullscreen' ? 'min-h-[60vh]' : ''
+            }`}>
               {/* Decorative only while the boot text runs; once the map is up
                   SkillWindow draws its own bar with working controls. */}
               {!bootComplete && (
@@ -393,8 +396,18 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                 {terminalLine >= 10 && <p className="animate-pulse">{'>'} SYSTEM_MAP: RENDERING…</p>}
               </div>
 
-              <div className={`transition-all duration-1000 ease-out absolute inset-0 ${bootComplete ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-                {bootComplete && <SkillWindow darkMode={darkMode} activeRole={activeRole} frame={false} className="absolute inset-0" />}
+              {/* In normal flow, not pinned to the card: a pinned window cannot
+                  make the card shorter when it is minimised. */}
+              <div className={`transition-opacity duration-1000 ease-out w-full ${bootComplete ? 'opacity-100 relative' : 'opacity-0 pointer-events-none absolute inset-0'}`}>
+                {bootComplete && (
+                  <SkillWindow
+                    darkMode={darkMode}
+                    activeRole={activeRole}
+                    frame={false}
+                    onModeChange={setMapMode}
+                    className="w-full"
+                  />
+                )}
               </div>
             </div>
           </div>

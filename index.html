@@ -43,7 +43,7 @@
       and the script below is a classic script so it runs even where the
       module never does.
     -->
-    <div id="boot-fallback" hidden style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center;font-family:Arial,Helvetica,sans-serif;color:#e0e0e0;background:#050505">
+    <div id="boot-fallback" hidden style="display:none;min-height:100vh;align-items:center;justify-content:center;padding:2rem;text-align:center;font-family:Arial,Helvetica,sans-serif;color:#e0e0e0;background:#050505">
       <div style="max-width:32rem">
         <p style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:0 0 .75rem">Joel van Hees</p>
         <p style="opacity:.7;line-height:1.6;margin:0 0 1.5rem">
@@ -62,7 +62,10 @@
           if (root && root.children.length) return; // the app made it
           shown = true;
           var el = document.getElementById('boot-fallback');
-          if (el) el.hidden = false;
+          // Both, and in this order: `hidden` alone is a UA rule that an
+          // inline display would beat, which is exactly how this block ended
+          // up permanently visible at the foot of every page.
+          if (el) { el.hidden = false; el.style.display = 'flex'; }
         }
         // A boot error is decisive, but give React a moment to recover first.
         window.addEventListener('error', function () { setTimeout(reveal, 1500); });

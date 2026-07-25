@@ -228,7 +228,10 @@ const App = () => {
           onClick={() => handleNav('home')}
           className="cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-1.5 bg-transparent border-none p-0 pointer-events-auto"
         >
-          <BrandLockup tone={darkMode ? 'clear' : 'smoke'} className="h-10 sm:h-12 md:h-16 w-auto" />
+          {/* Taller than the previous mark at the same optical size: this artwork
+              carries more padding inside its viewBox, so a 64px box rendered it
+              about a fifth smaller than the one it replaced. */}
+          <BrandLockup tone={darkMode ? 'clear' : 'smoke'} className="h-12 sm:h-14 md:h-20 w-auto" />
         </button>
 
         <div className="flex items-center gap-3 sm:gap-6 pointer-events-none">

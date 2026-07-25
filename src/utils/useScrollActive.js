@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from 'react';
  * Measurement is one rect read per item per animation frame, and only while
  * scrolling — cheap enough for the handful of rows this is used on.
  */
-export const useScrollActive = (count, { line = 0.42 } = {}) => {
+export const useScrollActive = (count, { line = 0.42, minScroll = 0 } = {}) => {
   const refs = useRef([]);
   const [active, setActive] = useState(-1);
 
@@ -19,6 +19,13 @@ export const useScrollActive = (count, { line = 0.42 } = {}) => {
 
     const measure = () => {
       frame = 0;
+      // Nothing is active before the visitor has scrolled. Without this the
+      // entry nearest the line at rest is lit the moment the page loads, which
+      // reads as a mis-set colour rather than as a scroll position.
+      if (window.scrollY < minScroll) {
+        setActive((current) => (current === -1 ? current : -1));
+        return;
+      }
       const focus = window.innerHeight * line;
       let best = -1;
       let bestDistance = Infinity;
@@ -49,7 +56,7 @@ export const useScrollActive = (count, { line = 0.42 } = {}) => {
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', schedule);
     };
-  }, [count, line]);
+  }, [count, line, minScroll]);
 
   const setRef = (i) => (el) => {
     refs.current[i] = el;

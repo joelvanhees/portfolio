@@ -69,6 +69,14 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
 
   // Lights the capability row the page is currently level with.
   const capabilities = useScrollActive(homeCapabilities.length);
+  // Visual / Story / Teller light up in turn as the page moves past them.
+  const heroLines = useScrollActive(3, {
+    // High in the viewport and only once scrolling has begun: the lines sit
+    // below this point at rest, so each crosses it in turn on the way down,
+    // and none is lit before the visitor has moved.
+    line: 0.22,
+    minScroll: 40,
+  });
 
   useEffect(() => {
     const sequence = [
@@ -290,9 +298,12 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                   out. Light mode therefore drops the opacity step, thickens the
                   dots with a hairline shadow, and gives the middle line Signal
                   Blue so the accent does the work the weight no longer does. */}
-              <div className={`glitch-hover cursor-default transition-colors block whitespace-nowrap text-left text-[18vw] md:text-[min(12.5vw,21rem)] w-full ${darkMode ? '' : 'hero-ink'}`}><ScrambleText text="Visual" duration={350} darkMode={darkMode} /></div>
-              <div className={`glitch-hover cursor-default transition-colors block whitespace-nowrap text-center text-[18vw] md:text-[min(12.5vw,21rem)] w-full ${darkMode ? 'opacity-80' : 'hero-ink text-[#0055FF]'}`}><ScrambleText text="Story" duration={700} darkMode={darkMode} /></div>
-              <div className={`glitch-hover cursor-default transition-colors block whitespace-nowrap text-right text-[18vw] md:text-[min(12.5vw,21rem)] w-full ${darkMode ? '' : 'hero-ink'}`}><ScrambleText text="Teller" duration={1050} darkMode={darkMode} /></div>
+              {/* The accent is the scroll state, not a fixed colour: the middle
+                  line used to be painted blue permanently in light mode, which
+                  read as a mistake rather than as an accent. */}
+              <div ref={heroLines.setRef(0)} className={`cursor-default transition-colors block whitespace-nowrap text-left text-[18vw] md:text-[min(12.5vw,21rem)] w-full ${darkMode ? '' : 'hero-ink'} ${heroLines.active === 0 ? 'glitch-active' : 'glitch-hover'}`}><ScrambleText text="Visual" duration={350} darkMode={darkMode} /></div>
+              <div ref={heroLines.setRef(1)} className={`cursor-default transition-colors block whitespace-nowrap text-center text-[18vw] md:text-[min(12.5vw,21rem)] w-full ${darkMode ? 'opacity-80' : 'hero-ink'} ${heroLines.active === 1 ? 'glitch-active' : 'glitch-hover'}`}><ScrambleText text="Story" duration={700} darkMode={darkMode} /></div>
+              <div ref={heroLines.setRef(2)} className={`cursor-default transition-colors block whitespace-nowrap text-right text-[18vw] md:text-[min(12.5vw,21rem)] w-full ${darkMode ? '' : 'hero-ink'} ${heroLines.active === 2 ? 'glitch-active' : 'glitch-hover'}`}><ScrambleText text="Teller" duration={1050} darkMode={darkMode} /></div>
             </h1>
           </div>
 

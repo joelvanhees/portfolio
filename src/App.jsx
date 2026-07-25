@@ -99,7 +99,7 @@ const App = () => {
       document.body.style.color = '#E0E0E0';
     } else {
       document.documentElement.classList.remove('dark');
-      document.body.style.backgroundColor = '#F3F0E8';
+      document.body.style.backgroundColor = '#FFFFFF';
       document.body.style.color = '#050505';
     }
   }, [darkMode]);
@@ -231,7 +231,7 @@ const App = () => {
           {/* Taller than the previous mark at the same optical size: this artwork
               carries more padding inside its viewBox, so a 64px box rendered it
               about a fifth smaller than the one it replaced. */}
-          <BrandLockup tone={darkMode ? 'clear' : 'smoke'} className="h-12 sm:h-14 md:h-20 w-auto" />
+          <BrandLockup tone={darkMode ? 'clear' : 'smoke'} className="h-16 sm:h-20 md:h-24 w-auto" />
         </button>
 
         <div className="flex items-center gap-3 sm:gap-6 pointer-events-none">

@@ -8,6 +8,9 @@
  * menu mark — would otherwise capture each other's gradients and filters.
  *
  * __ID__ is replaced at render time with a per-instance prefix.
+ *
+ * One further edit: the dark J drops its cast shadow and the soft halo behind
+ * it, so the mark reads as the letter alone on the menu panel.
  */
 
 export const LOGO_VIEWBOX = {"markDark": "0 0 512 512", "markLight": "0 0 512 512", "lockupDark": "0 0 960 470", "lockupLight": "0 0 960 470"};
@@ -26,10 +29,9 @@ export const LOGO_ART = {
         <path id="__ID__star" d="M205 3v58M176 34h58M184 13l42 42M226 13l-42 42" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         <path id="__ID__highlight" d="M194 77C189 123 190 168 194 209C198 248 183 268 160 271" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
       </defs>
-      <ellipse cx="256" cy="250" rx="142" ry="190" fill="#d9dedc" opacity=".07" filter="url(#__ID__glow)"/>
-      <g transform="translate(45 45) scale(1.27)">
+            <g transform="translate(45 45) scale(1.27)">
         <use href="#__ID__star" stroke="#000" stroke-width="29" opacity=".95"/><use href="#__ID__star" stroke="url(#__ID__rim)" stroke-width="24" opacity=".84"/><use href="#__ID__star" stroke="url(#__ID__body)" stroke-width="19" filter="url(#__ID__morph)"/><use href="#__ID__star" stroke="#fff" stroke-width="2.2" opacity=".82"/>
-        <use href="#__ID__hook" stroke="#000" stroke-width="94" filter="url(#__ID__shadow)"/><use href="#__ID__hook" stroke="#fff" stroke-width="88" opacity=".18" filter="url(#__ID__glow)"/><use href="#__ID__hook" stroke="url(#__ID__rim)" stroke-width="83" opacity=".82"/><use href="#__ID__hook" stroke="#090b0a" stroke-width="77" opacity=".94"/><use href="#__ID__hook" stroke="url(#__ID__body)" stroke-width="71" opacity=".90" filter="url(#__ID__morph)"><animate attributeName="opacity" values=".80;.98;.86;.80" dur="6.2s" repeatCount="indefinite"/></use><use href="#__ID__hook" stroke="url(#__ID__core)" stroke-width="49" opacity=".76"/><use href="#__ID__hook" stroke="#fff" stroke-width="11" opacity=".15"/><use href="#__ID__hook" stroke="#fff" stroke-width="2.6" opacity=".84"/>
+        <use href="#__ID__hook" stroke="#fff" stroke-width="88" opacity=".18" filter="url(#__ID__glow)"/><use href="#__ID__hook" stroke="url(#__ID__rim)" stroke-width="83" opacity=".82"/><use href="#__ID__hook" stroke="#090b0a" stroke-width="77" opacity=".94"/><use href="#__ID__hook" stroke="url(#__ID__body)" stroke-width="71" opacity=".90" filter="url(#__ID__morph)"><animate attributeName="opacity" values=".80;.98;.86;.80" dur="6.2s" repeatCount="indefinite"/></use><use href="#__ID__hook" stroke="url(#__ID__core)" stroke-width="49" opacity=".76"/><use href="#__ID__hook" stroke="#fff" stroke-width="11" opacity=".15"/><use href="#__ID__hook" stroke="#fff" stroke-width="2.6" opacity=".84"/>
         <use href="#__ID__highlight" stroke="url(#__ID__shine)" stroke-width="10" stroke-dasharray="48 76"><animate attributeName="stroke-dashoffset" values="0;-248" dur="5.2s" repeatCount="indefinite"/></use><use href="#__ID__star" stroke="url(#__ID__shine)" stroke-width="5" stroke-dasharray="24 42"><animate attributeName="stroke-dashoffset" values="0;-132" dur="4.4s" repeatCount="indefinite"/></use>
       </g>`,
   markLight: `<defs>

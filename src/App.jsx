@@ -8,7 +8,7 @@ import AboutView from './views/AboutView';
 import ContactView from './views/ContactView';
 import GameView from './views/GameView';
 import FloatingConsole from './components/FloatingConsole';
-import { BrandSignature, BrandMark } from './components/BrandLogo';
+import { BrandLockup, BrandMark } from './components/BrandLogo';
 
 const ProjectModal = lazy(() => import('./components/ProjectModal'));
 const CooldownPool = lazy(() => import('./components/CooldownPool'));
@@ -212,8 +212,7 @@ const App = () => {
           onClick={() => handleNav('home')}
           className="cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-1.5 bg-transparent border-none p-0 pointer-events-auto"
         >
-          <BrandSignature className="h-4 sm:h-5 md:h-7 w-auto" />
-          <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded uppercase font-meta tracking-widest ${darkMode ? 'bg-[#C7FF2E]/15 text-[#C7FF2E] border border-[#C7FF2E]/25' : 'bg-black/5 text-black border border-black/20'}`}>[ARCHITECT]</span>
+          <BrandLockup tone={darkMode ? 'clear' : 'smoke'} className="h-10 sm:h-12 md:h-16 w-auto" />
         </button>
 
         <div className="flex items-center gap-3 sm:gap-6 pointer-events-none">
@@ -290,7 +289,7 @@ const App = () => {
               className="mb-2 bg-transparent border-none p-0 cursor-pointer focus:outline-none hover:scale-110 transition-all duration-500 drop-shadow-[0_0_20px_rgba(199,255,46,0.2)] flex items-center justify-center pointer-events-auto"
               title="Geheimes Mixer Rezeptbuch"
             >
-              <BrandMark className="h-16 md:h-20 w-auto" />
+              <BrandMark tone={darkMode ? 'clear' : 'smoke'} className="h-16 md:h-20 w-auto" />
             </button>
             {['HOME', 'WORK', 'SERVICES', 'ABOUT', 'CONTACT'].map((item, i) => (
               <button

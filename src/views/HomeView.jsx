@@ -4,6 +4,7 @@ import { ArrowUpRight, Layers, Video } from 'lucide-react';
 import SkillNetwork from '../components/SkillNetwork';
 const SpiralTimeSphere = lazy(() => import('../components/visuals/SpiralTimeSphere'));
 import { homeCapabilities } from '../content/services';
+import { skillRoles } from '../content/skills';
 import salatProfileImg from '../assets/images/salat_profile.png';
 import LazyImage from '../components/LazyImage';
 import { playClickSound } from '../utils/clickSound';
@@ -60,17 +61,12 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
   const [bootComplete, setBootComplete] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
 
-  const [selectedRoles, setSelectedRoles] = useState({
-    Storyteller: true,
-    Designer: false,
-    Artist: false
-  });
+  // Exactly one role can be active, and none is active to begin with — the
+  // map then shows the full overview. Tapping the active role clears it.
+  const [activeRole, setActiveRole] = useState(null);
 
   const toggleRole = (role) => {
-    setSelectedRoles(prev => ({
-      ...prev,
-      [role]: !prev[role]
-    }));
+    setActiveRole((current) => (current === role ? null : role));
   };
 
   useEffect(() => {
@@ -362,13 +358,14 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
               My practice combines classical design discipline with experimental technologies to create scalable visual identities.
             </p>
             <div data-reveal style={{ '--reveal-delay': '170ms' }} className="flex flex-wrap gap-4">
-              {['Storyteller', 'Designer', 'Artist'].map((role) => {
-                const isSelected = selectedRoles[role];
+              {skillRoles.map(({ id, label }) => {
+                const isSelected = activeRole === id;
                 return (
                   <button
-                    key={role}
+                    key={id}
+                    aria-pressed={isSelected}
                     onClick={() => {
-                      toggleRole(role);
+                      toggleRole(id);
                       playClickSound('click');
                     }}
                     className={`px-4 py-2 rounded-full text-sm uppercase transition-all duration-300 border cursor-pointer active:scale-95
@@ -377,7 +374,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                         : (darkMode ? 'border-[#C7FF2E]/40 text-[#C7FF2E]/80 hover:text-[#C7FF2E] hover:border-[#C7FF2E] bg-transparent' : 'border-black/30 text-black/75 hover:text-black hover:border-black bg-transparent')
                       }`}
                   >
-                    {role}
+                    {label}
                   </button>
                 );
               })}
@@ -407,7 +404,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
               </div>
 
               <div className={`transition-all duration-1000 ease-out absolute inset-0 ${bootComplete ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-                {bootComplete && <SkillNetwork darkMode={darkMode} className="absolute inset-0 w-full h-full border-none bg-transparent" />}
+                {bootComplete && <SkillNetwork darkMode={darkMode} activeRole={activeRole} className="absolute inset-0 w-full h-full border-none bg-transparent" />}
               </div>
             </div>
           </div>

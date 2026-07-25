@@ -3,8 +3,8 @@ import { networkGroups } from '../content/services';
 
 const ServicesView = ({ darkMode }) => {
   return (
-    <div className="pt-32 px-6 min-h-screen max-w-7xl mx-auto pb-40">
-      <div data-reveal className="flex flex-col md:flex-row justify-between items-end mb-12">
+    <div className="pt-32 px-6 min-h-screen max-w-7xl mx-auto pb-20 md:pb-40">
+      <div data-reveal className="flex flex-col md:flex-row justify-between items-end mb-8 md:mb-12">
         <h1 className="text-[12vw] md:text-9xl font-rubik font-bold w-full break-words uppercase">
           <span className="glitch-hover cursor-default block">NETWORK_</span>
         </h1>
@@ -15,9 +15,9 @@ const ServicesView = ({ darkMode }) => {
 
       {/* The columns carry the reveal rather than the grid, so the grid keeps
           its own resting opacity untouched. */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 opacity-80 font-meta text-xs uppercase">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8 md:mb-12 opacity-80 font-meta text-xs uppercase">
         {networkGroups.map((group, i) => (
-          <div data-reveal style={{ '--reveal-delay': `${i * 80}ms` }} key={group.title}>
+          <div data-reveal style={{ '--reveal-delay': `${i * 60}ms` }} key={group.title}>
             <h4 className="border-b border-current pb-2 mb-2 font-bold">{group.title}</h4>
             <ul>
               {group.items.map((item) => (

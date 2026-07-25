@@ -331,17 +331,24 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
 
       <section id="about" className="py-24 px-6 relative">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+          {/* The reveal sits on the children, not on this column: it is the
+              sticky one, and a transform on it would fight the stickiness for
+              the length of the animation. */}
           <div className="sticky top-24">
-            <h2 className="text-4xl md:text-6xl font-rubik font-bold mb-8 uppercase">
+            <h2 data-reveal className="text-4xl md:text-6xl font-rubik font-bold mb-8 uppercase">
               <span className="glitch-hover cursor-default block">The Operator</span>
             </h2>
-            <p className="text-xl leading-relaxed mb-6">
+            <p data-reveal style={{ '--reveal-delay': '90ms' }} className="text-xl leading-relaxed mb-6">
               I am a graphic designer working across brand systems, generative design and visual storytelling.
             </p>
-            <p className="opacity-70 leading-relaxed mb-8 font-meta text-sm">
+            <p
+              data-reveal
+              style={{ '--reveal-delay': '170ms', '--reveal-opacity': 0.7 }}
+              className="opacity-70 leading-relaxed mb-8 font-meta text-sm"
+            >
               My practice combines classical design discipline with experimental technologies to create scalable visual identities.
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div data-reveal style={{ '--reveal-delay': '250ms' }} className="flex flex-wrap gap-4">
               {['Storyteller', 'Designer', 'Artist'].map((role) => {
                 const isSelected = selectedRoles[role];
                 return (
@@ -364,7 +371,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             </div>
           </div>
 
-          <div className="flex flex-col gap-8">
+          <div data-reveal style={{ '--reveal-delay': '120ms' }} className="flex flex-col gap-8">
             <div className={`p-6 rounded-lg font-meta text-xs md:text-sm leading-6 shadow-2xl overflow-hidden relative transition-all duration-1000 ${darkMode ? 'bg-[#0A0A0A] border border-acid-deep/50' : 'bg-white border border-gray-200'} flex items-center justify-center min-h-[60vh]`}>
               <div className="absolute top-6 left-6 flex gap-2 mb-4 opacity-50 z-20">
                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -395,14 +402,14 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
 
       <section id="work" className="py-24 px-6 bg-transparent">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-baseline justify-between mb-16 border-b border-current pb-4">
+          <div data-reveal className="flex items-baseline justify-between mb-16 border-b border-current pb-4">
             <h2 className="text-sm font-meta uppercase tracking-widest">Selected Data</h2>
             <span className="text-xs opacity-50">INDEX: 00—08</span>
           </div>
 
           <div className="grid grid-cols-1 gap-20">
             {projects.map((project) => (
-              <div key={project.id} onClick={() => setSelectedProject(project)} className="group cursor-pointer">
+              <div data-reveal key={project.id} onClick={() => setSelectedProject(project)} className="group cursor-pointer">
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-4">
                   <div>
                     <span className={`text-xs font-bold px-2 py-1 rounded mb-2 inline-block ${darkMode ? 'bg-white text-black' : 'bg-black text-white'}`}>
@@ -477,11 +484,18 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
 
       <section id="services" className="py-24 px-6 pb-40">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-sm font-meta uppercase tracking-widest mb-12">Capabilities</h2>
+          <h2 data-reveal className="text-sm font-meta uppercase tracking-widest mb-12">Capabilities</h2>
 
           <div className="flex flex-col">
-            {homeCapabilities.map((service) => (
-              <div key={service.title} className="border-t border-current py-8 group hover:pl-4 transition-all duration-300 cursor-default">
+            {/* These rows are short enough that several cross the trigger line
+                at once, so they are staggered to land one after another. */}
+            {homeCapabilities.map((service, i) => (
+              <div
+                data-reveal
+                style={{ '--reveal-delay': `${i * 70}ms` }}
+                key={service.title}
+                className="border-t border-current py-8 group hover:pl-4 transition-all duration-300 cursor-default"
+              >
                 <div className="flex flex-col md:flex-row justify-between items-baseline">
                   <h3 className="text-3xl md:text-5xl font-rubik font-bold uppercase group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r from-gray-500 to-current">
                     <span className="glitch-hover cursor-default block">{service.title}</span>

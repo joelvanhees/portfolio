@@ -43,7 +43,10 @@ const ContactView = ({ darkMode }) => {
       >
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-white/20 to-transparent rounded-full blur-3xl pointer-events-none"></div>
 
-        <div className="relative z-10">
+        {/* Inside the card, never around it: the card itself is the
+            backdrop-blur surface, and a transformed ancestor changes what that
+            blur samples. */}
+        <div data-reveal className="relative z-10">
           <h2 className="text-4xl md:text-5xl font-rubik font-bold mb-2 uppercase">
             <span className="glitch-hover cursor-default block">INITIATE UPLINK</span>
           </h2>

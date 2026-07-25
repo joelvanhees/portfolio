@@ -16,6 +16,7 @@ import ShellBlob from './components/ShellBlob';
 
 import { buildProjects } from './content/projects.jsx';
 import { playClickSound } from './utils/clickSound';
+import { start as startScrollReveal, scan as scanScrollReveal } from './utils/scrollReveal';
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(true);
@@ -54,6 +55,14 @@ const App = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Arms the scroll reveal. Until this runs, nothing on the page is hidden.
+  useEffect(() => startScrollReveal(), []);
+
+  // Each view swaps in its own blocks, so pick up the new ones once they mount.
+  useEffect(() => {
+    scanScrollReveal();
+  }, [activePage]);
 
   useEffect(() => {
     const checkMobile = () => {

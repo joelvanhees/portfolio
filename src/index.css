@@ -15,6 +15,39 @@
   scroll-behavior: smooth;
 }
 
+/*
+ * Scroll reveal. Two guards stand between a visitor and hidden content:
+ * `.reveal-ready` is only ever set by scrollReveal.js once it has a working
+ * IntersectionObserver, and the whole block is inside a reduced-motion query.
+ * Without JS, neither applies and every block renders normally.
+ *
+ * Only opacity and transform animate, so the work stays on the compositor —
+ * this has to stay smooth on a mid-range phone.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-ready [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-y, 30px), 0);
+    transition:
+      opacity 760ms cubic-bezier(0.16, 0.84, 0.44, 1) var(--reveal-delay, 0ms),
+      transform 760ms cubic-bezier(0.16, 0.84, 0.44, 1) var(--reveal-delay, 0ms);
+  }
+
+  .reveal-ready [data-reveal].is-revealed {
+    /* Falls back to 1, but blocks that carry their own resting opacity can set
+       --reveal-opacity so the reveal does not overwrite it. */
+    opacity: var(--reveal-opacity, 1);
+    transform: none;
+  }
+
+  /* A longer rise on phones, where the scroll is the whole interaction. */
+  @media (max-width: 767px) {
+    .reveal-ready [data-reveal] {
+      --reveal-y: 40px;
+    }
+  }
+}
+
 body {
   margin: 0;
   padding: 0;

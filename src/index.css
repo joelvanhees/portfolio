@@ -18,11 +18,13 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #050505; 
+  background-color: #050505;
   color: white;
-  display: block; 
+  display: block;
   min-height: 100vh;
   width: 100%;
+  /* TEXT voice — Arial Regular, Helvetica Neue as fallback (Identity V03.1). */
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden; /* Verhindert horizontales Scrollen global */

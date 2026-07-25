@@ -36,7 +36,7 @@ const HoverVideoPlayer = ({ src }) => {
         />
       )}
 
-      <div className="absolute bottom-4 right-4 text-[10px] font-mono border px-2 py-1 rounded bg-black/50 text-white border-white/20 z-20">
+      <div className="absolute bottom-4 right-4 text-[10px] font-meta border px-2 py-1 rounded bg-black/50 text-white border-white/20 z-20">
         [VIDEO_FEED]
       </div>
     </div>

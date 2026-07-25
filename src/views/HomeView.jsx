@@ -301,7 +301,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
                     playClickSound('click');
                   }}
-                  className={`text-xs font-mono tracking-widest px-6 py-2.5 rounded-full transition-all duration-300 hover:scale-105 cursor-pointer uppercase border active:scale-95
+                  className={`text-xs font-meta tracking-widest px-6 py-2.5 rounded-full transition-all duration-300 hover:scale-105 cursor-pointer uppercase border active:scale-95
                     ${darkMode 
                       ? 'border-[#00FF41] text-[#00FF41] bg-transparent hover:bg-[#00FF41] hover:text-black shadow-[0_0_15px_rgba(0,255,65,0.15)]' 
                       : 'border-black text-black bg-transparent hover:bg-black hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.05)]'}`}
@@ -313,7 +313,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                     handleNav('contact');
                     playClickSound('open');
                   }}
-                  className={`text-xs font-mono tracking-widest px-6 py-2.5 rounded-full transition-all duration-300 hover:scale-105 cursor-pointer uppercase border active:scale-95
+                  className={`text-xs font-meta tracking-widest px-6 py-2.5 rounded-full transition-all duration-300 hover:scale-105 cursor-pointer uppercase border active:scale-95
                     ${darkMode 
                       ? 'border-[#00FF41] bg-[#00FF41] text-black md:bg-transparent md:text-[#00FF41] hover:bg-[#00FF41] hover:text-black shadow-[0_0_15px_rgba(0,255,65,0.2)]' 
                       : 'border-black bg-black text-white md:bg-transparent md:text-black hover:bg-black hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
@@ -321,7 +321,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                   CONTACT
                 </button>
               </div>
-              <div className="text-left md:text-right font-mono text-xs md:text-sm">
+              <div className="text-left md:text-right font-meta text-xs md:text-sm">
                 SCROLL TO INITIALIZE <br /> ↓
               </div>
             </div>
@@ -338,7 +338,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             <p className="text-xl leading-relaxed mb-6">
               I am a graphic designer working across brand systems, generative design and visual storytelling.
             </p>
-            <p className="opacity-70 leading-relaxed mb-8 font-mono text-sm">
+            <p className="opacity-70 leading-relaxed mb-8 font-meta text-sm">
               My practice combines classical design discipline with experimental technologies to create scalable visual identities.
             </p>
             <div className="flex flex-wrap gap-4">
@@ -365,7 +365,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
           </div>
 
           <div className="flex flex-col gap-8">
-            <div className={`p-6 rounded-lg font-mono text-xs md:text-sm leading-6 shadow-2xl overflow-hidden relative transition-all duration-1000 ${darkMode ? 'bg-[#0A0A0A] border border-green-900/50' : 'bg-white border border-gray-200'} flex items-center justify-center min-h-[60vh]`}>
+            <div className={`p-6 rounded-lg font-meta text-xs md:text-sm leading-6 shadow-2xl overflow-hidden relative transition-all duration-1000 ${darkMode ? 'bg-[#0A0A0A] border border-green-900/50' : 'bg-white border border-gray-200'} flex items-center justify-center min-h-[60vh]`}>
               <div className="absolute top-6 left-6 flex gap-2 mb-4 opacity-50 z-20">
                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
                 <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -396,7 +396,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
       <section id="work" className="py-24 px-6 bg-transparent">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-baseline justify-between mb-16 border-b border-current pb-4">
-            <h2 className="text-sm font-mono uppercase tracking-widest">Selected Data</h2>
+            <h2 className="text-sm font-meta uppercase tracking-widest">Selected Data</h2>
             <span className="text-xs opacity-50">INDEX: 00—08</span>
           </div>
 
@@ -412,7 +412,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                       <span className="glitch-hover cursor-default block">{project.title}</span>
                     </h3>
                   </div>
-                  <div className="hidden md:flex items-center gap-2 text-sm font-mono opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="hidden md:flex items-center gap-2 text-sm font-meta opacity-0 group-hover:opacity-100 transition-opacity">
                     VIEW CASE <ArrowUpRight size={16} />
                   </div>
                 </div>
@@ -437,7 +437,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                               <Layers size={64} />
                             </div>
                           ) : (
-                            <Suspense fallback={<div className="flex items-center justify-center w-full h-full text-xs font-mono opacity-30">[LAUNCHING_SPHERE...]</div>}>
+                            <Suspense fallback={<div className="flex items-center justify-center w-full h-full text-xs font-meta opacity-30">[LAUNCHING_SPHERE...]</div>}>
                               <SpiralTimeSphere />
                             </Suspense>
                           )
@@ -454,7 +454,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                     )}
 
                     {(project.id === "02" || project.id === "01") && (
-                      <div className="absolute top-4 right-4 text-[10px] font-mono border px-2 py-1 rounded bg-black/50 text-white border-white/20">
+                      <div className="absolute top-4 right-4 text-[10px] font-meta border px-2 py-1 rounded bg-black/50 text-white border-white/20">
                         {project.id === "01" ? "[VIDEO_CONTENT]" : "[LIVE_RENDER]"}
                       </div>
                     )}
@@ -465,7 +465,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                   <div className="md:col-span-2">
                     <p>{project.description}</p>
                   </div>
-                  <div className="md:col-span-2 flex justify-start md:justify-end gap-4 font-mono text-xs uppercase flex-wrap">
+                  <div className="md:col-span-2 flex justify-start md:justify-end gap-4 font-meta text-xs uppercase flex-wrap">
                     {project.tech.map(t => <span key={t}>[{t}]</span>)}
                   </div>
                 </div>
@@ -477,7 +477,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
 
       <section id="services" className="py-24 px-6 pb-40">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-sm font-mono uppercase tracking-widest mb-12">Capabilities</h2>
+          <h2 className="text-sm font-meta uppercase tracking-widest mb-12">Capabilities</h2>
 
           <div className="flex flex-col">
             {homeCapabilities.map((service) => (
@@ -486,7 +486,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                   <h3 className="text-3xl md:text-5xl font-rubik font-bold uppercase group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r from-gray-500 to-current">
                     <span className="glitch-hover cursor-default block">{service.title}</span>
                   </h3>
-                  <p className="mt-2 md:mt-0 font-mono text-sm opacity-60 group-hover:opacity-100">
+                  <p className="mt-2 md:mt-0 font-meta text-sm opacity-60 group-hover:opacity-100">
                     {service.desc}
                   </p>
                 </div>

@@ -12,7 +12,7 @@ const InfiniteMarqueeVisual = () => {
             <div className="aspect-[2/3] w-full overflow-hidden border border-white/10 mb-3 bg-black">
               <img src={slide.img} alt={slide.target} className="w-full h-full object-cover" />
             </div>
-            <div className="font-mono text-[9px] leading-tight text-white/60">
+            <div className="font-meta text-[9px] leading-tight text-white/60">
               <strong className="block text-white mb-1">{slide.target}</strong>
               {slide.caption}
             </div>

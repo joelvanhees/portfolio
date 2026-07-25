@@ -625,14 +625,14 @@ const CooldownPool = ({ darkMode, onClose }) => {
               : 'bg-white/95 border-[#0055FF]/20 text-[#0055FF]'}`}
           >
             <div className="w-8 h-8 rounded-full border-2 border-current border-t-transparent animate-spin" />
-            <p className="font-mono text-xs uppercase tracking-widest">[ COOLDOWN_POOL: LOADING_3D_ASSETS ]</p>
+            <p className="font-meta text-xs uppercase tracking-widest">[ COOLDOWN_POOL: LOADING_3D_ASSETS ]</p>
           </div>
         </div>
       )}
 
       {/* Interactive Raycast Hover Info Card */}
       <div 
-        className={`absolute bottom-24 left-6 right-6 md:left-6 md:right-auto z-40 max-w-sm font-mono text-[10px] md:text-xs transition-all duration-500 ease-out transform pointer-events-none
+        className={`absolute bottom-24 left-6 right-6 md:left-6 md:right-auto z-40 max-w-sm font-meta text-[10px] md:text-xs transition-all duration-500 ease-out transform pointer-events-none
           ${(infoOpenManual || (!isMobileDevice && isHoveringPool && !infoClosed)) 
             ? 'opacity-100 translate-y-0 scale-100' 
             : 'opacity-0 translate-y-4 scale-95'}`}
@@ -679,11 +679,11 @@ const CooldownPool = ({ darkMode, onClose }) => {
             : 'bg-white/80 border-[#0055FF]/20 text-[#0055FF] shadow-black/10'}`}
         >
           <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
-          <h2 className="text-[10px] md:text-xs font-mono uppercase tracking-widest font-bold">
+          <h2 className="text-[10px] md:text-xs font-meta uppercase tracking-widest font-bold">
             [ SENSORY COOLDOWN POOL ACTIVE ]
           </h2>
           <span className="hidden md:inline text-[9px] opacity-40">|</span>
-          <span className="hidden md:inline text-[9px] font-mono opacity-60 uppercase">ORBIT: LEFT-DRAG  •  PAN: RIGHT-DRAG  •  ZOOM: SCROLL</span>
+          <span className="hidden md:inline text-[9px] font-meta opacity-60 uppercase">ORBIT: LEFT-DRAG  •  PAN: RIGHT-DRAG  •  ZOOM: SCROLL</span>
         </div>
       </div>
 
@@ -691,7 +691,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-3">
         <button
           onClick={() => { onClose(); playClickSound('close'); }}
-          className={`px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-bold border transition-all cursor-pointer hover:shadow-2xl active:scale-95 shadow-lg
+          className={`px-8 py-4 rounded-xl font-meta text-xs uppercase tracking-widest font-bold border transition-all cursor-pointer hover:shadow-2xl active:scale-95 shadow-lg
             ${darkMode 
               ? 'border-[#00FF41] text-black bg-[#00FF41] hover:bg-transparent hover:text-[#00FF41] hover:shadow-[0_0_20px_rgba(0,255,65,0.35)] shadow-black/60' 
               : 'border-[#0055FF] text-white bg-[#0055FF] hover:bg-transparent hover:text-[#0055FF] hover:shadow-[0_0_20px_rgba(0,85,255,0.35)] shadow-black/15'}`}

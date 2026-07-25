@@ -152,7 +152,7 @@ const ProjectModal = ({
         </div>
 
         {selectedProject.warningText && (
-          <div className="bg-red-500/10 border-b border-red-500/30 px-6 py-3.5 text-center text-xs font-mono tracking-wider text-red-500 uppercase font-bold flex items-center justify-center gap-2">
+          <div className="bg-red-500/10 border-b border-red-500/30 px-6 py-3.5 text-center text-xs font-meta tracking-wider text-red-500 uppercase font-bold flex items-center justify-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
             {selectedProject.warningText}
           </div>
@@ -165,7 +165,7 @@ const ProjectModal = ({
                  `}>
               {selectedProject.id === "02" ? (
                 <div className="w-full h-full relative">
-                  <Suspense fallback={<div className="flex items-center justify-center w-full h-full text-xs font-mono opacity-50">[LOADING_3D_ORB...]</div>}>
+                  <Suspense fallback={<div className="flex items-center justify-center w-full h-full text-xs font-meta opacity-50">[LOADING_3D_ORB...]</div>}>
                     <SpiralTimeSphere />
                   </Suspense>
                 </div>
@@ -200,12 +200,12 @@ const ProjectModal = ({
               )}
 
               {selectedProject.id === "01" ? (
-                <div className="absolute bottom-4 right-4 flex gap-2 text-xs font-mono opacity-60 pointer-events-none">
+                <div className="absolute bottom-4 right-4 flex gap-2 text-xs font-meta opacity-60 pointer-events-none">
                   <Video size={12} /> VIDEO PREVIEW
                 </div>
               ) : (
                 !showVideoSequence && selectedProject.id !== "02" && selectedProject.id !== "04" && selectedProject.id !== "05" && (
-                  <div className="absolute bottom-4 right-4 flex gap-2 text-xs font-mono opacity-60">
+                  <div className="absolute bottom-4 right-4 flex gap-2 text-xs font-meta opacity-60">
                     <Maximize2 size={12} /> INTERACTIVE PREVIEW
                   </div>
                 )
@@ -213,14 +213,14 @@ const ProjectModal = ({
             </div>
 
             {selectedProject.extraVisuals && (
-              <Suspense fallback={<div className="flex items-center justify-center w-full min-h-[200px] text-xs font-mono opacity-50">[LOADING_3D_TUNNEL...]</div>}>
+              <Suspense fallback={<div className="flex items-center justify-center w-full min-h-[200px] text-xs font-meta opacity-50">[LOADING_3D_TUNNEL...]</div>}>
                 <div className="mt-4 aspect-video w-full rounded-xl overflow-hidden border border-white/10 bg-black relative shadow-2xl">
                   <TypographicClockVisual />
                 </div>
 
                 <div className="mt-4 aspect-video w-full rounded-xl overflow-hidden border border-white/10 bg-black relative shadow-2xl">
                   <BufferOverflowVisual />
-                  <div className="absolute bottom-2 left-2 text-[10px] font-mono text-white/50 bg-black/50 px-2 py-1 rounded">
+                  <div className="absolute bottom-2 left-2 text-[10px] font-meta text-white/50 bg-black/50 px-2 py-1 rounded">
                     [BUFFER_OVERFLOW.EXE] RUNNING...
                   </div>
                 </div>
@@ -267,7 +267,7 @@ const ProjectModal = ({
 
                   <div className={`aspect-[3/2] w-full rounded-xl border flex items-center justify-center overflow-hidden relative ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
                     <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
-                      <span className="font-mono text-xs uppercase tracking-widest opacity-50">COMING SOON</span>
+                      <span className="font-meta text-xs uppercase tracking-widest opacity-50">COMING SOON</span>
                     </div>
                   </div>
                 </div>
@@ -311,7 +311,7 @@ const ProjectModal = ({
           <div className="flex flex-col gap-8">
             {selectedProject.brandLinks && (
               <div className="flex flex-col gap-2">
-                <h3 className="text-sm font-mono uppercase tracking-widest opacity-50 mb-2">Live Channels</h3>
+                <h3 className="text-sm font-meta uppercase tracking-widest opacity-50 mb-2">Live Channels</h3>
                 {selectedProject.brandLinks.map((link, i) => (
                   <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline opacity-80 hover:opacity-100">
                     <ArrowUpRight size={14} /> {link.label}
@@ -321,10 +321,10 @@ const ProjectModal = ({
             )}
 
             <div>
-              <h3 className="text-sm font-mono uppercase tracking-widest opacity-50 mb-4">Stack</h3>
+              <h3 className="text-sm font-meta uppercase tracking-widest opacity-50 mb-4">Stack</h3>
               <div className="flex flex-wrap gap-2">
                 {selectedProject.tech.map(t => (
-                  <span key={t} className={`px-3 py-1 rounded-full text-xs font-mono border ${darkMode ? 'border-white/20' : 'border-black/10'}`}>
+                  <span key={t} className={`px-3 py-1 rounded-full text-xs font-meta border ${darkMode ? 'border-white/20' : 'border-black/10'}`}>
                     {t}
                   </span>
                 ))}
@@ -355,7 +355,7 @@ const ProjectModal = ({
                         <LazyImage src={threedSign2} className="w-full h-full object-cover cursor-zoom-in" alt="3D Signage Process 2" onClick={() => setActiveImage(threedSign2)} />
                       </div>
                     </div>
-                    <p className="font-mono text-xs opacity-60 leading-relaxed">
+                    <p className="font-meta text-xs opacity-60 leading-relaxed">
                       “Custom 3D signage designed in Fusion 360, produced via in-house 3D printing and used as physical set elements for the IKEA video production.”
                     </p>
                   </div>
@@ -373,9 +373,9 @@ const ProjectModal = ({
                 {/* Immersive Soundscape Controller */}
                 <div className={`p-6 rounded-2xl border ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'} flex items-center justify-between shadow-2xl`}>
                   <div>
-                    <h3 className="font-mono text-xs uppercase tracking-widest opacity-50 mb-1">Atmosphere</h3>
-                    <h4 className="text-lg font-bold font-syne uppercase">Immersive Soundscape</h4>
-                    <p className="text-xs opacity-75 font-mono">Original audio score of the digital essay</p>
+                    <h3 className="font-meta text-xs uppercase tracking-widest opacity-50 mb-1">Atmosphere</h3>
+                    <h4 className="text-lg font-bold font-display uppercase">Immersive Soundscape</h4>
+                    <p className="text-xs opacity-75 font-meta">Original audio score of the digital essay</p>
                   </div>
                   <button 
                     onClick={toggleSound}
@@ -391,7 +391,7 @@ const ProjectModal = ({
                     href="https://checkyourbus.vercel.app" 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="w-full py-4 rounded-xl font-syne font-bold uppercase text-center transition-all hover:scale-[1.02] flex items-center justify-center gap-2 border bg-[#0022cc] text-[#ccff00] border-[#ccff00] hover:bg-[#ccff00] hover:text-[#0022cc] shadow-[0_0_20px_rgba(204,255,0,0.15)] cursor-pointer text-base"
+                    className="w-full py-4 rounded-xl font-display font-bold uppercase text-center transition-all hover:scale-[1.02] flex items-center justify-center gap-2 border bg-[#0022cc] text-[#ccff00] border-[#ccff00] hover:bg-[#ccff00] hover:text-[#0022cc] shadow-[0_0_20px_rgba(204,255,0,0.15)] cursor-pointer text-base"
                   >
                     Check Your Bus live ansehen ↗
                   </a>
@@ -426,7 +426,7 @@ const ProjectModal = ({
                           onClick={() => setActiveImage(busLanguageImg)} 
                         />
                       </div>
-                      <span className="font-mono text-[10px] opacity-60 uppercase text-center">[01 // LANG_SCREEN]</span>
+                      <span className="font-meta text-[10px] opacity-60 uppercase text-center">[01 // LANG_SCREEN]</span>
                     </div>
 
                     {/* Middle Row: Two-column grid with Image 02 and Image 03 (aspect-9/16) */}
@@ -440,7 +440,7 @@ const ProjectModal = ({
                             onClick={() => setActiveImage(busPerceptionImg)} 
                           />
                         </div>
-                        <span className="font-mono text-[10px] opacity-60 uppercase text-center">[02 // PERCEPTION_CHECK]</span>
+                        <span className="font-meta text-[10px] opacity-60 uppercase text-center">[02 // PERCEPTION_CHECK]</span>
                       </div>
 
                       <div className="flex flex-col gap-2">
@@ -452,7 +452,7 @@ const ProjectModal = ({
                             onClick={() => setActiveImage(busLiquidImg)} 
                           />
                         </div>
-                        <span className="font-mono text-[10px] opacity-60 uppercase text-center">[03 // SOLID_LIQUID_CARD]</span>
+                        <span className="font-meta text-[10px] opacity-60 uppercase text-center">[03 // SOLID_LIQUID_CARD]</span>
                       </div>
                     </div>
 
@@ -466,7 +466,7 @@ const ProjectModal = ({
                           onClick={() => setActiveImage(busAttentionImg)} 
                         />
                       </div>
-                      <span className="font-mono text-[10px] opacity-60 uppercase text-center">[04 // ATTENTION_CARD]</span>
+                      <span className="font-meta text-[10px] opacity-60 uppercase text-center">[04 // ATTENTION_CARD]</span>
                     </div>
                   </div>
                 </div>
@@ -517,7 +517,7 @@ const ProjectModal = ({
                       <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5 w-full">
                         <img src={logoVNC} loading="lazy" className="w-full h-auto object-contain" />
                       </div>
-                      <span className="font-mono text-[10px] opacity-50 mt-1 uppercase">VNC_SYSTEM</span>
+                      <span className="font-meta text-[10px] opacity-50 mt-1 uppercase">VNC_SYSTEM</span>
                     </div>
 
                     <div className="rounded-xl overflow-hidden border border-white/10 bg-black flex items-center justify-center">
@@ -532,20 +532,20 @@ const ProjectModal = ({
                     <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5">
                       <img src={softBodyProcess} className="w-full h-auto object-contain" alt="Process & exploration" />
                     </div>
-                    <p className="font-mono text-xs opacity-60">Process & exploration</p>
+                    <p className="font-meta text-xs opacity-60">Process & exploration</p>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5 mb-2">
                           <img src={softBodyLogo} className="w-full h-auto object-contain" alt="Early logo iteration" />
                         </div>
-                        <p className="font-mono text-xs opacity-60">Early logo iteration</p>
+                        <p className="font-meta text-xs opacity-60">Early logo iteration</p>
                       </div>
                       <div>
                         <div className="rounded-xl overflow-hidden border border-white/10 bg-black/5 mb-2">
                           <img src={softBodyFinal} className="w-full h-auto object-contain" alt="Final logo" />
                         </div>
-                        <p className="font-mono text-xs opacity-60">Final logo</p>
+                        <p className="font-meta text-xs opacity-60">Final logo</p>
                       </div>
                     </div>
                   </div>
@@ -553,7 +553,7 @@ const ProjectModal = ({
               </div>
             ) : (
               <div>
-                <h3 className="text-sm font-mono uppercase tracking-widest opacity-50 mb-4">Briefing</h3>
+                <h3 className="text-sm font-meta uppercase tracking-widest opacity-50 mb-4">Briefing</h3>
                 <p className="text-lg md:text-xl leading-relaxed font-light whitespace-pre-line">
                   {selectedProject.longDescription || selectedProject.description}
                 </p>
@@ -569,7 +569,7 @@ const ProjectModal = ({
                       </div>
                       <div>
                         <div className="font-bold uppercase text-sm">Designing a Website</div>
-                        <div className="text-xs opacity-60 font-mono">Complete Concept and Implementation</div>
+                        <div className="text-xs opacity-60 font-meta">Complete Concept and Implementation</div>
                       </div>
                       <ArrowUpRight className="ml-auto opacity-50 group-hover:opacity-100" size={16} />
                     </button>
@@ -608,7 +608,7 @@ const ProjectModal = ({
 
             {selectedProject.exhibitions && (
               <div className="border-l-2 border-current pl-4">
-                <h3 className="text-sm font-mono uppercase tracking-widest opacity-50 mb-4">Exhibitions</h3>
+                <h3 className="text-sm font-meta uppercase tracking-widest opacity-50 mb-4">Exhibitions</h3>
                 <ul className="space-y-4">
                   {selectedProject.exhibitions.map((ex, i) => (
                     <li key={i} className="text-lg md:text-xl font-light">
@@ -619,7 +619,7 @@ const ProjectModal = ({
               </div>
             )}
 
-            <div className={`mt-auto pt-8 border-t font-mono ${darkMode ? 'border-white/10' : 'border-black/10'}`}>
+            <div className={`mt-auto pt-8 border-t font-meta ${darkMode ? 'border-white/10' : 'border-black/10'}`}>
               {selectedProject.id !== "02" && selectedProject.id !== "07" && (
                 <button
                   onClick={() => { onStartProject(); playClickSound('open'); }}

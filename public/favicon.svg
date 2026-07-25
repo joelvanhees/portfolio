@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Joel van Hees">
+  <rect width="100" height="100" rx="12" fill="#050505"/>
+  <g transform="translate(31.7 18) scale(0.2511) translate(-140.31 -167.43)"
+     fill="none" stroke="#C7FF2E" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M253.79 174.39L253.79 244.33" stroke-width="13.983"/>
+    <path d="M253.79 233.45C249.13 272.31 249.91 315.83 253.79 348.47C257.68 380.33 238.26 398.98 211.08 397.42C187.01 395.87 173.03 384.99 165.27 368.67" stroke-width="49.717"/>
+    <path d="M229.72 199.26L280.97 199.26M235.16 180.61L271.65 219.46M279.42 182.94L236.71 218.69" stroke-width="10.099"/>
+  </g>
+</svg>

@@ -121,7 +121,7 @@ const SkillNetwork = ({ darkMode, className }) => {
             group-hover:scale-150
           `}></div>
 
-          <div className={`text-[10px] md:text-xs font-syne font-bold uppercase tracking-widest text-center whitespace-nowrap opacity-70 group-hover:opacity-100 transition-opacity
+          <div className={`text-[10px] md:text-xs font-display font-bold uppercase tracking-widest text-center whitespace-nowrap opacity-70 group-hover:opacity-100 transition-opacity
               ${darkMode ? 'text-white' : 'text-black'}
           `}>
             {node.label}
@@ -145,10 +145,10 @@ const SkillNetwork = ({ darkMode, className }) => {
               onClick={(e) => { e.stopPropagation(); setSelectedNode(null); }}
               className="w-2.5 h-2.5 rounded-full bg-red-500 hover:bg-red-600 transition-colors"
             />
-            <span className="text-[9px] font-mono uppercase opacity-50 ml-auto">INFO_NODE</span>
+            <span className="text-[9px] font-meta uppercase opacity-50 ml-auto">INFO_NODE</span>
           </div>
-          <h4 className="font-syne font-bold uppercase mb-1 text-xs">{selectedNode.label}</h4>
-          <p className="font-mono text-[10px] opacity-80 leading-relaxed">
+          <h4 className="font-display font-bold uppercase mb-1 text-xs">{selectedNode.label}</h4>
+          <p className="font-meta text-[10px] opacity-80 leading-relaxed">
             {selectedNode.desc}
           </p>
         </div>

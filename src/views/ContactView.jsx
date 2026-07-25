@@ -47,7 +47,7 @@ const ContactView = ({ darkMode }) => {
           <h2 className="text-4xl md:text-5xl font-rubik font-bold mb-2 uppercase">
             <span className="glitch-hover cursor-default block">INITIATE UPLINK</span>
           </h2>
-          <p className="font-mono text-sm opacity-60 mb-12">Send a signal. I will respond.</p>
+          <p className="font-meta text-sm opacity-60 mb-12">Send a signal. I will respond.</p>
 
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="group/input relative">
@@ -58,9 +58,9 @@ const ContactView = ({ darkMode }) => {
                 onChange={handleChange}
                 required
                 placeholder=" "
-                className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-syne text-xl transition-all ${darkMode ? 'border-white/20 focus:border-green-500' : 'border-black/20 focus:border-blue-500'}`}
+                className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-display text-xl transition-all ${darkMode ? 'border-white/20 focus:border-green-500' : 'border-black/20 focus:border-blue-500'}`}
               />
-              <label className={`absolute left-0 top-2 font-mono text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Identity / Name</label>
+              <label className={`absolute left-0 top-2 font-meta text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Identity / Name</label>
             </div>
 
             <div className="group/input relative">
@@ -71,9 +71,9 @@ const ContactView = ({ darkMode }) => {
                 onChange={handleChange}
                 required
                 placeholder=" "
-                className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-syne text-xl transition-all ${darkMode ? 'border-white/20 focus:border-green-500' : 'border-black/20 focus:border-blue-500'}`}
+                className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-display text-xl transition-all ${darkMode ? 'border-white/20 focus:border-green-500' : 'border-black/20 focus:border-blue-500'}`}
               />
-              <label className={`absolute left-0 top-2 font-mono text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Frequency / Email</label>
+              <label className={`absolute left-0 top-2 font-meta text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Frequency / Email</label>
             </div>
 
             <div className="group/input relative">
@@ -84,9 +84,9 @@ const ContactView = ({ darkMode }) => {
                 onChange={handleChange}
                 required
                 placeholder=" "
-                className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-mono text-sm resize-none transition-all ${darkMode ? 'border-white/20 focus:border-green-500' : 'border-black/20 focus:border-blue-500'}`}
+                className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-meta text-sm resize-none transition-all ${darkMode ? 'border-white/20 focus:border-green-500' : 'border-black/20 focus:border-blue-500'}`}
               ></textarea>
-              <label className={`absolute left-0 top-2 font-mono text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Transmission Data</label>
+              <label className={`absolute left-0 top-2 font-meta text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Transmission Data</label>
             </div>
 
             <button

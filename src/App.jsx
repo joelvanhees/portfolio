@@ -8,7 +8,7 @@ import AboutView from './views/AboutView';
 import ContactView from './views/ContactView';
 import GameView from './views/GameView';
 import FloatingConsole from './components/FloatingConsole';
-import TransparentLogo from './components/TransparentLogo';
+import { BrandSignature, BrandMark } from './components/BrandLogo';
 
 const ProjectModal = lazy(() => import('./components/ProjectModal'));
 const CooldownPool = lazy(() => import('./components/CooldownPool'));
@@ -174,12 +174,8 @@ const App = () => {
   };
 
   return (
-    <div className={`min-h-screen w-full relative transition-colors duration-700 ease-in-out font-mono selection:bg-green-500 selection:text-black overflow-x-hidden bg-transparent ${darkMode ? 'text-[#E0E0E0]' : 'text-black'}`}>
+    <div className={`min-h-screen w-full relative transition-colors duration-700 ease-in-out font-meta selection:bg-green-500 selection:text-black overflow-x-hidden bg-transparent ${darkMode ? 'text-[#E0E0E0]' : 'text-black'}`}>
       <style>{`
-        .font-syne { font-family: 'Syne', sans-serif; }
-        .font-rubik { font-family: 'Rubik80sFade', 'Syne', sans-serif; }
-        .font-mono { font-family: 'Space Mono', monospace; }
-
         @keyframes glitch {
           0% { transform: translate(0) }
           20% { transform: translate(-2px, 2px) }
@@ -216,26 +212,8 @@ const App = () => {
           onClick={() => handleNav('home')}
           className="cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-1.5 bg-transparent border-none p-0 pointer-events-auto"
         >
-          <span
-            className="text-xs sm:text-base md:text-xl font-bold tracking-tighter"
-            style={{
-              background: darkMode
-                ? 'linear-gradient(180deg, #ffffff 40%, rgba(255,255,255,0.45) 70%, rgba(0,255,65,0.9) 100%)'
-                : 'linear-gradient(180deg, #000000 0%, #000000 100%)',
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              textShadow: darkMode
-                ? '0px 1px 1px rgba(255,255,255,0.65), 0px -1px 1px rgba(0,0,0,0.7), 0px 0px 8px rgba(0,255,65,0.45)'
-                : 'none',
-              filter: darkMode
-                ? 'drop-shadow(0px 8px 16px rgba(0,0,0,0.35))'
-                : 'none',
-            }}
-          >
-            JOEL VAN HEES
-          </span>
-          <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded uppercase font-mono tracking-widest ${darkMode ? 'bg-[#00FF41]/15 text-[#00FF41] border border-[#00FF41]/25' : 'bg-black/5 text-black border border-black/20'}`}>[ARCHITECT]</span>
+          <BrandSignature className="h-4 sm:h-5 md:h-7 w-auto" />
+          <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded uppercase font-meta tracking-widest ${darkMode ? 'bg-[#00FF41]/15 text-[#00FF41] border border-[#00FF41]/25' : 'bg-black/5 text-black border border-black/20'}`}>[ARCHITECT]</span>
         </button>
 
         <div className="flex items-center gap-3 sm:gap-6 pointer-events-none">
@@ -301,7 +279,7 @@ const App = () => {
         <div className="fixed inset-0 z-30" onClick={() => { setMenuOpen(false); playClickSound('close'); }}>
           <div 
             onClick={(e) => e.stopPropagation()}
-            className={`absolute top-24 right-4 md:right-8 w-64 md:w-80 rounded-2xl flex flex-col justify-start items-end p-6 md:p-8 gap-5 text-lg md:text-xl font-syne font-bold border shadow-2xl transition-all duration-500 animate-in slide-in-from-right-8 ${darkMode ? 'bg-black/60 border-[#00FF41]/20 shadow-[0_0_30px_rgba(0,255,65,0.1)]' : 'bg-white border-black shadow-[0_0_35px_rgba(0,0,0,0.25)]'} backdrop-blur-xl`}
+            className={`absolute top-24 right-4 md:right-8 w-64 md:w-80 rounded-2xl flex flex-col justify-start items-end p-6 md:p-8 gap-5 text-lg md:text-xl font-display font-bold border shadow-2xl transition-all duration-500 animate-in slide-in-from-right-8 ${darkMode ? 'bg-black/60 border-[#00FF41]/20 shadow-[0_0_30px_rgba(0,255,65,0.1)]' : 'bg-white border-black shadow-[0_0_35px_rgba(0,0,0,0.25)]'} backdrop-blur-xl`}
           >
             <button
               onClick={() => {
@@ -312,7 +290,7 @@ const App = () => {
               className="mb-2 bg-transparent border-none p-0 cursor-pointer focus:outline-none hover:scale-110 transition-all duration-500 drop-shadow-[0_0_20px_rgba(0,255,65,0.2)] flex items-center justify-center pointer-events-auto"
               title="Geheimes Mixer Rezeptbuch"
             >
-              <TransparentLogo className="w-16 h-16 md:w-20 md:h-20" />
+              <BrandMark className="h-16 md:h-20 w-auto" />
             </button>
             {['HOME', 'WORK', 'SERVICES', 'ABOUT', 'CONTACT'].map((item, i) => (
               <button
@@ -334,7 +312,7 @@ const App = () => {
                   setMenuOpen(false);
                   playClickSound('open');
                 }}
-                className={`w-full text-right text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
+                className={`w-full text-right text-xs font-meta tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
                   ${darkMode 
                     ? 'border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff]' 
                     : 'border border-black bg-black text-white hover:bg-black/90 shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
@@ -348,7 +326,7 @@ const App = () => {
                   setMenuOpen(false);
                   playClickSound('open');
                 }}
-                className={`w-full text-right text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
+                className={`w-full text-right text-xs font-meta tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
                   ${darkMode 
                     ? 'border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84]' 
                     : 'border border-black bg-white text-black hover:bg-black hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
@@ -361,7 +339,7 @@ const App = () => {
                   setDarkMode(!darkMode);
                   playClickSound('click');
                 }}
-                className={`w-full text-right text-xs font-mono tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
+                className={`w-full text-right text-xs font-meta tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
                   ${darkMode 
                     ? 'border border-white/20 bg-white/5 text-white hover:bg-white hover:text-black shadow-[inset_0_2px_4px_rgba(255,255,255,0.15)]' 
                     : 'border border-black bg-black text-white hover:bg-black/90 hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
@@ -399,11 +377,11 @@ const App = () => {
             }`}
           >
             <div className="flex justify-between items-start mb-8 border-b border-current pb-4">
-              <h2 className="text-3xl font-syne font-bold">LEGAL DATA</h2>
+              <h2 className="text-3xl font-display font-bold">LEGAL DATA</h2>
               <button onClick={() => { setLegalOpen(false); playClickSound('close'); }} className="p-2 hover:opacity-50"><X size={24} /></button>
             </div>
 
-            <div className="font-mono text-sm space-y-8 leading-relaxed opacity-80">
+            <div className="font-meta text-sm space-y-8 leading-relaxed opacity-80">
               <section>
                 <h3 className="text-xl font-bold mb-4 uppercase">Impressum</h3>
                 <p className="mb-2">Angaben gemäß § 5 TMG</p>
@@ -538,12 +516,12 @@ const App = () => {
             <h2 className="text-6xl md:text-9xl font-rubik font-bold tracking-tighter leading-none mb-8">
               LET&apos;S <br /> BUILD.
             </h2>
-            <button onClick={() => handleNav('contact')} className="text-xl md:text-2xl font-mono underline decoration-2 underline-offset-4 hover:no-underline">
+            <button onClick={() => handleNav('contact')} className="text-xl md:text-2xl font-meta underline decoration-2 underline-offset-4 hover:no-underline">
               kontakt@joelvanhees.de
             </button>
           </div>
 
-          <div className="flex flex-col md:flex-row justify-between items-end gap-8 font-mono text-sm uppercase">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-8 font-meta text-sm uppercase">
             <div className="flex gap-4">
               <a href="https://www.instagram.com/joelvn20?igsh=cG91ZjEzYnh5azAx&utm_source=qr" target="_blank" rel="noopener noreferrer" className="hover:line-through">Instagram</a>
             </div>

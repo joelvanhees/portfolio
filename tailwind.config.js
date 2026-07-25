@@ -7,10 +7,15 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'syne': ['Syne', 'sans-serif'],
-        'mono': ['Space Mono', 'monospace'],
-        // Hier ist dein neuer Font:
-        'rubik': ['Rubik80sFade', 'sans-serif'], 
+        // Identity System V03.1 — two voices.
+        // DISPLAY / Arial Bold 700 — headlines, modes, chapters, statements.
+        'display': ['Arial', 'Helvetica Neue', 'Helvetica', 'sans-serif'],
+        // TEXT / Arial Regular + Bold — quotes, body copy, cases, interfaces.
+        'text': ['Arial', 'Helvetica Neue', 'Helvetica', 'sans-serif'],
+        // META / SF Mono — labels, status, numbering. Falls back per platform.
+        'meta': ['SF Mono', 'SFMono-Regular', 'ui-monospace', 'Menlo', 'Consolas', 'Liberation Mono', 'monospace'],
+        // Display face of the VISUAL STORYTELLER lettering — kept as set.
+        'rubik': ['Rubik80sFade', 'Arial', 'Helvetica Neue', 'sans-serif'],
       },
     },
   },

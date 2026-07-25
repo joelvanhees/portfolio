@@ -8,12 +8,12 @@ const ServicesView = ({ darkMode }) => {
         <h1 className="text-[12vw] md:text-9xl font-rubik font-bold w-full break-words uppercase">
           <span className="glitch-hover cursor-default block">NETWORK_</span>
         </h1>
-        <p className="font-mono text-sm opacity-60 text-right max-w-xs mt-4 md:mt-0">
+        <p className="font-meta text-sm opacity-60 text-right max-w-xs mt-4 md:mt-0">
           Interconnected disciplines forming a holistic design system.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 opacity-80 font-mono text-xs uppercase">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 opacity-80 font-meta text-xs uppercase">
         {networkGroups.map((group) => (
           <div key={group.title}>
             <h4 className="border-b border-current pb-2 mb-2 font-bold">{group.title}</h4>

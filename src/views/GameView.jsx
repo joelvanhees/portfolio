@@ -1009,7 +1009,7 @@ const GameView = ({ darkMode, onClose }) => {
 
   return (
     <div 
-      className="fixed inset-0 w-full h-full z-[100] flex items-center justify-center p-4 sm:p-8 touch-none font-mono bg-black/75 backdrop-blur-xl animate-in fade-in duration-300"
+      className="fixed inset-0 w-full h-full z-[100] flex items-center justify-center p-4 sm:p-8 touch-none font-meta bg-black/75 backdrop-blur-xl animate-in fade-in duration-300"
       onClick={handleExit}
     >
       {/* Always-visible top-right close window button outside the bezel */}
@@ -1176,7 +1176,7 @@ const GameView = ({ darkMode, onClose }) => {
                   <Zap size={18} className="text-[#00ff41]" />
                 </div>
 
-                <h1 className="text-xl md:text-2xl font-syne font-extrabold tracking-tighter uppercase mb-0.5">
+                <h1 className="text-xl md:text-2xl font-display font-extrabold tracking-tighter uppercase mb-0.5">
                   NEON BLOB RUNNER
                 </h1>
                 
@@ -1185,7 +1185,7 @@ const GameView = ({ darkMode, onClose }) => {
                 </p>
 
                 {/* Highscore pill */}
-                <div className="w-full flex justify-around border border-white/5 py-2 md:py-2.5 rounded-xl bg-white/[0.01] mb-4 font-mono text-xs">
+                <div className="w-full flex justify-around border border-white/5 py-2 md:py-2.5 rounded-xl bg-white/[0.01] mb-4 font-meta text-xs">
                   <div className="flex flex-col gap-0.5">
                     <span className="text-[7px] md:text-[8px] uppercase opacity-35">High Score</span>
                     <span className="text-xs md:text-sm font-bold text-[#00ff41]">{highScore}</span>
@@ -1201,14 +1201,14 @@ const GameView = ({ darkMode, onClose }) => {
                 <div className="w-full flex flex-col gap-2">
                   <button
                     onClick={startGame}
-                    className="w-full py-2.5 px-6 rounded-xl bg-[#00ff41] text-black font-syne font-bold uppercase tracking-wider text-[10px] md:text-xs transition-all hover:scale-[1.01] hover:bg-[#00cc33] active:scale-95 shadow-[0_0_15px_rgba(0,255,65,0.22)] cursor-pointer flex items-center justify-center gap-1.5"
+                    className="w-full py-2.5 px-6 rounded-xl bg-[#00ff41] text-black font-display font-bold uppercase tracking-wider text-[10px] md:text-xs transition-all hover:scale-[1.01] hover:bg-[#00cc33] active:scale-95 shadow-[0_0_15px_rgba(0,255,65,0.22)] cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     <Play size={12} fill="black" /> {gameOver ? 'RUN AGAIN' : 'START RUNNER'}
                   </button>
 
                   <button
                     onClick={handleExit}
-                    className="w-full py-2.5 px-6 rounded-xl border border-white/10 bg-transparent text-white/50 font-syne font-bold uppercase tracking-wider text-[9px] md:text-[10px] transition-all hover:bg-white/5 cursor-pointer"
+                    className="w-full py-2.5 px-6 rounded-xl border border-white/10 bg-transparent text-white/50 font-display font-bold uppercase tracking-wider text-[9px] md:text-[10px] transition-all hover:bg-white/5 cursor-pointer"
                   >
                     RETURN TO HOME
                   </button>
@@ -1219,7 +1219,7 @@ const GameView = ({ darkMode, onClose }) => {
               <div className="hidden md:block col-span-1 w-px bg-white/10 self-stretch mx-auto my-1" />
 
               {/* Right Column (Instructions Panel - perfectly matching 3:2 aspect!) */}
-              <div className="col-span-4 flex flex-col justify-center items-start w-full text-left font-mono text-[8px] md:text-[9px] leading-relaxed opacity-70 border-t border-white/5 md:border-t-0 pt-4 md:pt-0">
+              <div className="col-span-4 flex flex-col justify-center items-start w-full text-left font-meta text-[8px] md:text-[9px] leading-relaxed opacity-70 border-t border-white/5 md:border-t-0 pt-4 md:pt-0">
                 <span className="text-[8px] uppercase opacity-40 tracking-widest font-bold mb-2">SYSTEM MANUAL</span>
                 <div className="space-y-2 border-t border-white/5 pt-2 w-full">
                   <p>• <strong>KEYBOARD:</strong> <span className="underline">Left/Right Arrows (or A/D)</span> to change lanes. <span className="underline">Spacebar (or Up)</span> to jump over walls.</p>
@@ -1231,20 +1231,20 @@ const GameView = ({ darkMode, onClose }) => {
               {/* GAME OVER CARD OVERLAY (Ultra-Minimalist pure black screen style!) */}
               {gameOver && (
                 <div className="absolute inset-0 bg-black flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300 z-50">
-                  <h2 className="text-3xl md:text-4xl font-syne font-extrabold tracking-tighter uppercase text-red-500 mb-8 animate-pulse">
+                  <h2 className="text-3xl md:text-4xl font-display font-extrabold tracking-tighter uppercase text-red-500 mb-8 animate-pulse">
                     GAME OVER
                   </h2>
 
                   <div className="w-full max-w-xs flex flex-col gap-3">
                     <button
                       onClick={startGame}
-                      className="w-full py-3 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-syne font-bold uppercase tracking-wider text-xs transition-all hover:scale-[1.01] active:scale-95 shadow-[0_0_15px_rgba(239,68,68,0.35)] cursor-pointer"
+                      className="w-full py-3 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-display font-bold uppercase tracking-wider text-xs transition-all hover:scale-[1.01] active:scale-95 shadow-[0_0_15px_rgba(239,68,68,0.35)] cursor-pointer"
                     >
                       PLAY AGAIN
                     </button>
                     <button
                       onClick={handleExit}
-                      className="w-full py-3 px-6 rounded-xl border border-white/10 hover:bg-white/5 text-white/50 font-syne font-bold uppercase tracking-wider text-xs transition-all cursor-pointer"
+                      className="w-full py-3 px-6 rounded-xl border border-white/10 hover:bg-white/5 text-white/50 font-display font-bold uppercase tracking-wider text-xs transition-all cursor-pointer"
                     >
                       EXIT
                     </button>

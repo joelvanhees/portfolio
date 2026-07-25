@@ -153,7 +153,7 @@ const FloatingConsole = ({
                 onClick={() => {
                   window.location.hash = '#contact';
                 }}
-                className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-mono transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
+                className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-meta transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
                   ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-black text-black hover:bg-black hover:text-white'}`}
               >
                 [ GO_TO_CONTACT_FORM ↓ ]
@@ -206,7 +206,7 @@ const FloatingConsole = ({
                   onClick={() => {
                     window.location.hash = '#contact';
                   }}
-                  className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-mono transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
+                  className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-meta transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
                     ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-black text-black hover:bg-black hover:text-white'}`}
                 >
                   [ GO_TO_CONTACT_FORM ↓ ]
@@ -280,7 +280,7 @@ const FloatingConsole = ({
                   onClick={() => {
                     window.location.hash = '#contact';
                   }}
-                  className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-mono transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
+                  className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-meta transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
                     ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-black text-black hover:bg-black hover:text-white'}`}
                 >
                   [ GO_TO_CONTACT_FORM ↓ ]
@@ -323,7 +323,7 @@ const FloatingConsole = ({
       }`}
     >
       {/* Header */}
-      <div className={`px-4 py-3 flex justify-between items-center border-b font-mono text-[10px] uppercase tracking-wider
+      <div className={`px-4 py-3 flex justify-between items-center border-b font-meta text-[10px] uppercase tracking-wider
         ${darkMode ? 'border-[#00FF41]/20 bg-black/40' : 'border-black bg-white'}`}
       >
         <div className="flex items-center gap-3">
@@ -360,11 +360,11 @@ const FloatingConsole = ({
       {/* Output screen */}
       <div 
         id="console-scroll-screen" 
-        className="console-output-screen flex-1 p-4 overflow-y-auto font-mono text-[11px] leading-relaxed space-y-2.5"
+        className="console-output-screen flex-1 p-4 overflow-y-auto font-meta text-[11px] leading-relaxed space-y-2.5"
       >
-        <div className="flex items-center gap-4 mb-6 pb-6 border-b border-current/10 font-syne">
+        <div className="flex items-center gap-4 mb-6 pb-6 border-b border-current/10 font-display">
           <ShellBlob isThinking={isThinking} darkMode={darkMode} className="w-16 h-16 md:w-24 md:h-24 shrink-0 drop-shadow-[0_0_15px_currentColor]" />
-          <div className="flex flex-col justify-center opacity-70 font-syne">
+          <div className="flex flex-col justify-center opacity-70 font-display">
             <div className="font-bold mb-1 tracking-wider text-xs">JOEL VAN HEES [SYSTEM SHELL v1.2]</div>
             <div className="text-[10px]">Type "help" for executable commands or ask general questions.</div>
           </div>
@@ -374,7 +374,7 @@ const FloatingConsole = ({
         {history.map((log, i) => {
           if (log.isInput) {
             return (
-              <div key={i} className="font-mono text-xs font-bold opacity-90 mb-2.5 text-current flex items-start gap-1">
+              <div key={i} className="font-meta text-xs font-bold opacity-90 mb-2.5 text-current flex items-start gap-1">
                 <span>{log.text}</span>
               </div>
             );
@@ -382,13 +382,13 @@ const FloatingConsole = ({
             return (
               <div 
                 key={i} 
-                className={`font-syne tracking-wide text-xs leading-relaxed opacity-95 mb-4 border-l border-current/25 pl-3.5 py-0.5 ${
+                className={`font-display tracking-wide text-xs leading-relaxed opacity-95 mb-4 border-l border-current/25 pl-3.5 py-0.5 ${
                   darkMode ? 'text-white' : 'text-black'
                 }`}
               >
                 <TypewriterText text={log.text} speed={log.isFirstMessage ? 'fast' : 'normal'} />
                 {log.customRender && (
-                  <div className="mt-2 font-mono">
+                  <div className="mt-2 font-meta">
                     {log.customRender()}
                   </div>
                 )}
@@ -400,7 +400,7 @@ const FloatingConsole = ({
       </div>
 
       {/* Input prompt */}
-      <div className={`p-3 border-t flex items-center gap-2 font-mono text-xs
+      <div className={`p-3 border-t flex items-center gap-2 font-meta text-xs
         ${darkMode ? 'border-[#00FF41]/20 bg-black/40' : 'border-black bg-white'}`}
       >
         <span className="opacity-75 text-base md:text-xs">joel@architect:~$</span>
@@ -410,7 +410,7 @@ const FloatingConsole = ({
           onChange={(e) => setInput(e.target.value)} 
           onKeyDown={handleCommand}
           placeholder={awaitingName ? "Type your name..." : "Ask me anything (e.g. 'help')..."}
-          className={`flex-1 bg-transparent border-none outline-none font-mono text-base md:text-xs text-current placeholder-current transition-opacity ${darkMode ? 'opacity-40 focus:opacity-85' : 'opacity-100'}`}
+          className={`flex-1 bg-transparent border-none outline-none font-meta text-base md:text-xs text-current placeholder-current transition-opacity ${darkMode ? 'opacity-40 focus:opacity-85' : 'opacity-100'}`}
           autoFocus
         />
         <ChevronRight size={14} className="opacity-60" />

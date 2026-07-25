@@ -274,15 +274,23 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
           <div className={`absolute inset-0 pointer-events-none opacity-[0.03] ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
 
         <div className="w-full z-10 flex flex-col justify-between min-h-[70vh] md:min-h-0 md:justify-start pt-6 md:pt-16">
-          <div className="flex flex-col gap-0 w-full">
+          {/* The hero type is the one block that ignored the page container.
+              It now sits in one that is only a little wider than the rest of
+              the site (86rem against the 80rem used elsewhere), so the left
+              and right lines stop reaching for the screen edges.
+
+              The size is capped as well: the widest line, TELLER, measures a
+              steady 3.97x the font size, so 21rem keeps it inside 86rem no
+              matter how wide the display gets. */}
+          <div className="flex flex-col gap-0 w-full max-w-[86rem] mx-auto">
             <p className={`text-sm md:text-base mb-6 md:mb-4 tracking-widest uppercase text-left w-full ${darkMode ? 'text-acid' : 'text-blue-600'}`}>
               <span className="animate-pulse">●</span> System Online
             </p>
 
             <h1 className="font-rubik leading-[0.82] md:leading-[0.78] tracking-tighter uppercase select-none w-full block">
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-left text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Visual" duration={350} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Story" duration={700} darkMode={darkMode} /></div>
-              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-right text-[18vw] md:text-[12.5vw] w-full"><ScrambleText text="Teller" duration={1050} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-left text-[18vw] md:text-[min(12.5vw,21rem)] w-full"><ScrambleText text="Visual" duration={350} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors opacity-80 block whitespace-nowrap text-center text-[18vw] md:text-[min(12.5vw,21rem)] w-full"><ScrambleText text="Story" duration={700} darkMode={darkMode} /></div>
+              <div className="glitch-hover cursor-default transition-colors block whitespace-nowrap text-right text-[18vw] md:text-[min(12.5vw,21rem)] w-full"><ScrambleText text="Teller" duration={1050} darkMode={darkMode} /></div>
             </h1>
           </div>
 

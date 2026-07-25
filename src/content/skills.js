@@ -7,9 +7,10 @@
  * uncrowded as it was.
  */
 
+// Designer leads: it is the core of the practice, the rest builds on it.
 export const skillRoles = [
-  { id: 'web', label: 'Webentwickler' },
   { id: 'design', label: 'Designer' },
+  { id: 'web', label: 'Webentwickler' },
   { id: 'threed', label: '3D Artist' },
   { id: 'ai', label: 'AI Engineer' },
 ];

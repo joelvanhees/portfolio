@@ -201,8 +201,8 @@ const SkillNetwork = ({ darkMode, className, activeRole = null }) => {
       {selectedNode && (
         <div
           data-skill-panel
-          className={`absolute z-50 left-1/2 -translate-x-1/2 bottom-3 w-[min(20rem,calc(100%-1.5rem))] p-3 rounded-xl border backdrop-blur-md shadow-2xl max-h-[45%] overflow-y-auto break-words
-            ${darkMode ? 'bg-black/90 border-white/20 text-white' : 'bg-white/90 border-black/20 text-black'}`}
+          className={`absolute z-50 left-1/2 -translate-x-1/2 bottom-3 w-[min(20rem,calc(100%-1.5rem))] p-4 rounded-2xl max-h-[45%] overflow-y-auto break-words
+            liquid-panel ${darkMode ? 'text-white' : 'liquid-panel--light text-black'}`}
         >
           <div className="flex items-center gap-2 mb-2 border-b border-current/10 pb-2">
             <button

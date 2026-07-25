@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import SkillNetwork from '../components/SkillNetwork';
+import RoleSwitch from '../components/RoleSwitch';
 import { networkGroups } from '../content/services';
 
 const ServicesView = ({ darkMode }) => {
+  const [activeRole, setActiveRole] = useState(null);
+
   return (
     <div className="pt-32 px-6 min-h-screen max-w-7xl mx-auto pb-14 md:pb-40">
       <div data-reveal className="flex flex-col md:flex-row justify-between items-end mb-5 md:mb-12">
@@ -28,7 +32,12 @@ const ServicesView = ({ darkMode }) => {
         ))}
       </div>
 
-      <SkillNetwork darkMode={darkMode} />
+      {/* Same control as the home page, driving the same map. */}
+      <div data-reveal className="mb-6">
+        <RoleSwitch darkMode={darkMode} activeRole={activeRole} onChange={setActiveRole} />
+      </div>
+
+      <SkillNetwork darkMode={darkMode} activeRole={activeRole} />
     </div>
   );
 };

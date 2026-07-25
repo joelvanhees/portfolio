@@ -4,7 +4,7 @@ import { ArrowUpRight, Layers, Video } from 'lucide-react';
 import SkillNetwork from '../components/SkillNetwork';
 const SpiralTimeSphere = lazy(() => import('../components/visuals/SpiralTimeSphere'));
 import { homeCapabilities } from '../content/services';
-import { skillRoles } from '../content/skills';
+import RoleSwitch from '../components/RoleSwitch';
 import salatProfileImg from '../assets/images/salat_profile.png';
 import LazyImage from '../components/LazyImage';
 import { playClickSound } from '../utils/clickSound';
@@ -64,10 +64,6 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
   // Exactly one role can be active, and none is active to begin with — the
   // map then shows the full overview. Tapping the active role clears it.
   const [activeRole, setActiveRole] = useState(null);
-
-  const toggleRole = (role) => {
-    setActiveRole((current) => (current === role ? null : role));
-  };
 
   useEffect(() => {
     const sequence = [
@@ -357,27 +353,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             >
               My practice combines classical design discipline with experimental technologies to create scalable visual identities.
             </p>
-            <div data-reveal style={{ '--reveal-delay': '170ms' }} className="flex flex-wrap gap-4">
-              {skillRoles.map(({ id, label }) => {
-                const isSelected = activeRole === id;
-                return (
-                  <button
-                    key={id}
-                    aria-pressed={isSelected}
-                    onClick={() => {
-                      toggleRole(id);
-                      playClickSound('click');
-                    }}
-                    className={`px-4 py-2 rounded-full text-sm uppercase transition-all duration-300 border cursor-pointer active:scale-95
-                      ${isSelected 
-                        ? (darkMode ? 'bg-[#C7FF2E] border-[#C7FF2E] text-black shadow-[0_0_15px_rgba(199,255,46,0.3)]' : 'bg-black border-black text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]') 
-                        : (darkMode ? 'border-[#C7FF2E]/40 text-[#C7FF2E]/80 hover:text-[#C7FF2E] hover:border-[#C7FF2E] bg-transparent' : 'border-black/30 text-black/75 hover:text-black hover:border-black bg-transparent')
-                      }`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
+            <div data-reveal style={{ '--reveal-delay': '170ms' }}>
+              <RoleSwitch darkMode={darkMode} activeRole={activeRole} onChange={setActiveRole} />
             </div>
           </div>
           </div>
@@ -453,8 +430,11 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                   </div>
                 </div>
 
-                <div className={`relative w-full overflow-hidden bg-gray-800 mb-6 rounded-lg ${
-                  project.id === "01" ? "aspect-[9/16] md:w-1/3 mx-auto" : "aspect-video md:aspect-[2.5/1]"
+                {/* The width lives in the branches, not the base: `w-full` and `w-2/3`
+                    are the same specificity, so leaving both on the element let
+                    `w-full` win and the portrait card stayed too tall to pin. */}
+                <div className={`relative overflow-hidden bg-gray-800 mb-6 rounded-lg ${
+                  project.id === "01" ? "aspect-[9/16] w-[56%] md:w-1/3 mx-auto" : "aspect-video md:aspect-[2.5/1] w-full"
                 }`}>
                   <div className={`absolute inset-0 z-10 transition-opacity duration-500 opacity-20 group-hover:opacity-0 ${darkMode ? 'bg-black' : 'bg-white'}`}></div>
 

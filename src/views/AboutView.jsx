@@ -19,7 +19,7 @@ const AboutView = ({ darkMode }) => (
       </div>
 
       <div>
-        <div className={`p-8 rounded-lg font-meta text-sm leading-relaxed mb-12 ${darkMode ? 'bg-[#111] border border-green-900/30' : 'bg-gray-100 border border-gray-300'}`}>
+        <div className={`p-8 rounded-lg font-meta text-sm leading-relaxed mb-12 ${darkMode ? 'bg-[#111] border border-acid-deep/30' : 'bg-gray-100 border border-gray-300'}`}>
           <p className="mb-4 text-xs opacity-50">/ MANIFESTO.TXT</p>
           <p className="mb-6">
             I am a graphic designer working across brand systems, generative design and visual storytelling.
@@ -41,7 +41,7 @@ const AboutView = ({ darkMode }) => (
           </div>
           <div className="flex justify-between items-center border-b border-current pb-2">
             <span className="font-meta text-xs opacity-50">STATUS</span>
-            <span className={`font-display font-bold ${darkMode ? 'text-green-500' : 'text-blue-500'}`}>AVAILABLE FOR JOBS</span>
+            <span className={`font-display font-bold ${darkMode ? 'text-acid' : 'text-blue-500'}`}>AVAILABLE FOR JOBS</span>
           </div>
           <div className="flex justify-between items-center border-b border-current pb-2">
             <span className="font-meta text-xs opacity-50">EMAIL</span>

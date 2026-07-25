@@ -621,7 +621,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm transition-opacity duration-300">
           <div className={`p-8 rounded-3xl border flex flex-col items-center gap-4 text-center max-w-xs
             ${darkMode 
-              ? 'bg-black/90 border-[#00FF41]/20 text-[#00FF41]' 
+              ? 'bg-black/90 border-[#C7FF2E]/20 text-[#C7FF2E]' 
               : 'bg-white/95 border-[#0055FF]/20 text-[#0055FF]'}`}
           >
             <div className="w-8 h-8 rounded-full border-2 border-current border-t-transparent animate-spin" />
@@ -639,7 +639,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
       >
         <div className={`p-5 md:p-6 rounded-2xl border shadow-2xl backdrop-blur-md flex flex-col gap-2.5 pointer-events-auto
           ${darkMode 
-            ? 'bg-black/85 border-[#00FF41]/35 text-[#00FF41] shadow-[0_0_40px_rgba(0,255,65,0.15)] shadow-black/80' 
+            ? 'bg-black/85 border-[#C7FF2E]/35 text-[#C7FF2E] shadow-[0_0_40px_rgba(199,255,46,0.15)] shadow-black/80' 
             : 'bg-white/90 border-[#0055FF]/35 text-[#0055FF] shadow-[0_0_30px_rgba(0,85,255,0.15)] shadow-black/10'}`}
         >
           <div className="flex justify-between items-center border-b border-current pb-2">
@@ -675,7 +675,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
       <div className="absolute top-6 left-1/2 -translate-x-1/2 pointer-events-none flex flex-col items-center z-30 w-full px-6 text-center">
         <div className={`px-5 py-2.5 rounded-full border shadow-xl backdrop-blur-md flex items-center gap-3 pointer-events-auto transition-all transform hover:scale-105 duration-300
           ${darkMode 
-            ? 'bg-black/75 border-[#00FF41]/20 text-[#00FF41] shadow-black/65' 
+            ? 'bg-black/75 border-[#C7FF2E]/20 text-[#C7FF2E] shadow-black/65' 
             : 'bg-white/80 border-[#0055FF]/20 text-[#0055FF] shadow-black/10'}`}
         >
           <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
@@ -693,7 +693,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
           onClick={() => { onClose(); playClickSound('close'); }}
           className={`px-8 py-4 rounded-xl font-meta text-xs uppercase tracking-widest font-bold border transition-all cursor-pointer hover:shadow-2xl active:scale-95 shadow-lg
             ${darkMode 
-              ? 'border-[#00FF41] text-black bg-[#00FF41] hover:bg-transparent hover:text-[#00FF41] hover:shadow-[0_0_20px_rgba(0,255,65,0.35)] shadow-black/60' 
+              ? 'border-[#C7FF2E] text-black bg-[#C7FF2E] hover:bg-transparent hover:text-[#C7FF2E] hover:shadow-[0_0_20px_rgba(199,255,46,0.35)] shadow-black/60' 
               : 'border-[#0055FF] text-white bg-[#0055FF] hover:bg-transparent hover:text-[#0055FF] hover:shadow-[0_0_20px_rgba(0,85,255,0.35)] shadow-black/15'}`}
         >
           END COOLDOWN
@@ -710,7 +710,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
         title="Details anzeigen"
         className={`absolute bottom-6 left-6 p-4 rounded-full border shadow-2xl z-40 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer flex items-center justify-center
           ${darkMode 
-            ? 'bg-black/80 border-[#00FF41]/40 text-[#00FF41] hover:shadow-[0_0_20px_rgba(0,255,65,0.4)]' 
+            ? 'bg-black/80 border-[#C7FF2E]/40 text-[#C7FF2E] hover:shadow-[0_0_20px_rgba(199,255,46,0.4)]' 
             : 'bg-white/90 border-[#0055FF]/40 text-[#0055FF] hover:shadow-[0_0_20px_rgba(0,85,255,0.4)]'}`}
       >
         <Info size={18} />
@@ -722,7 +722,7 @@ const CooldownPool = ({ darkMode, onClose }) => {
         title="Exit Cooldown (ESC)"
         className={`absolute top-6 right-6 p-3 rounded-full border z-40 transition-all hover:scale-110 active:scale-95 shadow-lg cursor-pointer
           ${darkMode 
-            ? 'bg-black/80 border-white/10 text-white hover:text-[#00FF41] hover:border-[#00FF41]/40' 
+            ? 'bg-black/80 border-white/10 text-white hover:text-[#C7FF2E] hover:border-[#C7FF2E]/40' 
             : 'bg-white/90 border-black/10 text-black hover:text-[#0055FF] hover:border-[#0055FF]/40'}`}
       >
         <X size={18} />

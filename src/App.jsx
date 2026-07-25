@@ -174,7 +174,7 @@ const App = () => {
   };
 
   return (
-    <div className={`min-h-screen w-full relative transition-colors duration-700 ease-in-out font-meta selection:bg-green-500 selection:text-black overflow-x-hidden bg-transparent ${darkMode ? 'text-[#E0E0E0]' : 'text-black'}`}>
+    <div className={`min-h-screen w-full relative transition-colors duration-700 ease-in-out font-meta selection:bg-acid selection:text-black overflow-x-hidden bg-transparent ${darkMode ? 'text-[#E0E0E0]' : 'text-black'}`}>
       <style>{`
         @keyframes glitch {
           0% { transform: translate(0) }
@@ -186,13 +186,13 @@ const App = () => {
         }
         .glitch-hover:hover {
           animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
-          color: ${darkMode ? '#00FF41' : '#000000'};
+          color: ${darkMode ? '#C7FF2E' : '#000000'};
         }
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: ${darkMode ? '#111' : '#ddd'}; }
         ::-webkit-scrollbar-thumb { background: ${darkMode ? '#333' : '#999'}; }
-        ::-webkit-scrollbar-thumb:hover { background: ${darkMode ? '#00FF41' : '#000000'}; }
+        ::-webkit-scrollbar-thumb:hover { background: ${darkMode ? '#C7FF2E' : '#000000'}; }
       `}</style>
 
       <div className={`fixed inset-0 pointer-events-none z-0 ${
@@ -203,7 +203,7 @@ const App = () => {
 
       <div
         ref={scrollBarRef}
-        className={`fixed top-0 left-0 h-1 z-50 transition-all duration-100 ${darkMode ? 'bg-[#00FF41]' : 'bg-black'}`}
+        className={`fixed top-0 left-0 h-1 z-50 transition-all duration-100 ${darkMode ? 'bg-[#C7FF2E]' : 'bg-black'}`}
         style={{ width: '0%' }}
       />
 
@@ -213,7 +213,7 @@ const App = () => {
           className="cursor-pointer transition-all duration-300 hover:scale-105 flex items-center gap-1.5 bg-transparent border-none p-0 pointer-events-auto"
         >
           <BrandSignature className="h-4 sm:h-5 md:h-7 w-auto" />
-          <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded uppercase font-meta tracking-widest ${darkMode ? 'bg-[#00FF41]/15 text-[#00FF41] border border-[#00FF41]/25' : 'bg-black/5 text-black border border-black/20'}`}>[ARCHITECT]</span>
+          <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded uppercase font-meta tracking-widest ${darkMode ? 'bg-[#C7FF2E]/15 text-[#C7FF2E] border border-[#C7FF2E]/25' : 'bg-black/5 text-black border border-black/20'}`}>[ARCHITECT]</span>
         </button>
 
         <div className="flex items-center gap-3 sm:gap-6 pointer-events-none">
@@ -236,10 +236,10 @@ const App = () => {
             }}
             className={`flex items-center gap-1.5 text-[11px] sm:text-xs border px-3.5 py-1.5 sm:px-3 sm:py-1 rounded-full transition-all pointer-events-auto active:scale-95
               ${consoleOpen 
-                ? (darkMode ? 'border-[#00FF41] text-[#00FF41] bg-[#00FF41]/10' : 'border-[#0055FF] text-[#0055FF] bg-[#0055FF]/10') 
+                ? (darkMode ? 'border-[#C7FF2E] text-[#C7FF2E] bg-[#C7FF2E]/10' : 'border-[#0055FF] text-[#0055FF] bg-[#0055FF]/10') 
                 : (darkMode ? 'border-white/20 text-white hover:bg-white hover:text-black' : 'border-black/20 text-black hover:bg-black hover:text-white')}`}
           >
-            <Terminal size={12} className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${consoleOpen ? 'text-[#00FF41]' : ''}`} />
+            <Terminal size={12} className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${consoleOpen ? 'text-[#C7FF2E]' : ''}`} />
             {consoleOpen && !consoleMinimized ? 'SHELL: CLOSE' : 'SHELL: OPEN'}
           </button>
 
@@ -253,7 +253,7 @@ const App = () => {
                 ? 'border-white/20 text-white hover:bg-white hover:text-black' 
                 : 'border-black/20 text-black hover:bg-black hover:text-white'}`}
           >
-            {darkMode ? <div className="w-2 h-2 rounded-full bg-[#00FF41]" /> : <div className="w-2 h-2 rounded-full bg-[#0055FF]" />}
+            {darkMode ? <div className="w-2 h-2 rounded-full bg-[#C7FF2E]" /> : <div className="w-2 h-2 rounded-full bg-[#0055FF]" />}
             {darkMode ? 'SYSTEM: DARK' : 'SYSTEM: LIGHT'}
           </button>
 
@@ -279,7 +279,7 @@ const App = () => {
         <div className="fixed inset-0 z-30" onClick={() => { setMenuOpen(false); playClickSound('close'); }}>
           <div 
             onClick={(e) => e.stopPropagation()}
-            className={`absolute top-24 right-4 md:right-8 w-64 md:w-80 rounded-2xl flex flex-col justify-start items-end p-6 md:p-8 gap-5 text-lg md:text-xl font-display font-bold border shadow-2xl transition-all duration-500 animate-in slide-in-from-right-8 ${darkMode ? 'bg-black/60 border-[#00FF41]/20 shadow-[0_0_30px_rgba(0,255,65,0.1)]' : 'bg-white border-black shadow-[0_0_35px_rgba(0,0,0,0.25)]'} backdrop-blur-xl`}
+            className={`absolute top-24 right-4 md:right-8 w-64 md:w-80 rounded-2xl flex flex-col justify-start items-end p-6 md:p-8 gap-5 text-lg md:text-xl font-display font-bold border shadow-2xl transition-all duration-500 animate-in slide-in-from-right-8 ${darkMode ? 'bg-black/60 border-[#C7FF2E]/20 shadow-[0_0_30px_rgba(199,255,46,0.1)]' : 'bg-white border-black shadow-[0_0_35px_rgba(0,0,0,0.25)]'} backdrop-blur-xl`}
           >
             <button
               onClick={() => {
@@ -287,7 +287,7 @@ const App = () => {
                 setMenuOpen(false);
                 playClickSound('open');
               }}
-              className="mb-2 bg-transparent border-none p-0 cursor-pointer focus:outline-none hover:scale-110 transition-all duration-500 drop-shadow-[0_0_20px_rgba(0,255,65,0.2)] flex items-center justify-center pointer-events-auto"
+              className="mb-2 bg-transparent border-none p-0 cursor-pointer focus:outline-none hover:scale-110 transition-all duration-500 drop-shadow-[0_0_20px_rgba(199,255,46,0.2)] flex items-center justify-center pointer-events-auto"
               title="Geheimes Mixer Rezeptbuch"
             >
               <BrandMark className="h-16 md:h-20 w-auto" />
@@ -299,7 +299,7 @@ const App = () => {
                   handleNav(item.toLowerCase());
                   playClickSound('click');
                 }}
-                className={`hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300 ${activePage === item.toLowerCase() ? (darkMode ? 'text-[#00FF41]' : 'text-black underline decoration-2 underline-offset-4') : (darkMode ? '' : 'text-black/50')}`}
+                className={`hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r from-acid to-blue-500 transition-all duration-300 ${activePage === item.toLowerCase() ? (darkMode ? 'text-[#C7FF2E]' : 'text-black underline decoration-2 underline-offset-4') : (darkMode ? '' : 'text-black/50')}`}
               >
                 {`0${i} // ${item}`}
               </button>
@@ -328,7 +328,7 @@ const App = () => {
                 }}
                 className={`w-full text-right text-xs font-meta tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
                   ${darkMode 
-                    ? 'border border-[#00ff41]/40 bg-[#00ff41]/10 text-[#00ff41] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,255,65,0.15)] hover:bg-[#00ff41]/25 hover:border-[#00ff41]/80 hover:text-[#52ff84]' 
+                    ? 'border border-[#C7FF2E]/40 bg-[#C7FF2E]/10 text-[#C7FF2E] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(199,255,46,0.15)] hover:bg-[#C7FF2E]/25 hover:border-[#C7FF2E]/80 hover:text-[#D9FF73]' 
                     : 'border border-black bg-white text-black hover:bg-black hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
               >
                 BLOB RUN ⌁
@@ -510,7 +510,7 @@ const App = () => {
         </div>
       )}
 
-      <footer id="footer-contact" className={`py-24 px-6 ${darkMode ? 'bg-[#00FF41] text-black' : 'bg-[#0055FF] text-white'}`}>
+      <footer id="footer-contact" className={`py-24 px-6 ${darkMode ? 'bg-[#C7FF2E] text-black' : 'bg-[#0055FF] text-white'}`}>
         <div className="max-w-7xl mx-auto flex flex-col justify-between min-h-[50vh]">
           <div>
             <h2 className="text-6xl md:text-9xl font-rubik font-bold tracking-tighter leading-none mb-8">
@@ -576,7 +576,7 @@ const App = () => {
         <div 
           ref={cursorRef}
           className={`fixed w-2 h-2 rounded-full pointer-events-none z-[100] transition-colors duration-500 -translate-x-1/2 -translate-y-1/2
-            ${darkMode ? 'bg-[#00FF41] shadow-[0_0_8px_#00FF41]' : 'bg-[#0055FF] shadow-[0_0_8px_#0055FF]'}`}
+            ${darkMode ? 'bg-[#C7FF2E] shadow-[0_0_8px_#C7FF2E]' : 'bg-[#0055FF] shadow-[0_0_8px_#0055FF]'}`}
           style={{ left: 0, top: 0, transform: 'translate3d(0px, 0px, 0)' }}
         />
       )}

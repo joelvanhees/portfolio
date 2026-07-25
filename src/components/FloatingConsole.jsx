@@ -154,7 +154,7 @@ const FloatingConsole = ({
                   window.location.hash = '#contact';
                 }}
                 className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-meta transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
-                  ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-black text-black hover:bg-black hover:text-white'}`}
+                  ${darkMode ? 'border-[#C7FF2E] text-[#C7FF2E]' : 'border-black text-black hover:bg-black hover:text-white'}`}
               >
                 [ GO_TO_CONTACT_FORM ↓ ]
               </button>
@@ -207,7 +207,7 @@ const FloatingConsole = ({
                     window.location.hash = '#contact';
                   }}
                   className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-meta transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
-                    ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-black text-black hover:bg-black hover:text-white'}`}
+                    ${darkMode ? 'border-[#C7FF2E] text-[#C7FF2E]' : 'border-black text-black hover:bg-black hover:text-white'}`}
                 >
                   [ GO_TO_CONTACT_FORM ↓ ]
                 </button>
@@ -281,7 +281,7 @@ const FloatingConsole = ({
                     window.location.hash = '#contact';
                   }}
                   className={`mt-2.5 px-3.5 py-2 rounded-lg border text-[10px] uppercase font-meta transition-all hover:bg-current hover:text-black cursor-pointer font-bold flex items-center gap-1.5 active:scale-95
-                    ${darkMode ? 'border-[#00FF41] text-[#00FF41]' : 'border-black text-black hover:bg-black hover:text-white'}`}
+                    ${darkMode ? 'border-[#C7FF2E] text-[#C7FF2E]' : 'border-black text-black hover:bg-black hover:text-white'}`}
                 >
                   [ GO_TO_CONTACT_FORM ↓ ]
                 </button>
@@ -318,13 +318,13 @@ const FloatingConsole = ({
         : 'bottom-20 left-4 right-4 h-[380px] md:bottom-24 md:right-6 md:left-auto md:w-[480px] md:h-[320px]'
       }
       ${darkMode 
-        ? 'bg-black/90 border-[#00FF41]/30 text-[#00FF41] shadow-[0_0_30px_rgba(0,255,0,0.15)]' 
+        ? 'bg-black/90 border-[#C7FF2E]/30 text-[#C7FF2E] shadow-[0_0_30px_rgba(0,255,0,0.15)]' 
         : 'bg-white border-black text-black shadow-[0_0_35px_rgba(0,0,0,0.25)]'
       }`}
     >
       {/* Header */}
       <div className={`px-4 py-3 flex justify-between items-center border-b font-meta text-[10px] uppercase tracking-wider
-        ${darkMode ? 'border-[#00FF41]/20 bg-black/40' : 'border-black bg-white'}`}
+        ${darkMode ? 'border-[#C7FF2E]/20 bg-black/40' : 'border-black bg-white'}`}
       >
         <div className="flex items-center gap-3">
           {/* Apple dots style window controls */}
@@ -401,7 +401,7 @@ const FloatingConsole = ({
 
       {/* Input prompt */}
       <div className={`p-3 border-t flex items-center gap-2 font-meta text-xs
-        ${darkMode ? 'border-[#00FF41]/20 bg-black/40' : 'border-black bg-white'}`}
+        ${darkMode ? 'border-[#C7FF2E]/20 bg-black/40' : 'border-black bg-white'}`}
       >
         <span className="opacity-75 text-base md:text-xs">joel@architect:~$</span>
         <input 

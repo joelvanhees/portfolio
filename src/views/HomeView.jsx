@@ -49,7 +49,7 @@ function ScrambleText({ text, duration = 800, darkMode }) {
   }, [text, duration]);
 
   return (
-    <span className={`transition-colors duration-500 ${resolved ? '' : (darkMode ? 'text-[#00FF41]' : 'text-[#0055FF]')}`}>
+    <span className={`transition-colors duration-500 ${resolved ? '' : (darkMode ? 'text-[#C7FF2E]' : 'text-[#0055FF]')}`}>
       {displayed.join('')}
     </span>
   );
@@ -206,7 +206,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
         }
       }
       ctx.strokeStyle = darkMode
-        ? `rgba(0, 255, 65, ${currentFade * 0.06})`
+        ? `rgba(199, 255, 46, ${currentFade * 0.06})`
         : `rgba(0, 85, 255, ${currentFade * 0.10})`;
       ctx.stroke();
 
@@ -228,7 +228,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
         }
       }
       ctx.strokeStyle = darkMode
-        ? `rgba(0, 255, 65, ${currentFade * 0.06})`
+        ? `rgba(199, 255, 46, ${currentFade * 0.06})`
         : `rgba(0, 85, 255, ${currentFade * 0.10})`;
       ctx.stroke();
 
@@ -275,7 +275,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
 
         <div className="w-full z-10 flex flex-col justify-between min-h-[70vh] md:min-h-0 md:justify-start pt-6 md:pt-16">
           <div className="flex flex-col gap-0 w-full">
-            <p className={`text-sm md:text-base mb-6 md:mb-4 tracking-widest uppercase text-left w-full ${darkMode ? 'text-green-500' : 'text-blue-600'}`}>
+            <p className={`text-sm md:text-base mb-6 md:mb-4 tracking-widest uppercase text-left w-full ${darkMode ? 'text-acid' : 'text-blue-600'}`}>
               <span className="animate-pulse">●</span> System Online
             </p>
 
@@ -303,7 +303,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                   }}
                   className={`text-xs font-meta tracking-widest px-6 py-2.5 rounded-full transition-all duration-300 hover:scale-105 cursor-pointer uppercase border active:scale-95
                     ${darkMode 
-                      ? 'border-[#00FF41] text-[#00FF41] bg-transparent hover:bg-[#00FF41] hover:text-black shadow-[0_0_15px_rgba(0,255,65,0.15)]' 
+                      ? 'border-[#C7FF2E] text-[#C7FF2E] bg-transparent hover:bg-[#C7FF2E] hover:text-black shadow-[0_0_15px_rgba(199,255,46,0.15)]' 
                       : 'border-black text-black bg-transparent hover:bg-black hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.05)]'}`}
                 >
                   WORK
@@ -315,7 +315,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                   }}
                   className={`text-xs font-meta tracking-widest px-6 py-2.5 rounded-full transition-all duration-300 hover:scale-105 cursor-pointer uppercase border active:scale-95
                     ${darkMode 
-                      ? 'border-[#00FF41] bg-[#00FF41] text-black md:bg-transparent md:text-[#00FF41] hover:bg-[#00FF41] hover:text-black shadow-[0_0_15px_rgba(0,255,65,0.2)]' 
+                      ? 'border-[#C7FF2E] bg-[#C7FF2E] text-black md:bg-transparent md:text-[#C7FF2E] hover:bg-[#C7FF2E] hover:text-black shadow-[0_0_15px_rgba(199,255,46,0.2)]' 
                       : 'border-black bg-black text-white md:bg-transparent md:text-black hover:bg-black hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
                 >
                   CONTACT
@@ -353,8 +353,8 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                     }}
                     className={`px-4 py-2 rounded-full text-sm uppercase transition-all duration-300 border cursor-pointer active:scale-95
                       ${isSelected 
-                        ? (darkMode ? 'bg-[#00FF41] border-[#00FF41] text-black shadow-[0_0_15px_rgba(0,255,65,0.3)]' : 'bg-black border-black text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]') 
-                        : (darkMode ? 'border-[#00FF41]/40 text-[#00FF41]/80 hover:text-[#00FF41] hover:border-[#00FF41] bg-transparent' : 'border-black/30 text-black/75 hover:text-black hover:border-black bg-transparent')
+                        ? (darkMode ? 'bg-[#C7FF2E] border-[#C7FF2E] text-black shadow-[0_0_15px_rgba(199,255,46,0.3)]' : 'bg-black border-black text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]') 
+                        : (darkMode ? 'border-[#C7FF2E]/40 text-[#C7FF2E]/80 hover:text-[#C7FF2E] hover:border-[#C7FF2E] bg-transparent' : 'border-black/30 text-black/75 hover:text-black hover:border-black bg-transparent')
                       }`}
                   >
                     {role}
@@ -365,14 +365,14 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
           </div>
 
           <div className="flex flex-col gap-8">
-            <div className={`p-6 rounded-lg font-meta text-xs md:text-sm leading-6 shadow-2xl overflow-hidden relative transition-all duration-1000 ${darkMode ? 'bg-[#0A0A0A] border border-green-900/50' : 'bg-white border border-gray-200'} flex items-center justify-center min-h-[60vh]`}>
+            <div className={`p-6 rounded-lg font-meta text-xs md:text-sm leading-6 shadow-2xl overflow-hidden relative transition-all duration-1000 ${darkMode ? 'bg-[#0A0A0A] border border-acid-deep/50' : 'bg-white border border-gray-200'} flex items-center justify-center min-h-[60vh]`}>
               <div className="absolute top-6 left-6 flex gap-2 mb-4 opacity-50 z-20">
                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
                 <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <div className="w-3 h-3 rounded-full bg-acid"></div>
               </div>
 
-              <div className={`${darkMode ? 'text-green-500' : 'text-blue-600'} transition-opacity duration-500 w-full ${bootComplete ? 'opacity-0 absolute pointer-events-none' : 'opacity-100 relative'}`}>
+              <div className={`${darkMode ? 'text-acid' : 'text-blue-600'} transition-opacity duration-500 w-full ${bootComplete ? 'opacity-0 absolute pointer-events-none' : 'opacity-100 relative'}`}>
                 {terminalLine >= 1 && <p>{'>'} INITIATING IDENTITY SEQUENCE...</p>}
                 {terminalLine >= 2 && <p>{'>'} SUBJECT: JOEL_VAN_HEES</p>}
                 {terminalLine >= 3 && <p>{'>'} STATUS: AWAKENED</p>}

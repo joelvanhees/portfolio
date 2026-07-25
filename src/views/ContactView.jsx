@@ -37,7 +37,7 @@ const ContactView = ({ darkMode }) => {
     <div className="pt-32 px-6 min-h-screen max-w-7xl mx-auto flex items-center justify-center pb-40">
       <div className={`w-full max-w-2xl backdrop-blur-xl rounded-3xl p-8 md:p-12 border shadow-2xl relative overflow-hidden group transition-all duration-500
         ${darkMode 
-          ? 'bg-white/5 border-white/10 text-white shadow-[0_0_50px_rgba(0,255,65,0.1)]' 
+          ? 'bg-white/5 border-white/10 text-white shadow-[0_0_50px_rgba(199,255,46,0.1)]' 
           : 'bg-white/60 border-white/40 text-black shadow-[0_0_50px_rgba(0,85,255,0.1)]'
         }`}
       >
@@ -58,7 +58,7 @@ const ContactView = ({ darkMode }) => {
                 onChange={handleChange}
                 required
                 placeholder=" "
-                className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-display text-xl transition-all ${darkMode ? 'border-white/20 focus:border-green-500' : 'border-black/20 focus:border-blue-500'}`}
+                className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-display text-xl transition-all ${darkMode ? 'border-white/20 focus:border-acid' : 'border-black/20 focus:border-blue-500'}`}
               />
               <label className={`absolute left-0 top-2 font-meta text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Identity / Name</label>
             </div>
@@ -71,7 +71,7 @@ const ContactView = ({ darkMode }) => {
                 onChange={handleChange}
                 required
                 placeholder=" "
-                className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-display text-xl transition-all ${darkMode ? 'border-white/20 focus:border-green-500' : 'border-black/20 focus:border-blue-500'}`}
+                className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-display text-xl transition-all ${darkMode ? 'border-white/20 focus:border-acid' : 'border-black/20 focus:border-blue-500'}`}
               />
               <label className={`absolute left-0 top-2 font-meta text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Frequency / Email</label>
             </div>
@@ -84,7 +84,7 @@ const ContactView = ({ darkMode }) => {
                 onChange={handleChange}
                 required
                 placeholder=" "
-                className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-meta text-sm resize-none transition-all ${darkMode ? 'border-white/20 focus:border-green-500' : 'border-black/20 focus:border-blue-500'}`}
+                className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-meta text-sm resize-none transition-all ${darkMode ? 'border-white/20 focus:border-acid' : 'border-black/20 focus:border-blue-500'}`}
               ></textarea>
               <label className={`absolute left-0 top-2 font-meta text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Transmission Data</label>
             </div>
@@ -94,8 +94,8 @@ const ContactView = ({ darkMode }) => {
               disabled={status === 'sending' || status === 'success'}
               className={`w-full py-6 rounded-xl font-bold uppercase tracking-widest transition-all hover:scale-[1.02] flex items-center justify-center gap-2 mt-8 
                   ${status === 'success' 
-                    ? (darkMode ? 'bg-green-600 text-white' : 'bg-green-500 text-white')
-                    : (darkMode ? 'bg-[#00FF41] text-black hover:bg-[#00cc33] shadow-[0_0_20px_rgba(0,255,65,0.4)]' : 'bg-[#0055FF] text-white hover:bg-[#0044cc] shadow-[0_0_20px_rgba(0,85,255,0.4)]')
+                    ? (darkMode ? 'bg-acid-dark text-white' : 'bg-acid text-white')
+                    : (darkMode ? 'bg-[#C7FF2E] text-black hover:bg-[#9FCC25] shadow-[0_0_20px_rgba(199,255,46,0.4)]' : 'bg-[#0055FF] text-white hover:bg-[#0044cc] shadow-[0_0_20px_rgba(0,85,255,0.4)]')
                   }
                   ${status === 'sending' ? 'opacity-70 cursor-wait' : ''}
                 `}

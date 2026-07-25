@@ -334,7 +334,7 @@ const ProjectModal = ({
             {selectedProject.id === "01" ? (
               <div className="space-y-12 mt-4">
                 <div>
-                  <h3 className="text-xl font-rubik font-bold mb-4 uppercase text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">Social Media</h3>
+                  <h3 className="text-xl font-rubik font-bold mb-4 uppercase text-transparent bg-clip-text bg-gradient-to-r from-acid to-blue-500">Social Media</h3>
                   <p className="text-lg font-light leading-relaxed">
                     Created artistic, experimental video content centered around the 'Salatschüssel' persona. This strategic content creation grew the channel to ~400k followers and generated over 10 million likes, establishing a massive organic reach.
                   </p>
@@ -623,7 +623,7 @@ const ProjectModal = ({
               {selectedProject.id !== "02" && selectedProject.id !== "07" && (
                 <button
                   onClick={() => { onStartProject(); playClickSound('open'); }}
-                  className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest transition-all hover:scale-[1.02] flex items-center justify-center gap-2 cursor-pointer ${darkMode ? 'bg-[#00FF41] text-black hover:bg-[#00cc33]' : 'bg-black text-white hover:bg-black/90'}`}
+                  className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest transition-all hover:scale-[1.02] flex items-center justify-center gap-2 cursor-pointer ${darkMode ? 'bg-[#C7FF2E] text-black hover:bg-[#9FCC25]' : 'bg-black text-white hover:bg-black/90'}`}
                 >
                   Launch Your Project <ArrowUpRight size={18} />
                 </button>

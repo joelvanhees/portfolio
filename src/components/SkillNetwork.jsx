@@ -64,7 +64,7 @@ const SkillNetwork = ({ darkMode, className }) => {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      ctx.strokeStyle = darkMode ? 'rgba(0, 255, 65, 0.2)' : 'rgba(0, 85, 255, 0.2)';
+      ctx.strokeStyle = darkMode ? 'rgba(199, 255, 46, 0.2)' : 'rgba(0, 85, 255, 0.2)';
       ctx.lineWidth = 1;
 
       const getPos = (node, t) => {
@@ -117,7 +117,7 @@ const SkillNetwork = ({ darkMode, className }) => {
           onClick={() => setSelectedNode(node)}
         >
           <div className={`w-3 h-3 md:w-4 md:h-4 rounded-full mx-auto mb-2 transition-all duration-300
-            ${darkMode ? 'bg-green-500 shadow-[0_0_10px_rgba(0,255,65,0.5)]' : 'bg-blue-600 shadow-[0_0_10px_rgba(0,85,255,0.5)]'}
+            ${darkMode ? 'bg-acid shadow-[0_0_10px_rgba(199,255,46,0.5)]' : 'bg-blue-600 shadow-[0_0_10px_rgba(0,85,255,0.5)]'}
             group-hover:scale-150
           `}></div>
 

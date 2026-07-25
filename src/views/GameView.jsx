@@ -23,14 +23,14 @@ const createProceduralEnvMap = () => {
   
   // Base dark cyber gradient
   const grad = ctx.createLinearGradient(0, 0, 0, 128);
-  grad.addColorStop(0, '#001a08'); // Dark emerald top
+  grad.addColorStop(0, '#141A05'); // Dark emerald top
   grad.addColorStop(0.5, '#02020a'); // Dark indigo middle
   grad.addColorStop(1, '#000000'); // Pure black bottom
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 256, 128);
   
   // Neon cyber reflection lights
-  ctx.fillStyle = '#00ff41'; // Cyan-green neon tube
+  ctx.fillStyle = '#C7FF2E'; // Cyan-green neon tube
   ctx.fillRect(30, 20, 20, 88);
   
   ctx.fillStyle = '#0055ff'; // Electric blue neon tube
@@ -42,7 +42,7 @@ const createProceduralEnvMap = () => {
   ctx.fill();
 
   // Subtle grid lines in reflection
-  ctx.strokeStyle = 'rgba(0, 255, 65, 0.1)';
+  ctx.strokeStyle = 'rgba(199, 255, 46, 0.1)';
   ctx.lineWidth = 1;
   for (let x = 0; x < 256; x += 32) {
     ctx.strokeRect(x, 0, 1, 128);
@@ -257,7 +257,7 @@ const GameView = ({ darkMode, onClose }) => {
     pointLight.position.set(-10, 10, -5);
     scene.add(pointLight);
 
-    const fillLight = new THREE.PointLight(0x00ff41, 0.8, 40); // Cyan/Green glow from bottom
+    const fillLight = new THREE.PointLight(0xC7FF2E, 0.8, 40); // Cyan/Green glow from bottom
     fillLight.position.set(0, -4, 2);
     scene.add(fillLight);
 
@@ -308,7 +308,7 @@ const GameView = ({ darkMode, onClose }) => {
     // 7. High-Performance Translucent Glass Track (No complex GPU transmission!)
     const trackGeometry = new THREE.PlaneGeometry(12, 140);
     const trackMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x051a08, // Deep emerald green
+      color: 0x141A05, // Deep emerald green
       metalness: 0.4,
       roughness: 0.15,
       clearcoat: 1.0,
@@ -356,7 +356,7 @@ const GameView = ({ darkMode, onClose }) => {
     // Lateral lane boundaries (Sleek glass barriers)
     const barrierGeo = new THREE.BoxGeometry(0.12, 0.4, 140);
     const barrierMat = new THREE.MeshBasicMaterial({
-      color: 0x00ff41,
+      color: 0xC7FF2E,
       transparent: true,
       opacity: 0.28
     });
@@ -427,7 +427,7 @@ const GameView = ({ darkMode, onClose }) => {
     // Inner Core (Optimized emissive/transparent material)
     const innerGeometry = new THREE.SphereGeometry(INNER_RADIUS, segments, segments);
     const liquidMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0xccffcc,
+      color: 0xE6FFBE,
       metalness: 0.2,
       roughness: 0.04,
       transmission: 0.9,
@@ -436,7 +436,7 @@ const GameView = ({ darkMode, onClose }) => {
       ior: 1.4,
       side: THREE.DoubleSide,
       clearcoat: 1.0,
-      emissive: 0x003311,
+      emissive: 0x283309,
       emissiveIntensity: 0.2
     });
 
@@ -561,14 +561,14 @@ const GameView = ({ darkMode, onClose }) => {
 
       // Live swap environment and grid colors (Blob stays green!)
       if (innerBlobMaterial.current) {
-        innerBlobMaterial.current.color.setHex(0xccffcc);
-        innerBlobMaterial.current.attenuationColor.setHex(0x00ff41);
-        innerBlobMaterial.current.emissive.setHex(0x004411);
+        innerBlobMaterial.current.color.setHex(0xE6FFBE);
+        innerBlobMaterial.current.attenuationColor.setHex(0xC7FF2E);
+        innerBlobMaterial.current.emissive.setHex(0x35440C);
       }
 
       if (trackMaterialRef.current && barrierMaterialRef.current) {
         const envColorMap = {
-          green: { base: 0x051a08, grid: [0.0, 1.0, 0.25], barrier: 0x00ff41 },
+          green: { base: 0x141A05, grid: [0.78, 1.0, 0.18], barrier: 0xC7FF2E },
           yellow: { base: 0x1a1a00, grid: [1.0, 0.84, 0.0], barrier: 0xffea00 },
           pink: { base: 0x1a0010, grid: [1.0, 0.0, 0.5], barrier: 0xff007f },
           blue: { base: 0x00101a, grid: [0.0, 0.5, 1.0], barrier: 0x00a2ff }
@@ -1025,7 +1025,7 @@ const GameView = ({ darkMode, onClose }) => {
         ref={containerRef} 
         onClick={(e) => e.stopPropagation()} // Prevent clicking game bezel from closing it
         className={`relative w-full max-w-[340px] aspect-[9/16] max-h-[82vh] md:max-h-none md:max-w-4xl md:aspect-video rounded-[2rem] overflow-hidden select-none border-4 shadow-2xl transition-all duration-700
-          ${darkMode ? 'bg-black border-[#333] shadow-[0_0_60px_rgba(0,255,65,0.15)]' : 'bg-black border-white shadow-[0_0_60px_rgba(0,85,255,0.2)]'}`}
+          ${darkMode ? 'bg-black border-[#333] shadow-[0_0_60px_rgba(199,255,46,0.15)]' : 'bg-black border-white shadow-[0_0_60px_rgba(0,85,255,0.2)]'}`}
       >
         {/* CRT Scanline / Bezel Overlay for retro charm */}
         <div className="absolute inset-0 z-50 pointer-events-none opacity-20 bg-[linear-gradient(rgba(255,255,255,0),rgba(255,255,255,0)_50%,rgba(0,0,0,0.2)_50%,rgba(0,0,0,0.2))] bg-[length:100%_4px] rounded-[2rem] shadow-[inset_0_0_100px_rgba(0,0,0,0.9)]" />
@@ -1048,12 +1048,12 @@ const GameView = ({ darkMode, onClose }) => {
                 {!unlockedYellow && <span className="text-[#ffd700]/70">NEXT: YELLOW GRID (10 Parts)</span>}
                 {unlockedYellow && !unlockedPink && <span className="text-[#ff007f]/70">NEXT: PINK GRID (20 Parts)</span>}
                 {unlockedPink && !unlockedBlue && <span className="text-[#00a2ff]/70">NEXT: BLUE GRID (30 Parts)</span>}
-                {unlockedBlue && <span className="text-[#00FF41]/70">ALL GRIDS UNLOCKED</span>}
+                {unlockedBlue && <span className="text-[#C7FF2E]/70">ALL GRIDS UNLOCKED</span>}
               </div>
             </div>
 
             {/* Top Center: Minimal Level Indicator */}
-            <div className="hidden md:flex px-5 py-2 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl items-center gap-2 text-[#00ff41] shadow-2xl pointer-events-auto mt-2">
+            <div className="hidden md:flex px-5 py-2 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl items-center gap-2 text-[#C7FF2E] shadow-2xl pointer-events-auto mt-2">
               <Zap size={11} className="animate-pulse" />
               <span ref={levelRef} className="text-[9px] font-bold tracking-widest uppercase">LEVEL {stateRef.current.level}</span>
             </div>
@@ -1098,11 +1098,11 @@ const GameView = ({ darkMode, onClose }) => {
               onClick={() => setSelectedColor('green')}
               className={`w-7 h-7 md:w-8 md:h-8 rounded-full border transition-all flex items-center justify-center cursor-pointer shadow active:scale-90
                 ${selectedColor === 'green' 
-                  ? 'border-[#00ff41] bg-[#00ff41]/10 scale-105 shadow-[0_0_8px_rgba(0,255,65,0.3)]' 
-                  : 'border-white/10 hover:border-white/30 bg-[#00ff41]/5'}`}
+                  ? 'border-[#C7FF2E] bg-[#C7FF2E]/10 scale-105 shadow-[0_0_8px_rgba(199,255,46,0.3)]' 
+                  : 'border-white/10 hover:border-white/30 bg-[#C7FF2E]/5'}`}
               title="Neon Green"
             >
-              <div className="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full bg-[#00ff41]" />
+              <div className="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full bg-[#C7FF2E]" />
             </button>
 
             {/* Yellow */}
@@ -1167,13 +1167,13 @@ const GameView = ({ darkMode, onClose }) => {
         {/* Main Start / Game Over Frosted Glass overlay (Now in gorgeous 3:2 Horizontal Layout!) */}
         {!isPlaying && (
           <div className="absolute inset-0 z-30 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
-            <div className="relative w-full max-w-2xl p-6 md:p-8 rounded-3xl border border-white/10 bg-white/[0.01] text-white shadow-[0_0_40px_rgba(0,255,65,0.08)] flex flex-col md:grid md:grid-cols-12 gap-6 items-center md:items-start text-center md:text-left animate-in fade-in zoom-in-95 duration-300">
+            <div className="relative w-full max-w-2xl p-6 md:p-8 rounded-3xl border border-white/10 bg-white/[0.01] text-white shadow-[0_0_40px_rgba(199,255,46,0.08)] flex flex-col md:grid md:grid-cols-12 gap-6 items-center md:items-start text-center md:text-left animate-in fade-in zoom-in-95 duration-300">
               
               {/* Left Column (Main Panel) */}
               <div className="col-span-7 flex flex-col items-center md:items-start w-full">
                 {/* Glowing menu orb */}
-                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#00ff41]/5 border border-[#00ff41]/20 shadow-[0_0_15px_rgba(0,255,65,0.1)] mb-3 animate-pulse">
-                  <Zap size={18} className="text-[#00ff41]" />
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#C7FF2E]/5 border border-[#C7FF2E]/20 shadow-[0_0_15px_rgba(199,255,46,0.1)] mb-3 animate-pulse">
+                  <Zap size={18} className="text-[#C7FF2E]" />
                 </div>
 
                 <h1 className="text-xl md:text-2xl font-display font-extrabold tracking-tighter uppercase mb-0.5">
@@ -1188,12 +1188,12 @@ const GameView = ({ darkMode, onClose }) => {
                 <div className="w-full flex justify-around border border-white/5 py-2 md:py-2.5 rounded-xl bg-white/[0.01] mb-4 font-meta text-xs">
                   <div className="flex flex-col gap-0.5">
                     <span className="text-[7px] md:text-[8px] uppercase opacity-35">High Score</span>
-                    <span className="text-xs md:text-sm font-bold text-[#00ff41]">{highScore}</span>
+                    <span className="text-xs md:text-sm font-bold text-[#C7FF2E]">{highScore}</span>
                   </div>
                   <div className="w-px bg-white/10" />
                   <div className="flex flex-col gap-0.5">
                     <span className="text-[7px] md:text-[8px] uppercase opacity-35">Engine</span>
-                    <span className="text-xs md:text-sm font-bold text-[#00ff41]">WebGL 3D</span>
+                    <span className="text-xs md:text-sm font-bold text-[#C7FF2E]">WebGL 3D</span>
                   </div>
                 </div>
 
@@ -1201,7 +1201,7 @@ const GameView = ({ darkMode, onClose }) => {
                 <div className="w-full flex flex-col gap-2">
                   <button
                     onClick={startGame}
-                    className="w-full py-2.5 px-6 rounded-xl bg-[#00ff41] text-black font-display font-bold uppercase tracking-wider text-[10px] md:text-xs transition-all hover:scale-[1.01] hover:bg-[#00cc33] active:scale-95 shadow-[0_0_15px_rgba(0,255,65,0.22)] cursor-pointer flex items-center justify-center gap-1.5"
+                    className="w-full py-2.5 px-6 rounded-xl bg-[#C7FF2E] text-black font-display font-bold uppercase tracking-wider text-[10px] md:text-xs transition-all hover:scale-[1.01] hover:bg-[#9FCC25] active:scale-95 shadow-[0_0_15px_rgba(199,255,46,0.22)] cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     <Play size={12} fill="black" /> {gameOver ? 'RUN AGAIN' : 'START RUNNER'}
                   </button>

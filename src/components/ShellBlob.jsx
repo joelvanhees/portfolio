@@ -78,11 +78,11 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
     glassMaterial.onBeforeCompile = (shader) => injectBlobShader(shader, 0.12, 2.0, 1.2, false);
     
     // Liquid Material reacts to darkMode
-    const neonGreen = 0x00ff66;
+    const neonGreen = 0xC7FF2E;
     const neonBlue = 0x0055ff;
     const liquidColor = darkMode ? neonGreen : neonBlue;
-    const attenuationColor = darkMode ? 0x00cc22 : 0x0033cc;
-    const emissiveColor = darkMode ? 0x003311 : 0x001133;
+    const attenuationColor = darkMode ? 0x9FCC25 : 0x0033cc;
+    const emissiveColor = darkMode ? 0x283309 : 0x001133;
 
     const liquidMaterial = new THREE.MeshPhysicalMaterial({
       color: liquidColor,
@@ -199,7 +199,7 @@ const ShellBlob = ({ isThinking, darkMode, className = "" }) => {
   return (
     <div 
       ref={mountRef} 
-      className={`relative flex items-center justify-center transition-all duration-500 overflow-visible ${className} ${isThinking ? 'scale-125 drop-shadow-[0_0_15px_rgba(0,255,65,0.6)]' : 'scale-100 drop-shadow-md'}`}
+      className={`relative flex items-center justify-center transition-all duration-500 overflow-visible ${className} ${isThinking ? 'scale-125 drop-shadow-[0_0_15px_rgba(199,255,46,0.6)]' : 'scale-100 drop-shadow-md'}`}
     />
   );
 };

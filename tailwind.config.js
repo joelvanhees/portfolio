@@ -6,6 +6,15 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        // Signal Acid — the one accent. A signal, never a rainbow.
+        acid: {
+          DEFAULT: '#C7FF2E',
+          light: '#D9FF73', // hover text on dark
+          dark: '#9FCC25',  // pressed / hover fill
+          deep: '#3F5410',  // hairlines and dividers on Carbon
+        },
+      },
       fontFamily: {
         // Identity System V03.1 — two voices.
         // DISPLAY / Arial Bold 700 — headlines, modes, chapters, statements.

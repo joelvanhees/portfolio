@@ -198,6 +198,12 @@ const App = () => {
           animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
           color: ${darkMode ? '#C7FF2E' : '#000000'};
         }
+        /* The same shake and colour, driven by where the page is rather than
+           by the pointer, so a list reads as a position indicator. */
+        .glitch-active {
+          animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+          color: ${darkMode ? '#C7FF2E' : '#0055FF'};
+        }
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: ${darkMode ? '#111' : '#ddd'}; }
@@ -288,7 +294,7 @@ const App = () => {
         <div className="fixed inset-0 z-30" onClick={() => { setMenuOpen(false); playClickSound('close'); }}>
           <div 
             onClick={(e) => e.stopPropagation()}
-            className={`absolute top-24 right-4 md:right-8 w-64 md:w-80 rounded-2xl flex flex-col justify-start items-end p-6 md:p-8 gap-5 text-lg md:text-xl font-display font-bold border shadow-2xl transition-all duration-500 animate-in slide-in-from-right-8 ${darkMode ? 'bg-black/60 border-[#C7FF2E]/20 shadow-[0_0_30px_rgba(199,255,46,0.1)]' : 'bg-white border-black shadow-[0_0_35px_rgba(0,0,0,0.25)]'} backdrop-blur-xl`}
+            className={`absolute top-24 right-4 md:right-8 w-64 md:w-80 rounded-2xl flex flex-col justify-start items-end p-6 md:p-8 gap-5 text-lg md:text-xl font-display font-bold transition-all duration-500 liquid-panel ${darkMode ? 'text-white' : 'liquid-panel--light text-black'}`}
           >
             <button
               onClick={() => {

@@ -1,4 +1,5 @@
 import portraitImg from '../assets/images/portrait.jpg';
+import ScrollTypewriter from '../components/ScrollTypewriter';
 
 const AboutView = ({ darkMode }) => (
   <div className="pt-32 px-6 min-h-screen max-w-7xl mx-auto pb-14 md:pb-40">
@@ -21,16 +22,24 @@ const AboutView = ({ darkMode }) => (
       <div data-reveal style={{ '--reveal-delay': '75ms' }}>
         <div className={`p-8 rounded-lg font-meta text-sm leading-relaxed mb-6 md:mb-12 ${darkMode ? 'bg-[#111] border border-acid-deep/30' : 'bg-gray-100 border border-gray-300'}`}>
           <p className="mb-4 text-xs opacity-50">/ MANIFESTO.TXT</p>
+          {/* Typed out by scroll position, so the file reads as if it is being
+              written while you move through it. */}
           <p className="mb-6">
-            I am a graphic designer working across brand systems, generative design and visual storytelling.
-            My practice is interdisciplinary, combining graphic design, typography, motion, 3D and creative coding to develop coherent visual systems.
+            <ScrollTypewriter text="I am a graphic designer working across brand systems, generative design and visual storytelling. My practice is interdisciplinary, combining graphic design, typography, motion, 3D and creative coding to develop coherent visual systems." />
           </p>
           <p className="mb-6">
-            I work conceptually and system-oriented, translating ideas into scalable identities, interfaces and visual narratives.
-            This approach allows me to move fluently between static and dynamic media, from print and branding to real-time visuals and interactive environments.
+            <ScrollTypewriter
+              start={0.78}
+              end={0.28}
+              text="I work conceptually and system-oriented, translating ideas into scalable identities, interfaces and visual narratives. This approach allows me to move fluently between static and dynamic media, from print and branding to real-time visuals and interactive environments."
+            />
           </p>
           <p>
-            With a strong foundation in classical design principles and hands-on experience in experimental tools, I focus on building work that is structured, adaptable and context-aware.
+            <ScrollTypewriter
+              start={0.7}
+              end={0.22}
+              text="With a strong foundation in classical design principles and hands-on experience in experimental tools, I focus on building work that is structured, adaptable and context-aware."
+            />
           </p>
         </div>
 
@@ -41,7 +50,7 @@ const AboutView = ({ darkMode }) => (
           </div>
           <div className="flex justify-between items-center border-b border-current pb-2">
             <span className="font-meta text-xs opacity-50">STATUS</span>
-            <span className={`font-display font-bold ${darkMode ? 'text-acid' : 'text-blue-500'}`}>AVAILABLE FOR JOBS</span>
+            <span className={`font-display font-bold ${darkMode ? 'text-acid' : 'text-blue-500'}`}>AVAILABLE FOR PROJECTS</span>
           </div>
           <div className="flex justify-between items-center border-b border-current pb-2">
             <span className="font-meta text-xs opacity-50">EMAIL</span>

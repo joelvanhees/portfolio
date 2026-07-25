@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import SkillNetwork from '../components/SkillNetwork';
+import SkillWindow from '../components/SkillWindow';
 import RoleSwitch from '../components/RoleSwitch';
 import { networkGroups } from '../content/services';
 
@@ -37,7 +37,7 @@ const ServicesView = ({ darkMode }) => {
         <RoleSwitch darkMode={darkMode} activeRole={activeRole} onChange={setActiveRole} />
       </div>
 
-      <SkillNetwork darkMode={darkMode} activeRole={activeRole} />
+      <SkillWindow darkMode={darkMode} activeRole={activeRole} title="NETWORK_MAP" />
     </div>
   );
 };

@@ -63,7 +63,7 @@ const ContactView = ({ darkMode }) => {
                 placeholder=" "
                 className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-display text-xl transition-all ${darkMode ? 'border-white/20 focus:border-acid' : 'border-black/20 focus:border-blue-500'}`}
               />
-              <label className={`absolute left-0 top-2 font-meta text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Identity / Name</label>
+              <label className={`absolute left-0 top-2 font-meta text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Name</label>
             </div>
 
             <div className="group/input relative">
@@ -76,7 +76,7 @@ const ContactView = ({ darkMode }) => {
                 placeholder=" "
                 className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-display text-xl transition-all ${darkMode ? 'border-white/20 focus:border-acid' : 'border-black/20 focus:border-blue-500'}`}
               />
-              <label className={`absolute left-0 top-2 font-meta text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Frequency / Email</label>
+              <label className={`absolute left-0 top-2 font-meta text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Email</label>
             </div>
 
             <div className="group/input relative">
@@ -89,7 +89,7 @@ const ContactView = ({ darkMode }) => {
                 placeholder=" "
                 className={`peer w-full bg-transparent border-b-2 outline-none py-2 font-meta text-sm resize-none transition-all ${darkMode ? 'border-white/20 focus:border-acid' : 'border-black/20 focus:border-blue-500'}`}
               ></textarea>
-              <label className={`absolute left-0 top-2 font-meta text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Transmission Data</label>
+              <label className={`absolute left-0 top-2 font-meta text-xs uppercase transition-all peer-focus:-top-4 peer-focus:text-[10px] peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm ${darkMode ? 'text-white/50' : 'text-black/50'}`}>Message</label>
             </div>
 
             <button

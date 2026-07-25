@@ -13,8 +13,17 @@
  */
 
 const READY_CLASS = 'reveal-ready';
-const DONE_CLASS = 'is-revealed';
+/*
+ * The revealed mark is an attribute, not a class, and deliberately one React
+ * never renders. React owns `className` on these elements: any re-render with
+ * a computed class — a row highlighting itself on scroll, say — rewrites the
+ * whole attribute and would silently strip a class added from here. The block
+ * would then be hidden again with nothing left watching it, which is exactly
+ * the invisible-content state this module exists to prevent.
+ */
+const DONE_ATTR = 'data-revealed';
 const SELECTOR = '[data-reveal]';
+const PENDING = `${SELECTOR}:not([${DONE_ATTR}])`;
 
 let observer = null;
 let mutations = null;
@@ -32,7 +41,7 @@ const canReveal = () => {
 const pending = new Set();
 
 const reveal = (el) => {
-  el.classList.add(DONE_CLASS);
+  el.setAttribute(DONE_ATTR, '');
   pending.delete(el);
   observer?.unobserve(el);
 };
@@ -63,7 +72,7 @@ const sweep = () => {
 /** Observe any marked block that has not been revealed yet. Safe to re-run. */
 export const scan = () => {
   if (!observer) return;
-  document.querySelectorAll(`${SELECTOR}:not(.${DONE_CLASS})`).forEach((el) => {
+  document.querySelectorAll(PENDING).forEach((el) => {
     pending.add(el);
     observer.observe(el);
   });

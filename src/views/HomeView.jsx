@@ -1,10 +1,11 @@
 import { lazy, Suspense } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, Layers, Video } from 'lucide-react';
-import SkillNetwork from '../components/SkillNetwork';
+import SkillWindow from '../components/SkillWindow';
 const SpiralTimeSphere = lazy(() => import('../components/visuals/SpiralTimeSphere'));
 import { homeCapabilities } from '../content/services';
 import RoleSwitch from '../components/RoleSwitch';
+import { useScrollActive } from '../utils/useScrollActive';
 import salatProfileImg from '../assets/images/salat_profile.png';
 import LazyImage from '../components/LazyImage';
 import { playClickSound } from '../utils/clickSound';
@@ -64,6 +65,9 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
   // Exactly one role can be active, and none is active to begin with — the
   // map then shows the full overview. Tapping the active role clears it.
   const [activeRole, setActiveRole] = useState(null);
+
+  // Lights the capability row the page is currently level with.
+  const capabilities = useScrollActive(homeCapabilities.length);
 
   useEffect(() => {
     const sequence = [
@@ -366,11 +370,15 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
 
           <div data-reveal style={{ '--reveal-delay': '80ms' }} className="flex flex-col gap-8">
             <div className={`p-6 rounded-lg font-meta text-xs md:text-sm leading-6 shadow-2xl overflow-hidden relative transition-all duration-1000 ${darkMode ? 'bg-[#0A0A0A] border border-acid-deep/50' : 'bg-white border border-gray-200'} flex items-center justify-center min-h-[60vh]`}>
-              <div className="absolute top-6 left-6 flex gap-2 mb-4 opacity-50 z-20">
-                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div className="w-3 h-3 rounded-full bg-acid"></div>
-              </div>
+              {/* Decorative only while the boot text runs; once the map is up
+                  SkillWindow draws its own bar with working controls. */}
+              {!bootComplete && (
+                <div className="absolute top-6 left-6 flex gap-2 mb-4 opacity-50 z-20">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-acid"></div>
+                </div>
+              )}
 
               <div className={`${darkMode ? 'text-acid' : 'text-blue-600'} transition-opacity duration-500 w-full ${bootComplete ? 'opacity-0 absolute pointer-events-none' : 'opacity-100 relative'}`}>
                 {terminalLine >= 1 && <p>{'>'} INITIATING IDENTITY SEQUENCE...</p>}
@@ -386,7 +394,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
               </div>
 
               <div className={`transition-all duration-1000 ease-out absolute inset-0 ${bootComplete ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-                {bootComplete && <SkillNetwork darkMode={darkMode} activeRole={activeRole} className="absolute inset-0 w-full h-full border-none bg-transparent" />}
+                {bootComplete && <SkillWindow darkMode={darkMode} activeRole={activeRole} frame={false} className="absolute inset-0" />}
               </div>
             </div>
           </div>
@@ -506,13 +514,18 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
             {homeCapabilities.map((service, i) => (
               <div
                 data-reveal
+                ref={capabilities.setRef(i)}
                 style={{ '--reveal-delay': `${i * 55}ms` }}
                 key={service.title}
-                className="border-t border-current py-4 md:py-8 group hover:pl-4 transition-all duration-300 cursor-default"
+                className={`border-t border-current py-4 md:py-8 group transition-all duration-300 cursor-default ${
+                  capabilities.active === i ? 'pl-4' : 'hover:pl-4'
+                }`}
               >
                 <div className="flex flex-col md:flex-row justify-between items-baseline">
-                  <h3 className="text-3xl md:text-5xl font-rubik font-bold uppercase group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r from-gray-500 to-current">
-                    <span className="glitch-hover cursor-default block">{service.title}</span>
+                  <h3 className="text-3xl md:text-5xl font-rubik font-bold uppercase">
+                    <span className={`cursor-default block ${capabilities.active === i ? 'glitch-active' : 'glitch-hover'}`}>
+                      {service.title}
+                    </span>
                   </h3>
                   <p className="mt-2 md:mt-0 font-meta text-sm opacity-60 group-hover:opacity-100">
                     {service.desc}

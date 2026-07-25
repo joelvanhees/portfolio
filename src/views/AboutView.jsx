@@ -1,8 +1,8 @@
 import portraitImg from '../assets/images/portrait.jpg';
 
 const AboutView = ({ darkMode }) => (
-  <div className="pt-32 px-6 min-h-screen max-w-7xl mx-auto pb-20 md:pb-40">
-    <div data-reveal className="mb-8 md:mb-12">
+  <div className="pt-32 px-6 min-h-screen max-w-7xl mx-auto pb-14 md:pb-40">
+    <div data-reveal className="mb-5 md:mb-12">
       <h1 className="text-[15vw] md:text-9xl font-rubik font-bold leading-none break-words uppercase">
         <span className="glitch-hover cursor-default block">ABOUT</span>
       </h1>
@@ -11,7 +11,7 @@ const AboutView = ({ darkMode }) => (
       </h2>
     </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-start">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-16 items-start">
       <div data-reveal>
         <div className={`aspect-[3/4] w-full max-w-md rounded-2xl overflow-hidden relative transition-all duration-700 ${darkMode ? 'bg-[#111]' : 'bg-[#ccc]'}`}>
           <img src={portraitImg} alt="Joel van Hees" className="w-full h-full object-cover" />
@@ -19,7 +19,7 @@ const AboutView = ({ darkMode }) => (
       </div>
 
       <div data-reveal style={{ '--reveal-delay': '75ms' }}>
-        <div className={`p-8 rounded-lg font-meta text-sm leading-relaxed mb-8 md:mb-12 ${darkMode ? 'bg-[#111] border border-acid-deep/30' : 'bg-gray-100 border border-gray-300'}`}>
+        <div className={`p-8 rounded-lg font-meta text-sm leading-relaxed mb-6 md:mb-12 ${darkMode ? 'bg-[#111] border border-acid-deep/30' : 'bg-gray-100 border border-gray-300'}`}>
           <p className="mb-4 text-xs opacity-50">/ MANIFESTO.TXT</p>
           <p className="mb-6">
             I am a graphic designer working across brand systems, generative design and visual storytelling.

@@ -67,9 +67,9 @@ const GlassDefs = ({ uid, strokes, tone }) => {
   return (
     <defs>
       <linearGradient id={`${uid}-body`} gradientUnits="userSpaceOnUse" {...LIGHT}>
-        <stop offset="0%" stopColor={clear ? '#FFFFFF' : '#4A514E'} />
-        <stop offset="38%" stopColor={clear ? '#F6F8F7' : '#2A302E'} />
-        <stop offset="100%" stopColor={clear ? '#C8D0CD' : '#070908'} />
+        <stop offset="0%" stopColor={clear ? '#FFFFFF' : '#000000'} stopOpacity={clear ? 0.46 : 0.4} />
+        <stop offset="38%" stopColor={clear ? '#FFFFFF' : '#000000'} stopOpacity={clear ? 0.26 : 0.24} />
+        <stop offset="100%" stopColor={clear ? '#FFFFFF' : '#000000'} stopOpacity={clear ? 0.14 : 0.48} />
       </linearGradient>
 
       {/* Specular run along the top of each tube. */}
@@ -131,38 +131,100 @@ const GlassBody = ({ uid, strokes }) => (
   </g>
 );
 
-const svgProps = (title) => ({ role: 'img', 'aria-label': title, focusable: 'false' });
-
-/**
- * Signature — the primary mark. Use wherever the name has to read as a name.
- * `tone`: "clear" (white glass, for Carbon) or "smoke" (dark glass, for Paper).
+/*
+ * The mark is genuinely transparent: a masked surface carries a
+ * backdrop-filter, so whatever scrolls underneath shows through the
+ * letterforms, blurred and brightened rather than hidden. The SVG on top only
+ * adds the tint and the speculars.
+ *
+ * The mask is the letterforms rendered as an image. The counter of the E is
+ * punched inside the SVG rather than by the CSS mask, so this works with a
+ * plain alpha mask and needs no mask-mode support.
  */
-export const BrandSignature = ({ className = '', tone = 'clear', title = 'Joel van Hees' }) => {
+const maskUrl = (viewBox, strokes) => {
+  const paths = strokes
+    .map(
+      (s) =>
+        `<path d="${s.d}" stroke="#fff" stroke-width="${s.w}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+    )
+    .join('');
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}">` +
+    `<defs><mask id="c" maskUnits="userSpaceOnUse" x="${FIELD.x}" y="${FIELD.y}" width="${FIELD.width}" height="${FIELD.height}">` +
+    `<rect x="${FIELD.x}" y="${FIELD.y}" width="${FIELD.width}" height="${FIELD.height}" fill="#fff"/>` +
+    `<path d="${COUNTER_PATH}" fill="#000"/></mask></defs>` +
+    `<g mask="url(#c)">${paths}</g></svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+};
+
+const maskStyle = (url) => ({
+  maskImage: url,
+  WebkitMaskImage: url,
+  maskSize: 'contain',
+  WebkitMaskSize: 'contain',
+  maskRepeat: 'no-repeat',
+  WebkitMaskRepeat: 'no-repeat',
+  maskPosition: 'center',
+  WebkitMaskPosition: 'center',
+});
+
+const aspectOf = (viewBox) => {
+  const [, , w, h] = viewBox.split(' ').map(Number);
+  return `${w} / ${h}`;
+};
+
+const GlassShell = ({ className, viewBox, strokes, maskStrokes, tone, title, children }) => {
   const uid = useId().replace(/:/g, '');
-  const strokes = [...J_STROKES, ...REST_STROKES];
   return (
-    <svg viewBox={SIGNATURE_VIEWBOX} className={className} {...svgProps(title)}>
-      <GlassDefs uid={uid} strokes={strokes} tone={tone} />
-      <GlassBody uid={uid} strokes={strokes} />
-    </svg>
+    <span
+      className={`jvh-mark ${className}`}
+      style={{ aspectRatio: aspectOf(viewBox) }}
+      role="img"
+      aria-label={title}
+    >
+      <span aria-hidden className={`jvh-glass jvh-glass--${tone}`} style={maskStyle(maskUrl(viewBox, maskStrokes ?? strokes))} />
+      <svg aria-hidden viewBox={viewBox} className="jvh-mark__art" focusable="false">
+        <GlassDefs uid={uid} strokes={strokes} tone={tone} />
+        <GlassBody uid={uid} strokes={strokes} />
+        {children}
+      </svg>
+    </span>
   );
 };
 
 /**
+ * Signature — the primary mark. Use wherever the name has to read as a name.
+ * `tone`: "clear" (light glass, for Carbon) or "smoke" (dark glass, for Paper).
+ */
+export const BrandSignature = ({ className = '', tone = 'clear', title = 'Joel van Hees' }) => (
+  <GlassShell
+    className={className}
+    viewBox={SIGNATURE_VIEWBOX}
+    strokes={[...J_STROKES, ...REST_STROKES]}
+    tone={tone}
+    title={title}
+  />
+);
+
+/**
  * Full lockup — glass signature over the flat "VAN HEES" descriptor. The
- * descriptor stays flat: at its weight a glass treatment would only muddy it.
+ * descriptor stays flat: at its weight a glass treatment would only muddy it,
+ * so it is painted on top and left out of the mask.
  */
 export const BrandLockup = ({ className = '', tone = 'clear', title = 'Joel van Hees' }) => {
-  const uid = useId().replace(/:/g, '');
   const strokes = [...J_STROKES, ...REST_STROKES];
   return (
-    <svg viewBox={LOCKUP_VIEWBOX} className={className} {...svgProps(title)}>
-      <GlassDefs uid={uid} strokes={strokes} tone={tone} />
-      <GlassBody uid={uid} strokes={strokes} />
+    <GlassShell
+      className={className}
+      viewBox={LOCKUP_VIEWBOX}
+      strokes={strokes}
+      tone={tone}
+      title={title}
+    >
       <g opacity={tone === 'clear' ? 0.92 : 0.8}>
         <Strokes strokes={WORDMARK_STROKES} paint={tone === 'clear' ? '#FFFFFF' : '#050505'} />
       </g>
-    </svg>
+    </GlassShell>
   );
 };
 
@@ -170,14 +232,14 @@ export const BrandLockup = ({ className = '', tone = 'clear', title = 'Joel van 
  * Compact mark — the Signal J alone, for avatars and anywhere the full
  * signature would fall under its minimum size.
  */
-export const BrandMark = ({ className = '', tone = 'clear', title = 'Joel van Hees' }) => {
-  const uid = useId().replace(/:/g, '');
-  return (
-    <svg viewBox={MARK_VIEWBOX} className={className} {...svgProps(title)}>
-      <GlassDefs uid={uid} strokes={J_STROKES} tone={tone} />
-      <GlassBody uid={uid} strokes={J_STROKES} />
-    </svg>
-  );
-};
+export const BrandMark = ({ className = '', tone = 'clear', title = 'Joel van Hees' }) => (
+  <GlassShell
+    className={className}
+    viewBox={MARK_VIEWBOX}
+    strokes={J_STROKES}
+    tone={tone}
+    title={title}
+  />
+);
 
 export default BrandSignature;

@@ -13,6 +13,68 @@
 
 :root {
   scroll-behavior: smooth;
+
+  /* Where a stacked project card comes to rest, and how far each successive
+     card is offset so the deck shows its edges. */
+  --stack-top: 84px;
+  --stack-step: 7px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --stack-top: 112px;
+    --stack-step: 12px;
+  }
+}
+
+/*
+ * Brand mark — real glass, not painted glass.
+ *
+ * The surface is masked to the letterforms and carries a backdrop-filter, so
+ * whatever scrolls beneath the nav stays visible through the mark: blurred,
+ * lifted and slightly pushed, the way glass treats what is behind it. The SVG
+ * over it only contributes tint and speculars.
+ */
+.jvh-mark {
+  position: relative;
+  display: inline-block;
+}
+
+.jvh-mark__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.jvh-glass {
+  position: absolute;
+  inset: 0;
+}
+
+.jvh-glass--clear {
+  -webkit-backdrop-filter: blur(7px) saturate(210%) brightness(1.9) contrast(1.05);
+  backdrop-filter: blur(7px) saturate(210%) brightness(1.9) contrast(1.05);
+  /* A floor of presence, so the mark still reads where the backdrop behind it
+     is flat Carbon and there is nothing to refract. */
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.jvh-glass--smoke {
+  -webkit-backdrop-filter: blur(7px) saturate(150%) brightness(0.62) contrast(1.1);
+  backdrop-filter: blur(7px) saturate(150%) brightness(0.62) contrast(1.1);
+  background: rgba(5, 8, 7, 0.12);
+}
+
+/* Without backdrop-filter the mark would be almost invisible, so fall back to
+   a solid fill rather than a ghost. */
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .jvh-glass--clear {
+    background: rgba(245, 248, 247, 0.9);
+  }
+  .jvh-glass--smoke {
+    background: rgba(10, 12, 11, 0.9);
+  }
 }
 
 /*
@@ -63,5 +125,7 @@ body {
   font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden; /* Verhindert horizontales Scrollen global */
+  /* `clip`, not `hidden`: hidden makes body a scroll container, which
+     silently breaks every `position: sticky` descendant on the page. */
+  overflow-x: clip;
 }

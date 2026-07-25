@@ -34,7 +34,7 @@ const ContactView = ({ darkMode }) => {
   };
 
   return (
-    <div className="pt-32 px-6 min-h-screen max-w-7xl mx-auto flex items-center justify-center pb-20 md:pb-40">
+    <div className="pt-32 px-6 min-h-screen max-w-7xl mx-auto flex items-center justify-center pb-14 md:pb-40">
       <div className={`w-full max-w-2xl backdrop-blur-xl rounded-3xl p-8 md:p-12 border shadow-2xl relative overflow-hidden group transition-all duration-500
         ${darkMode 
           ? 'bg-white/5 border-white/10 text-white shadow-[0_0_50px_rgba(199,255,46,0.1)]' 

@@ -183,7 +183,7 @@ const App = () => {
   };
 
   return (
-    <div className={`min-h-screen w-full relative transition-colors duration-700 ease-in-out font-meta selection:bg-acid selection:text-black overflow-x-hidden bg-transparent ${darkMode ? 'text-[#E0E0E0]' : 'text-black'}`}>
+    <div className={`min-h-screen w-full relative transition-colors duration-700 ease-in-out font-meta selection:bg-acid selection:text-black overflow-x-clip bg-transparent ${darkMode ? 'text-[#E0E0E0]' : 'text-black'}`}>
       <style>{`
         @keyframes glitch {
           0% { transform: translate(0) }

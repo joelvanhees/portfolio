@@ -269,7 +269,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
           onTouchEnd={isMobile ? undefined : () => {
             mouseRef.current.active = false;
           }}
-          className="relative min-h-screen flex flex-col justify-between md:justify-center px-8 md:px-16 pt-32 pb-8 md:py-20 overflow-hidden bg-transparent"
+          className="relative min-h-screen flex flex-col justify-between md:justify-center px-8 md:px-16 pt-32 pb-4 md:py-20 overflow-hidden bg-transparent"
         >
           <div className={`absolute inset-0 pointer-events-none opacity-[0.03] ${darkMode ? 'bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]' : 'bg-[linear-gradient(to_right,#00000012_1px,transparent_1px),linear-gradient(to_bottom,#00000012_1px,transparent_1px)] bg-[size:24px_24px]'}`}></div>
 
@@ -329,12 +329,17 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
         </div>
       </header>
 
-      <section id="about" className="py-12 md:py-24 px-6 relative">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-          {/* The reveal sits on the children, not on this column: it is the
-              sticky one, and a transform on it would fight the stickiness for
-              the length of the animation. */}
-          <div className="sticky top-24">
+      <section id="about" className="py-7 md:py-24 px-6 relative">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+          {/* The wrapper is what stretches to the row; the sticky element has
+              to be a shorter child of it. With `items-start` on the grid the
+              column was exactly its own content height, so it had no room to
+              travel and never pinned.
+
+              The reveal sits on the children, not on the sticky element: a
+              transform on it would fight the pinning while animating. */}
+          <div>
+          <div className="md:sticky md:top-28">
             <h2 data-reveal className="text-4xl md:text-6xl font-rubik font-bold mb-8 uppercase">
               <span className="glitch-hover cursor-default block">The Operator</span>
             </h2>
@@ -370,6 +375,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
               })}
             </div>
           </div>
+          </div>
 
           <div data-reveal style={{ '--reveal-delay': '80ms' }} className="flex flex-col gap-8">
             <div className={`p-6 rounded-lg font-meta text-xs md:text-sm leading-6 shadow-2xl overflow-hidden relative transition-all duration-1000 ${darkMode ? 'bg-[#0A0A0A] border border-acid-deep/50' : 'bg-white border border-gray-200'} flex items-center justify-center min-h-[60vh]`}>
@@ -400,16 +406,34 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
         </div>
       </section>
 
-      <section id="work" className="py-12 md:py-24 px-6 bg-transparent">
+      <section id="work" className="py-7 md:py-24 px-6 bg-transparent">
         <div className="max-w-7xl mx-auto">
-          <div data-reveal className="flex items-baseline justify-between mb-8 md:mb-16 border-b border-current pb-4">
+          <div data-reveal className="flex items-baseline justify-between mb-5 md:mb-16 border-b border-current pb-4">
             <h2 className="text-sm font-meta uppercase tracking-widest">Selected Data</h2>
             <span className="text-xs opacity-50">INDEX: 00—08</span>
           </div>
 
-          <div className="grid grid-cols-1 gap-10 md:gap-20">
-            {projects.map((project) => (
-              <div data-reveal key={project.id} onClick={() => setSelectedProject(project)} className="group cursor-pointer">
+          {/* Inside this section the cards stack instead of scrolling past:
+              each one pins under the nav and the next slides over it, so the
+              whole run of projects reads as one deck rather than as more of
+              the page-wide reveal.
+
+              It has to be a plain block container. In a single-column grid
+              every card gets its own row sized to its content, and a sticky
+              element has no room to move inside a box its own height. These
+              cards carry no data-reveal for the same reason — the transform
+              would fight the pinning. */}
+          <div className="relative">
+            {projects.map((project, i) => (
+              <div
+                key={project.id}
+                onClick={() => setSelectedProject(project)}
+                style={{ top: `calc(var(--stack-top) + ${i} * var(--stack-step))`, zIndex: i + 1 }}
+                className={`group cursor-pointer sticky mb-5 md:mb-10 rounded-2xl overflow-hidden border p-4 md:p-6 transition-shadow duration-500
+                  ${darkMode
+                    ? 'bg-[#070707] border-white/10 shadow-[0_-8px_30px_rgba(0,0,0,0.8)]'
+                    : 'bg-white border-black/10 shadow-[0_-8px_30px_rgba(0,0,0,0.14)]'}`}
+              >
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-4">
                   <div>
                     <span className={`text-xs font-bold px-2 py-1 rounded mb-2 inline-block ${darkMode ? 'bg-white text-black' : 'bg-black text-white'}`}>
@@ -482,9 +506,9 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
         </div>
       </section>
 
-      <section id="services" className="py-12 md:py-24 px-6 pb-20 md:pb-40">
+      <section id="services" className="py-7 md:py-24 px-6 pb-14 md:pb-40">
         <div className="max-w-7xl mx-auto">
-          <h2 data-reveal className="text-sm font-meta uppercase tracking-widest mb-6 md:mb-12">Capabilities</h2>
+          <h2 data-reveal className="text-sm font-meta uppercase tracking-widest mb-4 md:mb-12">Capabilities</h2>
 
           <div className="flex flex-col">
             {/* These rows are short enough that several cross the trigger line
@@ -494,7 +518,7 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
                 data-reveal
                 style={{ '--reveal-delay': `${i * 55}ms` }}
                 key={service.title}
-                className="border-t border-current py-6 md:py-8 group hover:pl-4 transition-all duration-300 cursor-default"
+                className="border-t border-current py-4 md:py-8 group hover:pl-4 transition-all duration-300 cursor-default"
               >
                 <div className="flex flex-col md:flex-row justify-between items-baseline">
                   <h3 className="text-3xl md:text-5xl font-rubik font-bold uppercase group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r from-gray-500 to-current">

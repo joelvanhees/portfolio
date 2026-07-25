@@ -295,75 +295,76 @@ const App = () => {
 
       {menuOpen && (
         <div className="fixed inset-0 z-30" onClick={() => { setMenuOpen(false); playClickSound('close'); }}>
-          <div 
+          {/* Editorial rather than arcade: left-aligned, no index numbers, one
+              hairline separating navigation from the extras, and every control
+              cut from the same uncoloured glass as the panel. */}
+          <div
             onClick={(e) => e.stopPropagation()}
-            className={`absolute top-24 right-4 md:right-8 w-64 md:w-80 rounded-2xl flex flex-col justify-start items-end p-6 md:p-8 gap-5 text-lg md:text-xl font-display font-bold transition-all duration-500 liquid-panel ${darkMode ? 'text-white' : 'liquid-panel--light text-black'}`}
+            className={`absolute top-24 right-4 md:right-8 w-[17rem] md:w-[22rem] rounded-3xl flex flex-col p-7 md:p-9 transition-all duration-500 liquid-panel liquid-panel--strong ${darkMode ? 'text-white' : 'liquid-panel--light text-black'}`}
           >
-            <button
-              onClick={() => {
-                setSecretOpen(true);
-                setMenuOpen(false);
-                playClickSound('open');
-              }}
-              className="mb-2 bg-transparent border-none p-0 cursor-pointer focus:outline-none hover:scale-110 transition-all duration-500 drop-shadow-[0_0_20px_rgba(199,255,46,0.2)] flex items-center justify-center pointer-events-auto"
-              title="Geheimes Mixer Rezeptbuch"
-            >
-              <BrandMark tone={darkMode ? 'clear' : 'smoke'} className="h-16 md:h-20 w-auto" />
-            </button>
-            {['HOME', 'WORK', 'SERVICES', 'ABOUT', 'CONTACT'].map((item, i) => (
-              <button
-                key={item}
-                onClick={() => {
-                  handleNav(item.toLowerCase());
-                  playClickSound('click');
-                }}
-                className={`hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r from-acid to-blue-500 transition-all duration-300 ${activePage === item.toLowerCase() ? (darkMode ? 'text-[#C7FF2E]' : 'text-black underline decoration-2 underline-offset-4') : (darkMode ? '' : 'text-black/50')}`}
-              >
-                {`0${i} // ${item}`}
-              </button>
-            ))}
-            {/* Additional Menu Actions */}
-            <div className="flex flex-col gap-3 mt-4 w-full items-end">
+            <div className="flex items-start justify-between mb-7">
+              <div>
+                <p className="font-meta text-[10px] uppercase tracking-[0.22em] opacity-45">Index</p>
+                <p className="font-display font-bold text-sm mt-1 opacity-80">Joel van Hees</p>
+              </div>
               <button
                 onClick={() => {
-                  setCooldownActive(true);
+                  setSecretOpen(true);
                   setMenuOpen(false);
                   playClickSound('open');
                 }}
-                className={`w-full text-right text-xs font-meta tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
-                  ${darkMode 
-                    ? 'border border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(0,210,255,0.2)] hover:bg-[#00d2ff]/25 hover:border-[#00d2ff]/80 hover:text-[#39ebff]' 
-                    : 'border border-black bg-black text-white hover:bg-black/90 shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
+                className="bg-transparent border-none p-0 cursor-pointer focus:outline-none hover:scale-110 transition-transform duration-500 shrink-0"
+                title="Geheimes Mixer Rezeptbuch"
               >
-                COOL DOWN
+                <BrandMark tone={darkMode ? 'clear' : 'smoke'} className="h-12 md:h-14 w-auto" />
               </button>
+            </div>
 
-              <button
-                onClick={() => {
-                  handleNav('game');
-                  setMenuOpen(false);
-                  playClickSound('open');
-                }}
-                className={`w-full text-right text-xs font-meta tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
-                  ${darkMode 
-                    ? 'border border-[#C7FF2E]/40 bg-[#C7FF2E]/10 text-[#C7FF2E] shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.15),0_0_15px_rgba(199,255,46,0.15)] hover:bg-[#C7FF2E]/25 hover:border-[#C7FF2E]/80 hover:text-[#D9FF73]' 
-                    : 'border border-black bg-white text-black hover:bg-black hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
-              >
-                BLOB RUN ⌁
-              </button>
+            <nav className="flex flex-col">
+              {['HOME', 'WORK', 'SERVICES', 'ABOUT', 'CONTACT'].map((item) => {
+                const isActive = activePage === item.toLowerCase();
+                return (
+                  <button
+                    key={item}
+                    onClick={() => {
+                      handleNav(item.toLowerCase());
+                      playClickSound('click');
+                    }}
+                    className={`group text-left font-display font-bold uppercase tracking-tight text-2xl md:text-[1.75rem] leading-[1.5] transition-opacity duration-300 ${
+                      isActive ? 'opacity-100' : 'opacity-45 hover:opacity-90'
+                    }`}
+                  >
+                    <span className="inline-flex items-baseline gap-3">
+                      {item}
+                      <span
+                        className={`h-px w-6 bg-current transition-all duration-300 ${
+                          isActive ? 'opacity-70 w-10' : 'opacity-0 group-hover:opacity-50'
+                        }`}
+                      />
+                    </span>
+                  </button>
+                );
+              })}
+            </nav>
 
-              <button
-                onClick={() => {
-                  setDarkMode(!darkMode);
-                  playClickSound('click');
-                }}
-                className={`w-full text-right text-xs font-meta tracking-widest px-6 py-2.5 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer
-                  ${darkMode 
-                    ? 'border border-white/20 bg-white/5 text-white hover:bg-white hover:text-black shadow-[inset_0_2px_4px_rgba(255,255,255,0.15)]' 
-                    : 'border border-black bg-black text-white hover:bg-black/90 hover:text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]'}`}
-              >
-                THEME: {darkMode ? 'LIGHT ☼' : 'DARK ☾'}
-              </button>
+            <div className={`h-px my-6 ${darkMode ? 'bg-white/15' : 'bg-black/10'}`} />
+
+            <div className="flex flex-col gap-2.5">
+              {[
+                { label: 'Cool Down', onClick: () => { setCooldownActive(true); setMenuOpen(false); playClickSound('open'); } },
+                { label: 'Blob Run', onClick: () => { handleNav('game'); setMenuOpen(false); playClickSound('open'); } },
+                { label: darkMode ? 'Light Mode' : 'Dark Mode', onClick: () => { setDarkMode(!darkMode); playClickSound('click'); } },
+              ].map(({ label, onClick }) => (
+                <button
+                  key={label}
+                  onClick={onClick}
+                  className={`w-full text-left font-meta text-[11px] uppercase tracking-[0.18em] px-4 py-3 rounded-xl cursor-pointer active:scale-[0.98] glass-button ${
+                    darkMode ? 'text-white' : 'glass-button--light text-black'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -541,7 +542,7 @@ const App = () => {
 
           <div className="flex flex-col md:flex-row justify-between items-end gap-8 font-meta text-sm uppercase">
             <div className="flex gap-4">
-              <a href="https://www.instagram.com/joelvn20?igsh=cG91ZjEzYnh5azAx&utm_source=qr" target="_blank" rel="noopener noreferrer" className="hover:line-through">Instagram</a>
+              <a href="https://www.instagram.com/joelvanhees?igsh=cG91ZjEzYnh5azAx&utm_source=qr" target="_blank" rel="noopener noreferrer" className="hover:line-through">Instagram</a>
             </div>
             <div className="text-right">
               <p>© {new Date().getFullYear()} Joel van Hees</p>

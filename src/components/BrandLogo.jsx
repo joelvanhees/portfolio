@@ -1,12 +1,24 @@
 import { useEffect, useId, useMemo, useRef } from 'react';
 import { LOGO_ART, LOGO_VIEWBOX } from '../content/logoArt';
+import { MonoLockup, MonoMark } from '../content/logoMono';
+
+// Brand book master coordinates for the monoline drawing.
+const MONO_VIEWBOX = {
+  lockup: '140.32 167.44 569.36 298.96',
+  mark: '140.31 167.43 145.78 254.88',
+};
 
 /*
- * Brand marks — the supplied liquid glass artwork.
+ * Brand marks.
  *
- * Each mark exists as a dark-surface and a light-surface drawing; they differ
- * in more than the backdrop, so the theme picks the whole artwork rather than
- * recolouring one.
+ * Two different drawings, chosen by surface rather than recoloured:
+ *
+ *  - Dark surfaces get the liquid glass artwork, translucent, with the page
+ *    showing through the letterforms.
+ *  - Light surfaces get the monoline signature from the brand book, drawn flat
+ *    in the page's own ink. Glass on Paper reads as a washed-out object; the
+ *    monoline reads as a signature, which is the editorial register the light
+ *    theme is in.
  *
  * The artwork uses feTurbulence, feDisplacementMap and feSpecularLighting on a
  * loop. That is the effect, and it is not cheap. Two guards keep it from being
@@ -37,12 +49,17 @@ const prefersStill = () => {
 const Mark = ({ variant, tone, className, title }) => {
   const svgRef = useRef(null);
   const uid = useId().replace(/[:]/g, '');
-  const viewBox = viewBoxFor(variant, tone);
-  const html = useMemo(() => artFor(variant, tone).replaceAll('__ID__', `${uid}-`), [variant, tone, uid]);
+  const isGlass = tone === 'clear';
+  const viewBox = isGlass ? viewBoxFor(variant, tone) : MONO_VIEWBOX[variant === 'mark' ? 'mark' : 'lockup'];
+  const html = useMemo(
+    () => (isGlass ? artFor(variant, tone).replaceAll('__ID__', `${uid}-`) : ''),
+    [isGlass, variant, tone, uid],
+  );
 
   useEffect(() => {
     const svg = svgRef.current;
-    if (!svg) return undefined;
+    // The monoline has no filters and no timeline; there is nothing to pause.
+    if (!svg || !isGlass) return undefined;
 
     const apply = () => {
       if (prefersStill()) svg.pauseAnimations?.();
@@ -71,20 +88,29 @@ const Mark = ({ variant, tone, className, title }) => {
       motion?.removeEventListener?.('change', apply);
       observer?.disconnect();
     };
-  }, [html]);
+  }, [html, isGlass]);
 
-  return (
-    <svg
-      ref={svgRef}
-      viewBox={viewBox}
-      className={className}
-      role="img"
-      aria-label={title}
-      focusable="false"
-      preserveAspectRatio="xMidYMid meet"
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
-  );
+  const shared = {
+    ref: svgRef,
+    viewBox,
+    className,
+    role: 'img',
+    'aria-label': title,
+    focusable: 'false',
+    preserveAspectRatio: 'xMidYMid meet',
+  };
+
+  // The glass artwork arrives as markup and has to be injected verbatim; the
+  // monoline is real JSX, so it is rendered as children instead.
+  if (!isGlass) {
+    return (
+      <svg {...shared}>
+        {variant === 'mark' ? <MonoMark /> : <MonoLockup maskId={`${uid}-counter`} />}
+      </svg>
+    );
+  }
+
+  return <svg {...shared} dangerouslySetInnerHTML={{ __html: html }} />;
 };
 
 /**

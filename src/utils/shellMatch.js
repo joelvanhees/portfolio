@@ -75,7 +75,11 @@ const scoreTerm = (term, words, phrase) => {
   let best = 0;
   for (const word of words) {
     if (word === term) return 4;
-    if (term.length >= 4 && (word.startsWith(term) || term.startsWith(word))) best = Math.max(best, 2.5);
+    // Both sides have to be long enough: without the guard on `word`, the
+    // two-letter "ki" prefix-matches "kinetic" and asks about the sculpture.
+    if (term.length >= 4 && word.length >= 4 && (word.startsWith(term) || term.startsWith(word))) {
+      best = Math.max(best, 2.5);
+    }
     else {
       const allowance = typoAllowance(term);
       // Worth 2, not 1.5: a one-word input whose only signal is a misspelling

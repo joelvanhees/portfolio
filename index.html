@@ -3,22 +3,67 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Portfolio Joel van Hees - Visual Storyteller & Creative Developer. Brand Identity, Web & Interface, 3D & Motion, Creative Direction." />
+    <meta name="description" content="Joel van Hees — Multidisciplinary Designer & Web Developer based in Cologne. Brand systems, web development, 3D &amp; motion, generative design and kinetic sculpture." />
     <meta name="author" content="Joel van Hees" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
     <link rel="canonical" href="https://joelvanhees.de" />
 
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Joel van Hees | Visual Storyteller & Creative Developer" />
-    <meta property="og:description" content="Visual systems for brands, interfaces and narrative experiences. Brand Identity, Web & Interface, 3D & Motion, Creative Direction." />
+    <meta property="og:title" content="Joel van Hees | Multidisciplinary Designer &amp; Web Developer" />
+    <meta property="og:description" content="Brand systems, web development, 3D &amp; motion, generative design and kinetic sculpture — one practice, from concept to shipped site or finished object." />
     <meta property="og:url" content="https://joelvanhees.de" />
     <meta property="og:locale" content="de_DE" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Joel van Hees | Visual Storyteller & Creative Developer" />
-    <meta name="twitter:description" content="Visual systems for brands, interfaces and narrative experiences." />
+    <meta name="twitter:title" content="Joel van Hees | Multidisciplinary Designer &amp; Web Developer" />
+    <meta name="twitter:description" content="Brand systems, web development, 3D &amp; motion, generative design and kinetic sculpture." />
+
+    <!--
+      Structured data. Search engines had nothing authoritative to go on here,
+      so they described the practice from third-party pages and got it wrong —
+      "graphic designer", with web development missing entirely. This states it
+      first-hand, on the canonical domain, in the form crawlers actually read.
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "@id": "https://joelvanhees.de/#person",
+        "name": "Joel van Hees",
+        "url": "https://joelvanhees.de",
+        "jobTitle": ["Multidisciplinary Designer", "Web Developer"],
+        "description": "Joel van Hees is a multidisciplinary designer and web developer based in Cologne. His practice spans brand systems, web development, generative and 3D work, industrial design and kinetic sculpture.",
+        "knowsAbout": [
+          "Multidisciplinary Design",
+          "Web Development",
+          "Frontend Engineering",
+          "React",
+          "Three.js",
+          "WebGL",
+          "GLSL Shaders",
+          "Brand Systems",
+          "Visual Identity",
+          "Typography",
+          "3D and Motion Design",
+          "Generative Design",
+          "Industrial Design",
+          "Kinetic Sculpture",
+          "Animatronics"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Cologne",
+          "addressCountry": "DE"
+        },
+        "alumniOf": [
+          { "@type": "CollegeOrUniversity", "name": "Köln International School of Design (KISD)" },
+          { "@type": "CollegeOrUniversity", "name": "Peter Behrens School of Arts (HSD)" }
+        ],
+        "sameAs": ["https://www.instagram.com/joelvanhees"]
+      }
+    </script>
 
     <!-- Type is system-resident (Arial / SF Mono per Identity System V03.1);
          only the Rubik display face still has to be fetched. -->

@@ -240,15 +240,24 @@ const ProjectModal = ({
 
             {selectedProject.id === "08" && (
               <div className="flex flex-col gap-4 mt-4">
-                <div className={`aspect-[3.7/1] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                  <LazyImage src={eyeImg1} className="w-full h-full object-cover" alt="Gefängnisplanet I - V16 Ansichten" onClick={() => setActiveImage(eyeImg1)} />
+                <div>
+                  <div className={`aspect-[3.7/1] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
+                    <LazyImage src={eyeImg1} className="w-full h-full object-cover" alt="Gefängnisplanet I - V16 Ansichten" onClick={() => setActiveImage(eyeImg1)} />
+                  </div>
+                  <p className="font-meta text-xs opacity-60 mt-2">V16 — front, three-quarter and side elevations</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className={`aspect-[2.3/1] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                    <LazyImage src={eyeImg2} className="w-full h-full object-cover" alt="Gefängnisplanet I - Einbau" onClick={() => setActiveImage(eyeImg2)} />
+                  <div>
+                    <div className={`aspect-[2.3/1] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
+                      <LazyImage src={eyeImg2} className="w-full h-full object-cover" alt="Gefängnisplanet I - Einbau" onClick={() => setActiveImage(eyeImg2)} />
+                    </div>
+                    <p className="font-meta text-xs opacity-60 mt-2">Animatronics in the cavity — base plate, ball joint, eyeball</p>
                   </div>
-                  <div className={`aspect-[2.3/1] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
-                    <LazyImage src={eyeImg3} className="w-full h-full object-cover" alt="Gefängnisplanet I - Querschnitt" onClick={() => setActiveImage(eyeImg3)} />
+                  <div>
+                    <div className={`aspect-[2.3/1] w-full rounded-xl border flex items-center justify-center overflow-hidden cursor-zoom-in ${darkMode ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
+                      <LazyImage src={eyeImg3} className="w-full h-full object-cover" alt="Gefängnisplanet I - Querschnitt" onClick={() => setActiveImage(eyeImg3)} />
+                    </div>
+                    <p className="font-meta text-xs opacity-60 mt-2">Sections at Y=0 and X=0 — funnel depth and mounting shelf</p>
                   </div>
                 </div>
               </div>
@@ -573,6 +582,30 @@ const ProjectModal = ({
                       </div>
                       <ArrowUpRight className="ml-auto opacity-50 group-hover:opacity-100" size={16} />
                     </button>
+                  </div>
+                )}
+
+                {selectedProject.id === "08" && (
+                  <div className="mt-12">
+                    <h3 className="text-sm font-meta uppercase tracking-widest opacity-50 mb-4">Build Specification</h3>
+                    <dl className="font-meta text-sm">
+                      {[
+                        ['Revision', 'V16'],
+                        ['Body', 'Hollow shell, ~200 × 125 mm'],
+                        ['Face', 'Concentric terraces, funnel 43 mm deep'],
+                        ['Eyeball', '⌀ 35 mm, ball joint, gaze through pupil'],
+                        ['Mounting', 'Wall-mounted, integrated horizontal shelf'],
+                        ['Fabrication', '3D printed, hand assembled and finished'],
+                      ].map(([key, value]) => (
+                        <div
+                          key={key}
+                          className={`flex justify-between gap-6 py-2.5 border-b ${darkMode ? 'border-white/10' : 'border-black/10'}`}
+                        >
+                          <dt className="opacity-50 uppercase tracking-wider text-xs shrink-0 pt-0.5">{key}</dt>
+                          <dd className="text-right">{value}</dd>
+                        </div>
+                      ))}
+                    </dl>
                   </div>
                 )}
 

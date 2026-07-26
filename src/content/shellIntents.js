@@ -21,20 +21,20 @@ export const shellIntents = [
     broad: true,
     terms: ['about', 'ueber', 'manifesto', 'manifest', 'praxis', 'practice', 'yourself', 'selbst', 'vorstellen', 'introduce', 'summary'],
     respond: ({ addon }) =>
-      `Joel van Hees - Graphic Designer & Creative Coder.\nCombining classical design disciplines with experimental canvas/WebGL technologies to build high-end generative spaces and scalable digital brand systems.${addon}`,
+      `Joel van Hees - Multidisciplinary Designer & Web Developer.\nOne practice across brand systems, web development, 3D/motion and kinetic objects: classical design discipline combined with frontend engineering and experimental canvas/WebGL technologies. I design the system and build it — identities, production websites, generative spaces and physical work.${addon}`,
   },
   {
     id: 'profile',
     broad: true,
     terms: ['joel', 'van hees', 'creator', 'wer ist', 'who is', 'wer bist', 'who are you', 'person', 'hinter', 'behind', 'biografie', 'biography', 'profile', 'profil', 'steckbrief', 'bio'],
     respond: () =>
-      `PROFILE SUMMARY:\nJoel van Hees is an integrated graphic designer and developer living in Cologne. He merges classical design disciplines (composition, strict grid typography, brand strategy) with experimental frontend technologies (Three.js, custom shaders, reactive DOM interactions). He treats the web browser as an emotional, narrative canvas ready for deep atmosphere.`,
+      `PROFILE SUMMARY:\nJoel van Hees is a multidisciplinary designer and web developer living in Cologne. The practice runs across brand systems, web development, generative and 3D work, industrial design and kinetic sculpture — graphic design is one discipline in it, not the whole of it.\n\nHe merges classical design disciplines (composition, strict grid typography, brand strategy) with hands-on frontend engineering (React, Three.js, custom GLSL shaders, reactive DOM interactions), and takes projects from concept through to the shipped site or the finished object.`,
   },
   {
     id: 'projects',
     terms: ['projects', 'projekte', 'projekt', 'project', 'work', 'works', 'arbeiten', 'portfolio', 'cases', 'referenzen', 'index', 'selected'],
     respond: ({ addon }) =>
-      `SELECTED DATA INDEX:\n  02 // spiral down time\n  01 // brand collaboration\n  07 // check your bus\n  00 // web design as spatial experience\n  03 // nasalica\n  04 // branding systems\n  06 // concept vehicle rebrand\n  05 // poster series${addon}`,
+      `SELECTED DATA INDEX:\n  02 // spiral down time\n  01 // brand collaboration\n  07 // check your bus\n  08 // gefängnisplanet i\n  00 // web design as spatial experience\n  03 // nasalica\n  04 // branding systems\n  06 // concept vehicle rebrand\n  05 // poster series${addon}`,
   },
   {
     id: 'contact',
@@ -85,6 +85,16 @@ export const shellIntents = [
     terms: ['sound', 'sounds', 'music', 'musik', 'soundscape', 'audio', 'atmosphere', 'ton'],
     respond: ({ user }) =>
       `ATMOSPHERIC SOUNDSCAPE SYNTHESIS:\nSound shapes spatial depth. My portfolio integrates custom-engineered ambient tracks (like "Orbital Drift Run.mp3" in the Blob Runner overlay) and atmospheric sounds to establish emotional presence in digital installations. Audio controls are modular and easy to toggle directly inside project overlays, ${user}.`,
+  },
+  {
+    id: 'sculpture',
+    terms: [
+      'gefaengnisplanet', 'gefaengnis', 'prison', 'prisonplanet', 'planet', 'skulptur', 'sculpture',
+      'kinetisch', 'kinetische', 'kinetic', 'animatronik', 'animatronic', 'animatronics', 'auge',
+      'eye', 'eyeball', 'objekt', 'physical', 'installation', 'servo', 'mechanik',
+    ],
+    respond: ({ user, addon }) =>
+      `GEFÄNGNISPLANET I — KINETIC / ANIMATRONIC SCULPTURE:\nA wall-mounted planetary body, roughly 200 x 125 mm, whose face steps inward in concentric terraces and falls away into a funnel 43 mm deep. At the bottom of that funnel sits a pupil, and behind it a real eye that watches the room.\n\nMECHANISM: the shell is hollow. Its cavity carries a full animatronic assembly on a base plate resting on a horizontal shelf moulded into the body itself — no external frame. A 35 mm eyeball rides on a ball joint and aims straight out through the pupil, moving slowly, the way something watches when it already knows you are not leaving.\n\nBUILD: sixteen revisions (shown: V16), digitally sculpted and sectioned in CAD, 3D printed, assembled and finished by hand.\n\nSUBJECT: a prison nobody builds for you — you build it yourself, out of feeds, notifications and the soft pull of one more minute.\n\nOpen project 08 to see the sections and the internal assembly, ${user}.${addon}`,
   },
   {
     id: 'location',

@@ -120,12 +120,21 @@ The P50 becomes a platform rather than a product.`,
     id: "08",
     category: "3D PRINT / KINETIC / CODING / SCULPTURE",
     title: "Gefängnisplanet I",
-    description: "A wall-mounted kinetic sculpture exploring modern digital captivity through feeds, notifications, and soft behavioral pulls.",
+    description: "A wall-mounted animatronic sculpture: a planet-sized eye that tracks the room, exploring modern digital captivity through feeds, notifications and soft behavioural pulls.",
     longDescription: `Gefängnisplanet I (Prison Planet) is a wall-mounted kinetic sculpture about a prison that no one builds for you. You build it yourself.
 
-You scroll instead of live. You watch instead of move. The cell has no walls and no door. It is made of feeds, of notifications, of the soft pull of one more minute. The strangest part is that you want it. The sculpture does not judge this. It only watches back.`,
+You scroll instead of live. You watch instead of move. The cell has no walls and no door. It is made of feeds, of notifications, of the soft pull of one more minute. The strangest part is that you want it. The sculpture does not judge this. It only watches back.
+
+THE OBJECT
+A hollow planetary body, roughly 200 mm across and 125 mm deep, its face cut into concentric terraces that step inward and fall away into a funnel 43 mm deep. At the bottom of that funnel sits the pupil. The terracing is not decoration: it forces the eye of the viewer down the same shaft the sculpture looks back out of, so both parties end up staring through the same hole.
+
+THE MECHANISM
+The shell is not solid. Its cavity carries a full animatronic assembly, mounted on a base plate that sits on a horizontal shelf moulded into the body itself, so the mechanics hang off the sculpture's own structure instead of a separate frame. A 35 mm eyeball rides on a ball joint and aims straight out through the pupil. The gaze moves — slowly, without urgency, the way something watches when it already knows you are not leaving.
+
+THE MAKING
+Designed from scratch through sixteen full revisions (the build shown here is V16), each one resolving the same conflict: enough interior volume for the animatronics, thin enough walls to keep the object readable as a planet rather than a housing. Digitally sculpted, sectioned and pressure-tested in CAD, then 3D printed, assembled and finished by hand.`,
     warningText: "Gefängnisplanet I is part of an active funding process, shown here as a preview only, with all rights reserved by the artist.",
-    tech: ["Concept & Design", "Digital Sculpting", "3D Modelling", "3D Printing", "Kinetic Mechanism", "Hand Finishing", "Animatronics", "Mixed Media"],
+    tech: ["Concept & Design", "Digital Sculpting", "3D Modelling", "CAD & Sectioning", "3D Printing", "Animatronics", "Kinetic Mechanism", "Ball-Joint Assembly", "Hand Finishing", "Mixed Media"],
     visualComponent: <LazyImage src={eyeImg1} className="w-full h-full object-cover cursor-zoom-in" alt="Gefängnisplanet Preview" onClick={() => setActiveImage(eyeImg1)} />,
     link: "#",
     featured: true,

@@ -365,14 +365,16 @@ const HomeView = ({ darkMode, projects, setSelectedProject, selectedProject, han
               <span className="glitch-hover cursor-default block">The Operator</span>
             </h2>
             <p data-reveal style={{ '--reveal-delay': '60ms' }} className="text-xl leading-relaxed mb-6">
-              I am a graphic designer working across brand systems, generative design and visual storytelling.
+              I am a multidisciplinary designer and web developer, working across brand systems, web
+              development, generative design, 3D and visual storytelling.
             </p>
             <p
               data-reveal
               style={{ '--reveal-delay': '115ms', '--reveal-opacity': 0.7 }}
               className="opacity-70 leading-relaxed mb-8 font-meta text-sm"
             >
-              My practice combines classical design discipline with experimental technologies to create scalable visual identities.
+              My practice combines classical design discipline with frontend engineering and experimental
+              technologies — from identity systems and interfaces to production websites and kinetic objects.
             </p>
             <div data-reveal style={{ '--reveal-delay': '170ms' }}>
               <RoleSwitch darkMode={darkMode} activeRole={activeRole} onChange={setActiveRole} />

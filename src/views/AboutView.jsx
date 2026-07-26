@@ -25,20 +25,20 @@ const AboutView = ({ darkMode }) => (
           {/* Typed out by scroll position, so the file reads as if it is being
               written while you move through it. */}
           <p className="mb-6">
-            <ScrollTypewriter text="I am a graphic designer working across brand systems, generative design and visual storytelling. My practice is interdisciplinary, combining graphic design, typography, motion, 3D and creative coding to develop coherent visual systems." />
+            <ScrollTypewriter text="I am a multidisciplinary designer and web developer. My practice spans brand systems, web development, generative design and visual storytelling — combining typography, motion, 3D, industrial design and creative coding into coherent systems rather than isolated artefacts." />
           </p>
           <p className="mb-6">
             <ScrollTypewriter
               start={0.78}
               end={0.28}
-              text="I work conceptually and system-oriented, translating ideas into scalable identities, interfaces and visual narratives. This approach allows me to move fluently between static and dynamic media, from print and branding to real-time visuals and interactive environments."
+              text="I work conceptually and system-oriented, translating ideas into scalable identities, interfaces and visual narratives. Web development is a core part of that: I build the sites and interfaces myself, in React, WebGL and custom shaders, so the concept survives all the way into production."
             />
           </p>
           <p>
             <ScrollTypewriter
               start={0.7}
               end={0.22}
-              text="With a strong foundation in classical design principles and hands-on experience in experimental tools, I focus on building work that is structured, adaptable and context-aware."
+              text="The range is deliberate. Classical design principles, frontend engineering and physical fabrication are not separate disciplines to me but one practice, which is why a project can end as a brand system, a website or a kinetic sculpture depending on what the idea actually needs."
             />
           </p>
         </div>

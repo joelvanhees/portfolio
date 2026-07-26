@@ -331,7 +331,7 @@ const App = () => {
                       playClickSound('click');
                     }}
                     className={`group text-left font-display font-bold uppercase tracking-tight text-2xl md:text-[1.75rem] leading-[1.5] transition-opacity duration-300 ${
-                      isActive ? 'opacity-100' : 'opacity-45 hover:opacity-90'
+                      isActive ? 'opacity-100' : 'opacity-70 hover:opacity-100'
                     }`}
                   >
                     <span className="inline-flex items-baseline gap-3">

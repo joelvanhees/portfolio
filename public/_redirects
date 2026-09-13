@@ -1,0 +1,4 @@
+# One bundle, real paths. /gefängnisplanet and /prisonplanet are routed in the
+# app, so a direct hit on them has to be served the shell instead of a 404.
+# Static files still win over this rule.
+/*  /index.html  200

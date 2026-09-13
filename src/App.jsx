@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef, lazy, Suspense } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef, lazy, Suspense } from 'react';
 import { Menu, X, Terminal } from 'lucide-react';
 
 import HomeView from './views/HomeView';
@@ -7,6 +7,7 @@ import ServicesView from './views/ServicesView';
 import AboutView from './views/AboutView';
 import ContactView from './views/ContactView';
 import GameView from './views/GameView';
+import PrisonPlanetView from './views/PrisonPlanetView';
 import FloatingConsole from './components/FloatingConsole';
 import ErrorBoundary from './components/ErrorBoundary';
 import { BrandLockup, BrandMark } from './components/BrandLogo';
@@ -18,13 +19,47 @@ import ShellBlob from './components/ShellBlob';
 import { buildProjects } from './content/projects.jsx';
 import { playClickSound } from './utils/clickSound';
 import { start as startScrollReveal, scan as scanScrollReveal } from './utils/scrollReveal';
+import { PRISON_PLANET_PATHS, resolvePathRoute } from './utils/routes';
+
+const VALID_PAGES = ['home', 'work', 'services', 'about', 'contact', 'game', 'secret', 'mixer', 'skinbar'];
+
+// Hashes that open something on top of the page instead of being a page.
+const OVERLAY_HASHES = { game: 'game', secret: 'secret', mixer: 'secret', skinbar: 'secret' };
+
+/**
+ * What the address bar currently means. Pure: it reads, it never writes — so
+ * it can seed state during the first render as well as answer a later event.
+ *
+ * `page: null` means "whatever page you were already on".
+ */
+const readRoute = () => {
+  const hash = window.location.hash.replace('#', '').toLowerCase();
+  const matchedPath = resolvePathRoute(window.location.pathname);
+
+  // A real path owns the page, unless something asked for a hash page from
+  // there — the console and the game both navigate that way, and they have to
+  // be able to get out of a standalone page.
+  if (matchedPath && !VALID_PAGES.includes(hash)) {
+    return { matchedPath, pathRoute: matchedPath, page: null, overlay: null };
+  }
+
+  const overlay = OVERLAY_HASHES[hash] ?? null;
+  const page = !overlay && VALID_PAGES.includes(hash) ? hash : null;
+
+  return { matchedPath, pathRoute: null, page, overlay };
+};
+
+// Evaluated once, on import: the address this page was opened on.
+const initialRoute = readRoute();
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
-  const [activePage, setActivePage] = useState('home');
-  const [gameOpen, setGameOpen] = useState(false);
+  const [activePage, setActivePage] = useState(initialRoute.page ?? 'home');
+  // A real path (Gefängnisplanet) outranks the hash while it is set.
+  const [pathRoute, setPathRoute] = useState(initialRoute.pathRoute);
+  const [gameOpen, setGameOpen] = useState(initialRoute.overlay === 'game');
   const [legalOpen, setLegalOpen] = useState(false);
   const [showVideoSequence, setShowVideoSequence] = useState(false);
   const [activeImage, setActiveImage] = useState(null);
@@ -32,8 +67,8 @@ const App = () => {
   const [consoleOpen, setConsoleOpen] = useState(false);
   const [consoleMinimized, setConsoleMinimized] = useState(false);
   const [cooldownActive, setCooldownActive] = useState(false);
-  const [secretOpen, setSecretOpen] = useState(false);
-  const [secretBypass, setSecretBypass] = useState(false);
+  const [secretOpen, setSecretOpen] = useState(initialRoute.overlay === 'secret');
+  const [secretBypass, setSecretBypass] = useState(initialRoute.overlay === 'secret');
   const [isMobile, setIsMobile] = useState(true);
   const [userName, setUserName] = useState('');
   const [awaitingName, setAwaitingName] = useState(true);
@@ -63,7 +98,7 @@ const App = () => {
   // Each view swaps in its own blocks, so pick up the new ones once they mount.
   useEffect(() => {
     scanScrollReveal();
-  }, [activePage]);
+  }, [activePage, pathRoute]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -134,47 +169,73 @@ const App = () => {
       cancelAnimationFrame(handle);
       document.documentElement.style.scrollBehavior = originalScrollBehavior;
     };
-  }, [activePage]);
+  }, [activePage, pathRoute]);
 
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '').toLowerCase();
-      const validPages = ['home', 'work', 'services', 'about', 'contact', 'game', 'secret', 'mixer', 'skinbar'];
-      if (validPages.includes(hash)) {
-        if (hash === 'game') {
-          setGameOpen(true);
-          setActivePage((prev) => {
-            const pageToSet = prev === 'game' ? 'home' : prev;
-            window.history.replaceState(null, '', `#${pageToSet}`);
-            return pageToSet;
-          });
-        } else if (hash === 'secret' || hash === 'mixer' || hash === 'skinbar') {
-          setSecretOpen(true);
-          setSecretBypass(true);
-          setActivePage((prev) => {
-            const pageToSet = (prev === 'secret' || prev === 'mixer' || prev === 'skinbar') ? 'home' : prev;
-            window.history.replaceState(null, '', `#${pageToSet}`);
-            return pageToSet;
-          });
-        } else {
-          setActivePage(hash);
-        }
-      } else {
-        setActivePage('home');
-        if (hash === '' || !validPages.includes(hash)) {
-          window.history.replaceState(null, '', '#home');
-        }
-      }
-    };
+  // Reads the address bar and puts the app where it says. Defined here rather
+  // than inside the effect because navigation calls it directly: pushState
+  // fires no event of its own.
+  const applyRoute = useCallback(() => {
+    const { matchedPath, pathRoute: nextPathRoute, page, overlay } = readRoute();
+    setPathRoute(nextPathRoute);
+    if (nextPathRoute) return;
 
-    window.addEventListener('hashchange', handleHashChange);
-    handleHashChange(); // Run on initial load
+    // Left a standalone page by its hash: the path has to go with it.
+    if (matchedPath) {
+      window.history.replaceState(null, '', `/${window.location.hash}`);
+    }
 
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    if (overlay === 'game') setGameOpen(true);
+    if (overlay === 'secret') {
+      setSecretOpen(true);
+      setSecretBypass(true);
+    }
+
+    if (page) {
+      setActivePage(page);
+    } else if (overlay) {
+      // An overlay sits on top of whatever was already open, so put that page
+      // back in the address bar.
+      setActivePage((prev) => {
+        window.history.replaceState(null, '', `#${prev}`);
+        return prev;
+      });
+    } else {
+      setActivePage('home');
+      window.history.replaceState(null, '', '#home');
+    }
   }, []);
 
+  // The address the page was opened on, tidied: an overlay hash or an unknown
+  // one should not survive the first paint. State is already seeded from it,
+  // so this only writes history.
+  useEffect(() => {
+    if (initialRoute.pathRoute) return;
+    if (initialRoute.overlay || !initialRoute.page) {
+      window.history.replaceState(null, '', `#${initialRoute.page ?? 'home'}`);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('hashchange', applyRoute);
+    window.addEventListener('popstate', applyRoute);
+
+    return () => {
+      window.removeEventListener('hashchange', applyRoute);
+      window.removeEventListener('popstate', applyRoute);
+    };
+  }, [applyRoute]);
+
   const handleNav = (page) => {
-    window.location.hash = page;
+    // pushState rather than assigning the hash: coming back from a path route
+    // the pathname has to be dropped too, and that fires no hashchange.
+    window.history.pushState(null, '', `/#${page}`);
+    applyRoute();
+    setMenuOpen(false);
+  };
+
+  const openPrisonPlanet = (lang = 'de') => {
+    window.history.pushState(null, '', PRISON_PLANET_PATHS[lang] ?? PRISON_PLANET_PATHS.de);
+    applyRoute();
     setMenuOpen(false);
   };
 
@@ -370,11 +431,21 @@ const App = () => {
         </div>
       )}
 
-      {activePage === 'home' && <ErrorBoundary label="home view"><HomeView darkMode={darkMode} projects={projects} setSelectedProject={setSelectedProject} selectedProject={selectedProject} handleNav={handleNav} setCooldownActive={setCooldownActive} /></ErrorBoundary>}
-      {activePage === 'work' && <ErrorBoundary label="work view"><WorkView darkMode={darkMode} /></ErrorBoundary>}
-      {activePage === 'services' && <ErrorBoundary label="services view"><ServicesView darkMode={darkMode} /></ErrorBoundary>}
-      {activePage === 'about' && <ErrorBoundary label="about view"><AboutView darkMode={darkMode} /></ErrorBoundary>}
-      {activePage === 'contact' && <ErrorBoundary label="contact view"><ContactView darkMode={darkMode} /></ErrorBoundary>}
+      {pathRoute?.page === 'prisonplanet' && (
+        <ErrorBoundary label="gefängnisplanet view">
+          <PrisonPlanetView
+            darkMode={darkMode}
+            lang={pathRoute.lang}
+            onNavigate={handleNav}
+            onSwitchLanguage={openPrisonPlanet}
+          />
+        </ErrorBoundary>
+      )}
+      {!pathRoute && activePage === 'home' && <ErrorBoundary label="home view"><HomeView darkMode={darkMode} projects={projects} setSelectedProject={setSelectedProject} selectedProject={selectedProject} handleNav={handleNav} setCooldownActive={setCooldownActive} /></ErrorBoundary>}
+      {!pathRoute && activePage === 'work' && <ErrorBoundary label="work view"><WorkView darkMode={darkMode} /></ErrorBoundary>}
+      {!pathRoute && activePage === 'services' && <ErrorBoundary label="services view"><ServicesView darkMode={darkMode} /></ErrorBoundary>}
+      {!pathRoute && activePage === 'about' && <ErrorBoundary label="about view"><AboutView darkMode={darkMode} /></ErrorBoundary>}
+      {!pathRoute && activePage === 'contact' && <ErrorBoundary label="contact view"><ContactView darkMode={darkMode} /></ErrorBoundary>}
       {gameOpen && (
         <GameView 
           darkMode={darkMode} 

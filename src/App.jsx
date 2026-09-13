@@ -7,7 +7,6 @@ import ServicesView from './views/ServicesView';
 import AboutView from './views/AboutView';
 import ContactView from './views/ContactView';
 import GameView from './views/GameView';
-import PrisonPlanetView from './views/PrisonPlanetView';
 import FloatingConsole from './components/FloatingConsole';
 import ErrorBoundary from './components/ErrorBoundary';
 import { BrandLockup, BrandMark } from './components/BrandLogo';
@@ -233,11 +232,12 @@ const App = () => {
     setMenuOpen(false);
   };
 
-  const openPrisonPlanet = (lang = 'de') => {
-    window.history.pushState(null, '', PRISON_PLANET_PATHS[lang] ?? PRISON_PLANET_PATHS.de);
-    applyRoute();
-    setMenuOpen(false);
-  };
+  useEffect(() => {
+    const standalone = initialRoute.pathRoute;
+    if (!standalone) return;
+    if (decodeURIComponent(window.location.pathname) === standalone.href) return;
+    window.location.replace(standalone.href);
+  }, []);
 
   const handleStartProject = () => {
     setSelectedProject(null);
@@ -431,15 +431,12 @@ const App = () => {
         </div>
       )}
 
-      {pathRoute?.page === 'prisonplanet' && (
-        <ErrorBoundary label="gefängnisplanet view">
-          <PrisonPlanetView
-            darkMode={darkMode}
-            lang={pathRoute.lang}
-            onNavigate={handleNav}
-            onSwitchLanguage={openPrisonPlanet}
-          />
-        </ErrorBoundary>
+      {pathRoute && (
+        <div className="min-h-screen flex items-center justify-center px-6 text-center">
+          <a href={pathRoute.href} className="font-meta text-xs uppercase tracking-[0.18em] underline underline-offset-8">
+            Gefängnisplanet I ↗
+          </a>
+        </div>
       )}
       {!pathRoute && activePage === 'home' && <ErrorBoundary label="home view"><HomeView darkMode={darkMode} projects={projects} setSelectedProject={setSelectedProject} selectedProject={selectedProject} handleNav={handleNav} setCooldownActive={setCooldownActive} /></ErrorBoundary>}
       {!pathRoute && activePage === 'work' && <ErrorBoundary label="work view"><WorkView darkMode={darkMode} /></ErrorBoundary>}

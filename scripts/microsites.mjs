@@ -22,9 +22,18 @@ const SITE = 'https://joelvanhees.de';
 
 // One page, two addresses. German is the work's own language — the title
 // stays Gefängnisplanet in both — so only the prose and the metadata switch.
+const CANONICAL = {
+  de: `${SITE}/gefängnisplanet/`,
+  en: `${SITE}/prisonplanet/`,
+};
+
 export const MICROSITE_PAGES = [
-  { path: 'gefängnisplanet/index.html', lang: 'de', url: `${SITE}/gefängnisplanet/` },
-  { path: 'prisonplanet/index.html', lang: 'en', url: `${SITE}/prisonplanet/` },
+  { path: 'gefängnisplanet/index.html', lang: 'de' },
+  { path: 'prisonplanet/index.html', lang: 'en' },
+  // The same document under the ASCII spelling. Hosts, CDNs and link rewriters
+  // still trip over a path with an umlaut in it, and a page that 404s is worse
+  // than a page with a second door. Canonical stays on the umlaut.
+  { path: 'gefaengnisplanet/index.html', lang: 'de' },
 ];
 
 const DESCRIPTION = {
@@ -49,10 +58,9 @@ export const renderMicrosite = (lang) => {
     html = html.replace(DESCRIPTION.de, DESCRIPTION.en);
   }
 
-  // Two addresses for one page: say which is which, or a crawler picks for us.
-  const de = MICROSITE_PAGES[0].url;
-  const en = MICROSITE_PAGES[1].url;
-  const self = lang === 'en' ? en : de;
+  // Several addresses for one page: say which is which, or a crawler picks.
+  const { de, en } = CANONICAL;
+  const self = CANONICAL[lang];
   const head =
     `<link rel="canonical" href="${self}">` +
     `<link rel="alternate" hreflang="de" href="${de}">` +

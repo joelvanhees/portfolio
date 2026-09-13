@@ -20,6 +20,17 @@ import { playClickSound } from './utils/clickSound';
 import { start as startScrollReveal, scan as scanScrollReveal } from './utils/scrollReveal';
 import { PRISON_PLANET_PATHS, resolvePathRoute } from './utils/routes';
 
+// The index. Five views of the portfolio, and one work that is its own
+// document at its own address — so that one is a link, not a page switch.
+const MENU_ITEMS = [
+  { label: 'HOME', page: 'home' },
+  { label: 'WORK', page: 'work' },
+  { label: 'SERVICES', page: 'services' },
+  { label: 'ABOUT', page: 'about' },
+  { label: 'CONTACT', page: 'contact' },
+  { label: 'GEFÄNGNISPLANET', href: PRISON_PLANET_PATHS.de },
+];
+
 const VALID_PAGES = ['home', 'work', 'services', 'about', 'contact', 'game', 'secret', 'mixer', 'skinbar'];
 
 // Hashes that open something on top of the page instead of being a page.
@@ -382,27 +393,43 @@ const App = () => {
             </div>
 
             <nav className="flex flex-col">
-              {['HOME', 'WORK', 'SERVICES', 'ABOUT', 'CONTACT'].map((item) => {
-                const isActive = activePage === item.toLowerCase();
-                return (
-                  <button
-                    key={item}
-                    onClick={() => {
-                      handleNav(item.toLowerCase());
-                      playClickSound('click');
-                    }}
-                    className={`group text-left font-display font-bold uppercase tracking-tight text-2xl md:text-[1.75rem] leading-[1.5] transition-opacity duration-300 ${
-                      isActive ? 'opacity-100' : 'opacity-70 hover:opacity-100'
-                    }`}
-                  >
-                    <span className="inline-flex items-baseline gap-3">
-                      {item}
+              {MENU_ITEMS.map(({ label, page, href }) => {
+                const isActive = Boolean(page) && activePage === page;
+                // A fifteen letter title does not sit at the size of HOME in a
+                // panel this narrow. Smaller, on one line, with the arrow the
+                // other leaving links use.
+                const className = `group text-left font-display font-bold uppercase tracking-tight leading-[1.5] transition-opacity duration-300 ${
+                  href ? 'text-base md:text-lg' : 'text-2xl md:text-[1.75rem]'
+                } ${isActive ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`;
+                const body = (
+                  <span className="inline-flex items-baseline gap-3">
+                    {label}
+                    {href ? (
+                      <span className="text-sm opacity-50 transition-opacity duration-300 group-hover:opacity-100">↗</span>
+                    ) : (
                       <span
                         className={`h-px w-6 bg-current transition-all duration-300 ${
                           isActive ? 'opacity-70 w-10' : 'opacity-0 group-hover:opacity-50'
                         }`}
                       />
-                    </span>
+                    )}
+                  </span>
+                );
+
+                return href ? (
+                  <a key={label} href={href} className={className} onClick={() => playClickSound('click')}>
+                    {body}
+                  </a>
+                ) : (
+                  <button
+                    key={label}
+                    onClick={() => {
+                      handleNav(page);
+                      playClickSound('click');
+                    }}
+                    className={className}
+                  >
+                    {body}
                   </button>
                 );
               })}

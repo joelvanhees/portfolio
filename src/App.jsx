@@ -18,7 +18,7 @@ import ShellBlob from './components/ShellBlob';
 import { buildProjects } from './content/projects.jsx';
 import { playClickSound } from './utils/clickSound';
 import { start as startScrollReveal, scan as scanScrollReveal } from './utils/scrollReveal';
-import { PRISON_PLANET_PATHS, resolvePathRoute } from './utils/routes';
+import { AKKOMMODATION_PATHS, resolvePathRoute } from './utils/routes';
 
 // The index. Five views of the portfolio, and one work that is its own
 // document at its own address — so that one is a link, not a page switch.
@@ -28,7 +28,7 @@ const MENU_ITEMS = [
   { label: 'SERVICES', page: 'services' },
   { label: 'ABOUT', page: 'about' },
   { label: 'CONTACT', page: 'contact' },
-  { label: 'GEFÄNGNISPLANET', href: PRISON_PLANET_PATHS.de },
+  { label: 'AKKOMMODATION', href: AKKOMMODATION_PATHS.de },
 ];
 
 const VALID_PAGES = ['home', 'work', 'services', 'about', 'contact', 'game', 'secret', 'mixer', 'skinbar'];
@@ -67,7 +67,7 @@ const App = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [activePage, setActivePage] = useState(initialRoute.page ?? 'home');
-  // A real path (Gefängnisplanet) outranks the hash while it is set.
+  // A real path (AKKOMMODATION) outranks the hash while it is set.
   const [pathRoute, setPathRoute] = useState(initialRoute.pathRoute);
   const [gameOpen, setGameOpen] = useState(initialRoute.overlay === 'game');
   const [legalOpen, setLegalOpen] = useState(false);
@@ -461,7 +461,7 @@ const App = () => {
       {pathRoute && (
         <div className="min-h-screen flex items-center justify-center px-6 text-center">
           <a href={pathRoute.href} className="font-meta text-xs uppercase tracking-[0.18em] underline underline-offset-8">
-            Gefängnisplanet I ↗
+            AKKOMMODATION ↗
           </a>
         </div>
       )}

@@ -1,0 +1,16 @@
+{
+  "scanLinearRGB": [
+    0.035,
+    0.7,
+    0.15
+  ],
+  "scanSRGB": [
+    53,
+    218,
+    108
+  ],
+  "scanHex": "#35DA6C",
+  "source": "Blender SCAN / wavefront Emission color before AgX and emission intensity",
+  "source_verified_in_scene_builder": true,
+  "packed_blend_verification_pending": true
+}

@@ -1,3 +1,17 @@
 {
+  "redirects": [
+    { "source": "/gefängnisplanet", "destination": "/akkommodation/", "statusCode": 301 },
+    { "source": "/gefängnisplanet/", "destination": "/akkommodation/", "statusCode": 301 },
+    { "source": "/gef%C3%A4ngnisplanet", "destination": "/akkommodation/", "statusCode": 301 },
+    { "source": "/gef%C3%A4ngnisplanet/", "destination": "/akkommodation/", "statusCode": 301 },
+    { "source": "/gefaengnisplanet", "destination": "/akkommodation/", "statusCode": 301 },
+    { "source": "/gefaengnisplanet/", "destination": "/akkommodation/", "statusCode": 301 },
+    { "source": "/gefangnisplanet", "destination": "/akkommodation/", "statusCode": 301 },
+    { "source": "/gefangnisplanet/", "destination": "/akkommodation/", "statusCode": 301 },
+    { "source": "/prisonplanet", "destination": "/akkommodation/en.html", "statusCode": 301 },
+    { "source": "/prisonplanet/", "destination": "/akkommodation/en.html", "statusCode": 301 },
+    { "source": "/prison-planet", "destination": "/akkommodation/en.html", "statusCode": 301 },
+    { "source": "/prison-planet/", "destination": "/akkommodation/en.html", "statusCode": 301 }
+  ],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

@@ -1,0 +1,13 @@
+const clamp=x=>Math.max(0,Math.min(1,x));
+export class Story {
+ constructor(request){this.request=request;this.trilogy=document.querySelector('.trilogy');this.track=document.querySelector('.trilogy-track');this.pull=document.querySelector('.cosmos-story');this.cards=[...document.querySelectorAll('.reading-card')];this.sections=[...document.querySelectorAll('.chapter')];this.video=document.querySelector('#film');this.visibleFilm=false;this.filmLoaded=false;this.still=false;if(this.video){new IntersectionObserver(entries=>{this.visibleFilm=entries[0].isIntersecting;this.videoState();},{threshold:.15}).observe(this.video);new IntersectionObserver((entries,observer)=>{if(entries.some(e=>e.isIntersecting)){const source=this.video.querySelector('source');source.src=source.dataset.src;this.video.load();this.filmLoaded=true;observer.disconnect();this.videoState();}},{rootMargin:'400px'}).observe(this.video);document.addEventListener('visibilitychange',()=>this.videoState());}}
+ videoState(){if(this.filmLoaded&&this.visibleFilm&&!this.still&&!document.hidden)this.video.play().catch(()=>{});else this.video?.pause();}
+ update(still){if(this.still!==still){this.still=still;this.videoState();}const ctx={};for(const section of this.sections){const r=section.getBoundingClientRect();if(r.top<innerHeight*.55&&r.bottom>innerHeight*.4){ctx.name=section.id;break;}}
+ if(this.trilogy){const r=this.trilogy.getBoundingClientRect(),p=clamp(-r.top/Math.max(1,r.height-innerHeight));this.track.style.transform=`translate3d(${-p*200/3}%,0,0)`;if(r.top<=0&&r.bottom>=innerHeight)ctx.trilogy=still?0:p;}
+ if(this.pull){const r=this.pull.getBoundingClientRect();if(r.top<innerHeight*.5&&r.bottom>0)ctx.pull=clamp((innerHeight*.5-r.top)/Math.max(1,r.height-innerHeight*.5));}
+ const zoom=document.querySelector('.hollow-transition');if(zoom){const r=zoom.getBoundingClientRect(),p=clamp((innerHeight-r.top)/(innerHeight+r.height));zoom.firstElementChild.style.transform=still?'none':`scale(${1+p*p*5})`;zoom.style.opacity=1-Math.max(0,(p-.8)*5);}
+ for(let i=0;i<this.cards.length;i++){const card=this.cards[i],next=this.cards[i+1],r=card.getBoundingClientRect(),bottom=next?.getBoundingClientRect().top??Infinity;for(const child of card.children){const b=child.getBoundingClientRect();child.style.clipPath=bottom<b.bottom?`inset(0 0 ${Math.min(b.height,Math.max(0,b.bottom-bottom))}px 0)`:'none';}card.dataset.clipBottom=String(bottom);}
+ const eye=document.querySelector('.return-eye');if(eye){const r=eye.getBoundingClientRect();if(ctx.name==='contact'){ctx.contact=clamp((innerHeight-r.top)/(innerHeight*.8));ctx.eyeY=clamp((r.top+r.height*.5)/innerHeight);}}
+ return ctx;
+ }
+}

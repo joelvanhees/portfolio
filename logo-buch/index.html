@@ -1,3 +1,5 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}</style>
 <title>Joel van Hees Logobuch</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,13 +16,14 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --paper:#0F1011; --ink:#ECECE8; --mute:#8b8d8e; --rule:#2a2c2d; --tile:#18191a; color-scheme:dark}}
 :root[data-theme="dark"]{--paper:#0F1011; --ink:#ECECE8; --mute:#8b8d8e; --rule:#2a2c2d; --tile:#18191a; color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
 html,body{height:100%}
 body{background:var(--paper);color:var(--ink);font-family:var(--ui);overflow:hidden}
 .mag{height:100%;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;overscroll-behavior-x:contain}
 .mag::-webkit-scrollbar{display:none}
 .page{flex:0 0 100%;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow-y:auto;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
-  padding-block:20px 76px;display:flex;flex-direction:column;gap:14px}
+  padding-block:20px 84px;display:flex;flex-direction:column;gap:14px}
 .folio{display:flex;justify-content:space-between;font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding-bottom:10px;border-bottom:1px solid var(--rule)}
 .grid{flex:1;display:grid;gap:14px;min-height:0}
 .g1{grid-template-columns:1fr}
@@ -35,9 +38,9 @@ body{background:var(--paper);color:var(--ink);font-family:var(--ui);overflow:hid
 }
 .cell{position:relative;display:grid;grid-template-rows:1fr auto;background:var(--tile);min-width:0;min-height:0}
 .no{position:absolute;top:14px;left:16px;font:500 12px/1 var(--mono);letter-spacing:.08em;color:var(--mute)}
-.art{display:flex;align-items:center;justify-content:center;padding:44px 8% 20px;min-height:0}
-.art svg{width:100%;height:100%;max-height:min(46vh,380px);color:var(--ink);overflow:visible}
-.g1 .art svg{max-height:min(58vh,480px)}
+.art{position:relative;min-height:0}
+.art svg{position:absolute;left:10%;top:48px;width:80%;height:calc(100% - 72px);color:var(--ink);overflow:visible}
+.g1 .art svg{left:18%;width:64%;top:64px;height:calc(100% - 104px)}
 .cap{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:0 16px 14px}
 .cap div{min-width:0}
 .cap b{display:block;font:600 15px/1.25 var(--ui);letter-spacing:-.01em}
@@ -53,12 +56,12 @@ body{background:var(--paper);color:var(--ink);font-family:var(--ui);overflow:hid
 .a{fill:var(--a)} .as{stroke:var(--a)}
 .chk.inv .glass{display:none}
 /* cover */
-.cover{justify-content:space-between}
+.cover{justify-content:space-between;padding-bottom:110px}
 .cover h1{font:800 clamp(64px,15vw,220px)/.82 "Bricolage Grotesque",var(--ui);letter-spacing:-.055em;margin:0;text-wrap:balance}
 .cover h1 em{font-family:"Bodoni Moda",serif;font-style:italic;font-weight:400;letter-spacing:-.03em}
 .cover p{font:400 15px/1.5 var(--ui);color:var(--mute);max-width:44ch;margin:0}
 .cover .row{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
-.cover .big{font:500 clamp(80px,18vw,260px)/.8 var(--mono);letter-spacing:-.06em;color:var(--a)}
+.cover .big{font:500 clamp(72px,14vw,200px)/1 var(--mono);letter-spacing:-.06em;color:var(--a)}
 /* index */
 .idx{flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:0 24px;align-content:start}
 .idx a{display:flex;gap:12px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--rule);color:inherit;text-decoration:none;font:500 14px/1.3 var(--ui)}
@@ -89,10 +92,10 @@ h2{font:700 clamp(32px,5vw,56px)/1 "Bricolage Grotesque",var(--ui);letter-spacin
 
 <script>
 /* ---------- helpers ---------- */
-const T=(x,y,s,fam,w,txt,ex='')=>`<text x="${x}" y="${y}" style="font-family:${fam};font-size:${s}px;font-weight:${w};${ex}" fill="currentColor">${txt}</text>`;
+const T=(x,y,s,fam,w,txt,ex='',at='')=>`<text x="${x}" y="${y}"${at} style="font-family:${fam};font-size:${s}px;font-weight:${w};${ex}" fill="currentColor">${txt}</text>`;
 const PIX={J:["00111","00010","00010","00010","10010","10010","01100"],V:["10001","10001","10001","10001","10001","01010","00100"],H:["10001","10001","10001","11111","10001","10001","10001"]};
 function pixel(word,cell,gap,accent){let o='',ox=0;for(const ch of word){PIX[ch].forEach((row,r)=>[...row].forEach((v,c)=>{if(v==='1'){const isA=accent&&accent[0]===ch&&accent[1]===r&&accent[2]===c;o+=`<rect x="${ox+c*cell}" y="${r*cell}" width="${cell-gap}" height="${cell-gap}" ${isA?'class="a"':'fill="currentColor"'}/>`}}));ox+=6*cell}return o}
-function halftone(){let o='';const n=13,s=18;for(let r=0;r<n;r++)for(let c=0;c<n;c++){const inH=(c<=3||c>=9||(r>=5&&r<=7));let d=0;if(!inH){const dc=Math.min(Math.abs(c-3),Math.abs(c-9));const dr=Math.min(Math.abs(r-5),Math.abs(r-7));d=Math.min(dc,dr)}const rad=inH?7.6:Math.max(0,6.2-d*1.9);if(rad>.4)o+=`<circle cx="${c*s+9}" cy="${r*s+9}" r="${rad.toFixed(2)}" fill="currentColor"/>`}return o}
+function halftone(){let o='';const n=13,s=18;for(let r=0;r<n;r++)for(let c=0;c<n;c++){const inH=(c<=3||c>=9||(r>=5&&r<=7));let d=0;if(!inH){const dc=Math.min(Math.abs(c-3),Math.abs(c-9));const dr=Math.min(Math.abs(r-5),Math.abs(r-7));d=Math.min(dc,dr)}const rad=inH?7.6:Math.max(0,5.6-d*2.4);if(rad>.4)o+=`<circle cx="${c*s+9}" cy="${r*s+9}" r="${rad.toFixed(2)}" fill="currentColor"/>`}return o}
 
 /* ---------- 33 logos ---------- */
 const L=[
@@ -102,7 +105,7 @@ const L=[
 ${T(40,250,12,'Geist Mono',500,'JOEL VAN HEES','letter-spacing:.32em')}`},
 
 {t:"van Hees.",n:"Dein bestehendes Wortbild, enger gesetzt, mit Punkt als Haltung. Ohne Blob, voll druckbar.",f:"Bricolage Grotesque 800",vb:"0 0 520 150",s:`
-${T(0,112,128,"'Bricolage Grotesque'",800,'van Hees','letter-spacing:-.06em;font-variation-settings:\'opsz\' 96')}<circle cx="503" cy="100" r="13" class="a"/>`},
+${T(0,112,128,"'Bricolage Grotesque'",800,'van Hees<tspan class="a">.</tspan>','letter-spacing:-.06em;font-variation-settings:\'opsz\' 96')}`},
 
 {t:"Signatur",n:"Die Hand des Künstlers. Für Kunst, Editionen, Prints. Immer mit gesetzter Zeile darunter.",f:"Mrs Saint Delafield · Geist Mono",vb:"0 0 420 230",s:`
 ${T(30,140,150,"'Mrs Saint Delafield'",400,'Joel')}
@@ -110,10 +113,10 @@ ${T(30,140,150,"'Mrs Saint Delafield'",400,'Joel')}
 ${T(150,212,12,'Geist Mono',500,'VAN HEES','letter-spacing:.5em')}`},
 
 {t:"Masthead",n:"Wie der Kopf eines Magazins. Didone-Kontrast, das 'van' als kursives Scharnier.",f:"Bodoni Moda",vb:"0 0 640 120",s:`
-${T(320,88,92,"'Bodoni Moda'",500,'JOEL <tspan style="font-style:italic;font-weight:400;font-size:60px;letter-spacing:0">van</tspan> HEES','letter-spacing:.06em;text-anchor:middle;font-variation-settings:\'opsz\' 96')}`},
+${T(320,88,92,"'Bodoni Moda'",500,'JOEL <tspan style="font-style:italic;font-weight:400;font-size:60px;letter-spacing:0">van</tspan> HEES','letter-spacing:.06em;text-anchor:middle;font-variation-settings:\'opsz\' 30')}`},
 
 {t:"Prompt",n:"Der Entwickler-Name als Pfad. Der Cursor ist das einzige Farbelement.",f:"JetBrains Mono 700",vb:"0 0 440 110",s:`
-${T(0,78,64,"'JetBrains Mono'",700,'joel<tspan class="a">.</tspan>vh/','letter-spacing:-.04em')}<rect x="392" y="26" width="34" height="62" class="a"/>`},
+${T(0,78,64,"'JetBrains Mono'",700,'joel<tspan class="a">.</tspan>vh/','letter-spacing:-.04em',' data-k="t"')}<rect data-after="t" data-dx="10" x="392" y="26" width="34" height="62" class="a"/>`},
 
 {t:"Pixel JVH",n:"5×7-Raster, ein Pixel in Akzentfarbe als 'Cursor'. Stark als Favicon, Sticker, Stickerei.",f:"Raster 5×7",vb:"0 0 340 140",s:pixel("JVH",20,3,["H",3,2])},
 
@@ -154,13 +157,10 @@ ${T(0,324,118,'Anton',400,'HEES','letter-spacing:.01em')}
 <rect x="226" y="122" width="74" height="92" class="a"/>`},
 
 {t:"Klammer",n:"Code-Klammern um eine kursive Serife. Technik umschließt Handschrift.",f:"JetBrains Mono · Fraunces Italic",vb:"0 0 420 170",s:`
-${T(0,128,140,"'JetBrains Mono'",400,'{','fill-opacity:1')}
-${T(92,126,132,'Fraunces',500,'vH','font-style:italic;letter-spacing:-.04em;font-variation-settings:\'SOFT\' 100,\'WONK\' 1,\'opsz\' 144')}
-${T(330,128,140,"'JetBrains Mono'",400,'}','')}`},
+${T(0,128,140,"'JetBrains Mono'",400,'{<tspan dx="10" style="font-family:Fraunces;font-style:italic;font-weight:500;letter-spacing:-.04em;font-variation-settings:\'SOFT\' 100,\'WONK\' 1,\'opsz\' 144">vH</tspan><tspan dx="14">}</tspan>','letter-spacing:-.02em')}`},
 
 {t:"Weiche Serife",n:"Fraunces mit Soft- und Wonk-Achse. Warm, eigen, ein bisschen schräg wie du.",f:"Fraunces 600 · SOFT 100 · WONK 1",vb:"0 0 470 170",s:`
-${T(0,128,150,'Fraunces',600,'Joel','letter-spacing:-.04em;font-variation-settings:\'SOFT\' 100,\'WONK\' 1,\'opsz\' 144')}
-<circle cx="400" cy="118" r="14" class="a"/>`},
+${T(0,128,150,'Fraunces',600,'Joel<tspan class="a">.</tspan>','letter-spacing:-.04em;font-variation-settings:\'SOFT\' 100,\'WONK\' 1,\'opsz\' 144')}`},
 
 {t:"Schnitt",n:"Das Wort ist durchgeschnitten und versetzt. Für Glitch, Kunst, Bewegtbild.",f:"Unbounded 800",vb:"0 0 600 130",s:`
 <defs><clipPath id="ctop"><rect x="-20" y="0" width="660" height="66"/></clipPath><clipPath id="cbot"><rect x="-20" y="66" width="660" height="80"/></clipPath></defs>
@@ -169,8 +169,8 @@ ${T(0,128,150,'Fraunces',600,'Joel','letter-spacing:-.04em;font-variation-settin
 <rect x="0" y="64" width="16" height="4" class="a"/>`},
 
 {t:"Echo",n:"Vier Konturen, eine Füllung. Op-Art-Rhythmus, auch als Animation denkbar.",f:"Anton",vb:"0 0 320 300",s:`
-${[0,1,2].map(i=>T(0,110+i*56,120,'Anton',400,'HEES',`fill:none;stroke:currentColor;stroke-width:1.5;opacity:${.35+i*.2}`)).join('')}
-${T(0,278,120,'Anton',400,'HEES','')}`},
+${[0,1,2].map(i=>T(0,100+i*112,120,'Anton',400,'HEES',`fill:none;stroke:currentColor;stroke-width:1.5;opacity:${.3+i*.25}`)).join('')}
+${T(0,436,120,'Anton',400,'HEES','')}`},
 
 {t:"Bauhaus-Initialen",n:"Viertelkreis = J, Dreieck = V, zwei Balken = H. Formen statt Schrift.",f:"Konstruiert",vb:"0 0 330 140",s:`
 <path d="M0 0 H40 V70 A70 70 0 0 1 -30 140 V100 A30 30 0 0 0 0 70Z" fill="currentColor" transform="translate(40 0)"/>
@@ -190,7 +190,7 @@ ${T(0,278,120,'Anton',400,'HEES','')}`},
 ${T(0,74,58,"'Major Mono Display'",400,'joel van hees','letter-spacing:-.02em')}<rect x="0" y="100" width="560" height="3" fill="currentColor"/><rect x="0" y="100" width="62" height="3" class="a"/>`},
 
 {t:"Syne",n:"Eine Schrift, die für ein Kunstzentrum gezeichnet wurde. Breit, eigenwillig, galerietauglich.",f:"Syne 800",vb:"0 0 520 220",s:`
-${T(0,96,104,'Syne',800,'Joel','letter-spacing:-.04em')}${T(0,200,104,'Syne',800,'van Hees','letter-spacing:-.04em')}<circle cx="300" cy="80" r="12" class="a"/>`},
+${T(0,96,104,'Syne',800,'Joel','letter-spacing:-.04em')}${T(0,200,104,'Syne',800,'van Hees<tspan class="a">.</tspan>','letter-spacing:-.04em')}`},
 
 {t:"Auge",n:"Bezug auf deine Augen-Skulpturen. Das Zeichen sieht zurück.",f:"Konstruiert · Geist",vb:"0 0 300 230",s:`
 <path d="M20 90 Q150 -6 280 90 Q150 186 20 90Z" fill="none" stroke="currentColor" stroke-width="10" stroke-linejoin="round"/>
@@ -211,10 +211,10 @@ ${T(40,64,62,"'Inter Tight'",700,'J','text-anchor:middle')}${T(120,144,62,"'Inte
 
 {t:"Tinte",n:"Raue Kante wie Siebdruck oder Stempel. Analog, bewusst unperfekt.",f:"Rubik Mono One · Displacement",vb:"0 0 300 160",s:`
 <defs><filter id="ink" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="5"/></filter></defs>
-<g filter="url(#ink)">${T(0,130,150,"'Rubik Mono One'",400,'VH','letter-spacing:-.06em')}</g><rect x="270" y="112" width="18" height="18" class="a"/>`},
+<g filter="url(#ink)">${T(0,130,150,"'Rubik Mono One'",400,'VH','letter-spacing:-.06em',' data-k="t"')}</g><rect data-after="t" data-dx="6" x="270" y="112" width="18" height="18" class="a"/>`},
 
-{t:"Variable Breite",n:"Jeder Buchstabe eine Stufe breiter. Zeigt, dass du Schrift als Material verstehst.",f:"Archivo · wdth 62 → 125",vb:"0 0 560 130",s:`
-<text x="0" y="104" style="font-family:Archivo;font-size:118px;font-weight:800;letter-spacing:-.02em" fill="currentColor">${[...'vanHees'].map((c,i)=>`<tspan style="font-stretch:${62+i*10.5}%">${c}</tspan>`).join('')}</text>`},
+{t:"Gewichtsverlauf",n:"Jeder Buchstabe eine Stufe kräftiger, von Haarlinie bis Black. Schrift als Material.",f:"Archivo · wght 100 → 900",vb:"0 0 560 130",s:`
+<g data-seq="3">${[...'vanHees'].map((c,i)=>{const w=Math.round(62+i*10.5);return `<text x="0" y="104" ${i===3?'data-gap="34"':''} style="font-family:Archivo;font-size:118px;font-weight:800;font-weight:${Math.round(100+i*(800/6))}" fill="currentColor">${c}</text>`}).join('')}</g>`},
 
 {t:"JvH Serif",n:"Klassisches Monogramm mit erhöhtem kleinem v. Für Briefpapier, Kunst, Kanzlei-Ruhe.",f:"Gloock",vb:"0 0 300 170",s:`
 ${T(150,140,150,'Gloock',400,'J<tspan dy="-46" style="font-size:72px">v</tspan><tspan dy="46">H</tspan>','text-anchor:middle;letter-spacing:-.03em')}
@@ -234,12 +234,11 @@ ${T(232,118,56,'Geist',600,'van Hees','letter-spacing:-.04em')}`},
 {t:"Halbton-H",n:"Ein H aus Rasterpunkten, die zum Rand hin verschwinden. Druckkunst trifft Bildschirm.",f:"Generiert, 13×13",vb:"0 0 234 234",s:halftone()},
 
 {t:"Konstrukt",n:"Dein JOEL-Zeichen, neu gezeichnet: gleiche Idee, sauberes Raster, Versatz als System.",f:"Überarbeitung Bestand",vb:"0 0 260 300",s:`
-<defs><mask id="km"><rect width="260" height="300" fill="#fff"/><rect x="104" y="70" width="8" height="110" fill="#000"/></mask></defs>
-<g fill="none" stroke="currentColor" stroke-width="2" transform="translate(9 9)" opacity=".9"><path d="M40 30 H150 A60 60 0 0 1 210 90 V120"/><rect x="112" y="184" width="70" height="30"/><path d="M196 200 V266 H96"/></g>
+<defs><mask id="km"><rect x="-20" y="-20" width="300" height="340" fill="#fff"/><rect x="104" y="66" width="8" height="120" fill="#000"/></mask></defs>
 <path d="M40 30 H150 A60 60 0 0 1 210 90 V120" fill="none" stroke="currentColor" stroke-width="22"/>
 <g mask="url(#km)"><circle cx="108" cy="126" r="54" fill="currentColor"/></g>
-<rect x="112" y="184" width="70" height="30" fill="currentColor"/><rect x="88" y="226" width="44" height="22" class="a"/>
-<path d="M196 200 V266 H96" fill="none" stroke="currentColor" stroke-width="22"/>`},
+<rect x="100" y="196" width="80" height="26" fill="currentColor"/><rect x="100" y="234" width="52" height="20" class="a"/>
+<path d="M200 196 V270 H92" fill="none" stroke="currentColor" stroke-width="22"/>`},
 
 {t:"Grüner Kiesel",n:"Dein aktuelles Logo, flach und präzise. Klare Form, Wortbild optisch ausgeglichen.",f:"Überarbeitung Bestand · Bricolage 800",vb:"0 0 240 240",s:`
 <defs><mask id="pm"><rect width="240" height="240" fill="#000"/><path d="M128 12 C190 14 232 64 226 128 C220 192 172 230 110 226 C48 222 10 176 14 112 C18 50 66 10 128 12Z" fill="#fff"/>
@@ -249,7 +248,7 @@ ${T(232,118,56,'Geist',600,'van Hees','letter-spacing:-.04em')}`},
 
 {t:"Scanline",n:"Buchstaben aus horizontalen Linien. CRT, Interface, Op-Art.",f:"Archivo Black · Linienraster",vb:"0 0 440 150",s:`
 <defs><pattern id="scan" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="4.5" fill="currentColor"/></pattern></defs>
-<text x="0" y="128" style="font-family:'Archivo Black';font-size:150px;letter-spacing:-.04em" fill="url(#scan)">HEES</text><rect x="404" y="20" width="30" height="30" class="a"/>`},
+<text x="0" y="128" style="font-family:'Archivo Black';font-size:150px;letter-spacing:-.04em" fill="url(#scan)" data-k="t">HEES</text><rect data-after="t" data-dx="8" x="404" y="20" width="30" height="30" class="a"/>`},
 
 {t:"Initiale",n:"Das J als große Initiale, der Rest des Namens wohnt im Bogen. Wie ein Buchanfang.",f:"Bodoni Moda Italic",vb:"0 0 340 280",s:`
 ${T(10,236,280,"'Bodoni Moda'",500,'J','font-style:italic;font-variation-settings:\'opsz\' 96')}
@@ -268,7 +267,7 @@ ${T(230,146,13,'Geist Mono',500,'DESIGN · CODE · KI · KUNST','letter-spacing:
 const PAGES=[[0],[1,2],[3,4,5,6],[7],[8,9,10],[11,12],[13,14,15,16],[17,18],[19,20,21],[22,23,24,25],[26,27],[28,29,30],[31,32]];
 
 const pad=n=>String(n).padStart(2,'0');
-const svg=(l,cls='')=>`<svg viewBox="${l.vb}" ${cls} role="img" aria-label="${l.t}" xmlns="http://www.w3.org/2000/svg">${l.s}</svg>`;
+const svg=(l,cls='')=>`<svg viewBox="${l.vb}" ${cls} role="img" aria-label="${l.t}" xmlns="http://www.w3.org/2000/svg"><g class="c">${l.s}</g></svg>`;
 const cell=i=>{const l=L[i];return `<figure class="cell" id="logo-${pad(i+1)}"><span class="no">${pad(i+1)}</span>
 <div class="art">${svg(l,'preserveAspectRatio="xMidYMid meet"')}</div>
 <figcaption class="cap"><div><b>${l.t}</b><span>${l.n}</span><i>${l.f}</i></div>
@@ -282,6 +281,14 @@ html+=`<section class="page" id="seite-2"><div class="folio"><span>Inhalt</span>
   L.map((l,i)=>{const p=PAGES.findIndex(g=>g.includes(i))+3;return `<a href="#seite-${p}" data-p="${p}"><span>${pad(i+1)}</span>${l.t}</a>`}).join('')}</nav></section>`;
 PAGES.forEach((g,pi)=>{const p=pi+3;html+=`<section class="page" id="seite-${p}"><div class="folio"><span>Joel van Hees · Logobuch</span><span>${g.map(i=>pad(i+1)).join(' · ')}</span></div><div class="grid g${g.length}">${g.map(cell).join('')}</div></section>`});
 mag.innerHTML=html;
+
+
+/* ---------- fit: sequence letters, attach followers, crop viewBox to real ink ---------- */
+function fitAll(){mag.querySelectorAll('svg').forEach(sv=>{const g=sv.querySelector('g.c');if(!g)return;
+  sv.querySelectorAll('[data-seq]').forEach(q=>{let x=0;const gap=+q.dataset.seq;[...q.children].forEach(t=>{x+=(+t.dataset.gap||0);t.setAttribute('x',x);x+=t.getBBox().width+gap})});
+  sv.querySelectorAll('[data-after]').forEach(el=>{const t=el.parentNode.querySelector('[data-k="'+el.dataset.after+'"]')||sv.querySelector('[data-k="'+el.dataset.after+'"]');if(!t)return;const b=t.getBBox();el.setAttribute('x',b.x+b.width+(+el.dataset.dx||0))});
+  try{const b=g.getBBox();const pd=Math.max(b.width,b.height)*.03+4;sv.setAttribute('viewBox',[b.x-pd,b.y-pd,b.width+2*pd,b.height+2*pd].map(v=>v.toFixed(1)).join(' '))}catch(e){}})}
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>{fitAll();setTimeout(fitAll,600)});
 
 /* ---------- navigation ---------- */
 const pages=[...mag.children],tot=pages.length;
@@ -301,3 +308,5 @@ addEventListener('hashchange',fromHash);fromHash();upd();
 const root=document.documentElement;
 document.getElementById('theme').onclick=()=>{const dark=root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;root.dataset.theme=dark?'light':'dark'};
 </script>
+
+</html>

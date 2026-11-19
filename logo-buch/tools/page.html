@@ -1,0 +1,247 @@
+<title>Joel van Hees Logobuch</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+{{FONTS}}
+/* Layout: horizontal magazine; every logo gets one spread: clean vector (left) + the mark on a real material (right) */
+:root{
+  --paper:#F0EFEB; --ink:#151515; --mute:#77756f; --rule:#d6d4cd; --stage:#E7E6E1;
+  --num:"Le Murmure","Six Caps",Impact,sans-serif;
+  --serif:"Libre Caslon Display","Bodoni 72",Didot,Georgia,serif;
+  --type:"Compagnon","Courier New",ui-monospace,monospace;
+  --a:#151515;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#121211;--ink:#ECEAE4;--mute:#8d8a83;--rule:#2c2b29;--stage:#1a1a19;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#121211;--ink:#ECEAE4;--mute:#8d8a83;--rule:#2c2b29;--stage:#1a1a19;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--type);overflow:hidden;-webkit-font-smoothing:antialiased}
+.mag{height:100%;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;overscroll-behavior-x:contain}
+.mag::-webkit-scrollbar{display:none}
+.page{flex:0 0 100%;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow-y:auto;position:relative}
+.pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* spread */
+.spread{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+.L{display:grid;grid-template-rows:auto 1fr auto;padding-block:22px 92px;gap:10px;min-height:0}
+.head{display:flex;align-items:baseline;gap:18px;border-bottom:1px solid var(--rule);padding-bottom:12px}
+.num{font:400 clamp(56px,7vw,96px)/.78 var(--num);letter-spacing:-.01em}
+.head h3{margin:0;font:400 clamp(22px,2.4vw,32px)/1.05 var(--serif);letter-spacing:-.005em;text-wrap:balance}
+.head .tag{margin-left:auto;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);white-space:nowrap}
+.stage{position:relative;min-height:0}
+.stage svg{position:absolute;left:12%;top:8%;width:76%;height:84%;color:var(--ink);overflow:visible}
+.foot{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:end;border-top:1px solid var(--rule);padding-top:12px}
+.foot p{margin:0 0 10px;font:400 17px/1.35 var(--serif);max-width:46ch;text-wrap:pretty}
+.foot dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:3px 14px;font-size:11.5px;line-height:1.4}
+.foot dt{color:var(--mute);letter-spacing:.1em;text-transform:uppercase;font-size:10.5px}
+.foot dd{margin:0}
+.checks{display:flex;gap:6px}
+.chk{width:58px;height:58px;display:flex;align-items:center;justify-content:center;padding:9px}
+.chk svg{width:100%;height:100%;overflow:visible}
+.chk.inv{background:var(--ink);color:var(--paper)}
+.chk.sm{border:1px solid var(--rule);color:var(--ink)}
+.chk.sm svg{width:20px;height:20px}
+.chk.inv .a,.chk.sm .a{fill:currentColor}
+.R{position:relative;overflow:hidden;background:#222;min-height:0}
+.R svg.matsvg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.R .lab{position:absolute;left:14px;top:14px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:6px 9px;background:rgba(15,15,15,.72);color:#eee;backdrop-filter:blur(4px)}
+.i{fill:currentColor}.a{fill:var(--a)}.r{fill:currentColor}.g{fill:currentColor}
+
+/* cover */
+.cover{background:#e9e8e3 url(tex/paper.jpg) center/cover;color:#141414;display:flex;flex-direction:column;justify-content:space-between;padding-block:22px 96px}
+.cover .top,.cover .bot{display:flex;justify-content:space-between;gap:16px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;flex-wrap:wrap}
+.cover h1{margin:0;font:400 clamp(110px,24vw,330px)/.78 var(--num);letter-spacing:-.005em;mix-blend-mode:multiply;filter:url(#f-ink-cover)}
+.cover h1 span{display:block}
+.cover .sub{font:400 clamp(20px,2.4vw,30px)/1.2 var(--serif);max-width:28ch;margin:0}
+.cover .row{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+
+/* index */
+.index{padding-block:22px 92px;display:flex;flex-direction:column;gap:16px}
+.index h2{margin:0;font:400 clamp(64px,9vw,120px)/.8 var(--num)}
+.thumbs{display:grid;grid-auto-rows:132px;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.thumbs a{background:var(--paper);color:var(--ink);text-decoration:none;display:grid;grid-template-rows:auto 1fr;gap:6px;padding:10px;min-width:0;min-height:0;overflow:hidden}
+.thumbs a span{display:flex;justify-content:space-between;gap:6px;font-size:10.5px;letter-spacing:.06em;color:var(--mute)}
+.thumbs a span b{font:400 22px/.8 var(--num);color:var(--ink)}
+.thumbs a svg{width:100%;height:100%;min-height:0;overflow:visible;padding:6% 10%}
+.thumbs a:hover,.thumbs a:focus-visible{background:var(--stage);outline:none}
+
+/* end */
+.end{display:flex;flex-direction:column;justify-content:center;gap:22px;padding-block:22px 96px}
+.end h2{margin:0;font:400 clamp(80px,12vw,170px)/.8 var(--num)}
+.end p{margin:0;font:400 20px/1.4 var(--serif);max-width:40ch}
+.picks{display:flex;gap:10px;flex-wrap:wrap}
+.picks a{font:400 44px/.8 var(--num);color:var(--ink);text-decoration:none;border:1px solid var(--ink);padding:14px 18px 10px}
+.picks a:hover{background:var(--ink);color:var(--paper)}
+
+/* nav */
+.nav{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:5;
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));pointer-events:none}
+.nav>*{pointer-events:auto}
+.nav button{all:unset;cursor:pointer;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:var(--paper);color:var(--ink);border:1px solid var(--rule);font:400 18px/1 var(--type)}
+.nav button:hover{border-color:var(--ink)}
+.nav button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.nav .mid{display:flex;gap:12px;align-items:center;background:var(--paper);border:1px solid var(--rule);padding:0 14px;height:46px;font-size:12px;letter-spacing:.08em;color:var(--mute)}
+.nav .mid b{font:400 26px/.8 var(--num);color:var(--ink);letter-spacing:0}
+.bar{height:2px;width:min(200px,30vw);background:var(--rule);position:relative}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--ink);transition:width .3s}
+.nav .r{display:flex;gap:6px}
+
+@media (max-width:820px){
+  .spread{grid-template-columns:1fr;grid-auto-rows:auto}
+  .L{padding-block:18px 18px;min-height:88vh}
+  .R{height:78vh;margin-bottom:84px}
+  .foot{grid-template-columns:1fr}
+  .head .tag{display:none}
+}
+@media (prefers-reduced-motion:reduce){.mag{scroll-behavior:auto}.bar i{transition:none}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <filter id="f-ink-cover" x="-2%" y="-2%" width="104%" height="104%">
+    <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="4" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="9" result="n2"/>
+    <feColorMatrix in="n2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 2.15" result="sp"/>
+    <feComposite in="d" in2="sp" operator="in"/>
+  </filter>
+  <filter id="f-rough" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="3" seed="11" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="9"/>
+  </filter>
+</defs>
+</svg>
+
+<main class="mag" id="mag" aria-label="Logobuch"></main>
+<nav class="nav" aria-label="Blättern">
+  <button id="prev" aria-label="Vorherige Seite">←</button>
+  <div class="mid"><b id="cur">01</b><span>/ <span id="tot">00</span></span><div class="bar"><i id="prog"></i></div></div>
+  <div class="r"><button id="theme" aria-label="Hell oder dunkel">◐</button><button id="next" aria-label="Nächste Seite">→</button></div>
+</nav>
+
+<script>window.LOGOS={{LOGOS}};</script>
+<script>
+const LG=window.LOGOS, pad=n=>String(n).padStart(2,'0');
+const PICKS=[4,19,21];
+const MATNAME={print:"Offsetdruck auf Naturpapier",press:"Letterpress, blind geprägt",foil:"Heißfolie auf schwarzem Karton",riso:"Risografie, zweifarbig",stamp:"Gummistempel auf Kraftpapier",spray:"Schablone, gesprüht auf Beton",tee:"Siebdruck auf Baumwolle",screen:"Bildschirm",glass:"Liquid Glass, Screen"};
+
+const paths=(l,filter)=>l.parts.filter(([d,c])=>!filter||filter(c)).map(([d,c])=>`<path class="${c}" d="${d}"/>`).join('');
+const vb=l=>l.vb.join(' ');
+function mark(l,cls='',filter){const rough=l.parts.some(p=>p[1]==='r');return `<svg viewBox="${vb(l)}" class="${cls}" style="--a:${l.accent||'currentColor'}" role="img" aria-label="${l.t}"><g ${rough?'filter="url(#f-rough)"':''}>${paths(l,filter)}</g></svg>`}
+
+/* ---------- material renderer ---------- */
+let uid=0;
+function matsvg(l){
+  const k=++uid, W=800, H=1000, m=l.mat, acc=l.accent;
+  const [x0,y0,w0,h0]=l.vb; const s=Math.min(540/w0,560/h0), w=w0*s, h=h0*s, X=(W-w)/2, Y=(H-h)/2-10;
+  const inner=(fill,f='')=>`<svg x="${X}" y="${Y}" width="${w}" height="${h}" viewBox="${vb(l)}" overflow="visible"><g fill="${fill}" ${f}>${l.parts.filter(p=>p[1]!=='g'||m==='glass').filter(p=>m!=='glass'||p[1]==='g').map(([d])=>`<path d="${d}"/>`).join('')}</g></svg>`;
+  const bg=t=>`<image href="tex/${t}.jpg" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/>`;
+  const light=`<radialGradient id="lt${k}" cx="22%" cy="12%" r="110%"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".32"/></radialGradient>`;
+  const lightRect=`<rect width="${W}" height="${H}" fill="url(#lt${k})" style="mix-blend-mode:soft-light"/>`;
+  const speck=(id,freq,a,b,seed=3)=>`<feTurbulence type="fractalNoise" baseFrequency="${freq}" numOctaves="2" seed="${seed}" result="n${id}"/><feColorMatrix in="n${id}" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ${a} ${b}" result="sp${id}"/>`;
+  let defs=light, body='';
+  if(m==='print'){
+    const ink=acc&&l.parts.every(p=>p[1]==='a')?acc:'#1b1b1b';
+    defs+=`<filter id="f${k}" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="2" seed="5" result="dn"/><feDisplacementMap in="SourceGraphic" in2="dn" scale="1.8" result="d"/>${speck(1,.9,-2.2,2.05,7)}<feComposite in="d" in2="sp1" operator="in"/></filter>`;
+    body=bg('paper')+`<g filter="url(#f${k})" style="mix-blend-mode:multiply" opacity=".94">${inner(ink)}</g>`+(acc&&ink!==acc?`<g filter="url(#f${k})" style="mix-blend-mode:multiply">${innerAccent(l,X,Y,w,h,acc)}</g>`:'')+lightRect;
+  } else if(m==='press'){
+    defs+=`<filter id="f${k}" x="-10%" y="-10%" width="120%" height="120%">
+      <feFlood flood-color="#3a3428" flood-opacity=".14" result="t"/><feComposite in="t" in2="SourceAlpha" operator="in" result="tone"/>
+      <feComponentTransfer in="SourceAlpha" result="inv"><feFuncA type="table" tableValues="1 0"/></feComponentTransfer>
+      <feGaussianBlur in="inv" stdDeviation="2.4" result="ib"/>
+      <feOffset in="ib" dx="2.2" dy="2.8" result="io"/><feFlood flood-color="#1d1a14" flood-opacity=".62"/><feComposite in2="io" operator="in"/><feComposite in2="SourceAlpha" operator="in" result="ish"/>
+      <feOffset in="ib" dx="-1.6" dy="-2" result="io2"/><feFlood flood-color="#fff" flood-opacity=".75"/><feComposite in2="io2" operator="in"/><feComposite in2="SourceAlpha" operator="in" result="ihl"/>
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.3" result="sb"/><feOffset in="sb" dx="1.6" dy="2" result="so"/><feFlood flood-color="#fff" flood-opacity=".85"/><feComposite in2="so" operator="in"/><feComposite in2="SourceAlpha" operator="out" result="lip"/>
+      <feMerge><feMergeNode in="tone"/><feMergeNode in="ish"/><feMergeNode in="ihl"/><feMergeNode in="lip"/></feMerge></filter>`;
+    body=bg('paper')+`<g filter="url(#f${k})">${inner('#000')}</g>`+lightRect;
+  } else if(m==='foil'){
+    defs+=`<linearGradient id="gd${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7a5a22"/><stop offset=".22" stop-color="#e9d08a"/><stop offset=".42" stop-color="#9e7a30"/><stop offset=".6" stop-color="#f7e9ad"/><stop offset=".8" stop-color="#a4802f"/><stop offset="1" stop-color="#6e5020"/></linearGradient>
+      <filter id="f${k}" x="-6%" y="-6%" width="112%" height="112%"><feGaussianBlur in="SourceAlpha" stdDeviation="1.6" result="b"/>
+      <feSpecularLighting in="b" surfaceScale="2.6" specularConstant="1" specularExponent="26" lighting-color="#fff6d8" result="s"><feDistantLight azimuth="225" elevation="42"/></feSpecularLighting>
+      <feComposite in="s" in2="SourceAlpha" operator="in" result="sp"/>
+      <feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="1" seed="2" result="n"/><feColorMatrix in="n" type="saturate" values="0" result="ng"/><feComposite in="ng" in2="SourceAlpha" operator="in" result="ngi"/>
+      <feComposite in="SourceGraphic" in2="sp" operator="arithmetic" k1="0" k2="1" k3=".75" k4="0" result="lit"/>
+      <feComposite in="lit" in2="ngi" operator="arithmetic" k1="0" k2="1" k3=".07" k4="-.03" result="g"/>
+      <feDropShadow dx="0" dy="1" stdDeviation=".6" flood-color="#000" flood-opacity=".7"/></filter>`;
+    body=bg('black')+`<g filter="url(#f${k})">${inner(`url(#gd${k})`)}</g>`+lightRect;
+  } else if(m==='riso'){
+    const top='#24398f', under=acc||'#ff48b0';
+    defs+=`<filter id="f${k}" x="-3%" y="-3%" width="106%" height="106%">${speck(1,2.1,-2.5,2.15,2)}<feComposite in="SourceGraphic" in2="sp1" operator="in"/></filter>
+      <filter id="h${k}" x="-3%" y="-3%" width="106%" height="106%">${speck(2,1.9,-2.3,2.0,6)}<feComposite in="SourceGraphic" in2="sp2" operator="in"/></filter>`;
+    body=bg('paper')+`<g filter="url(#h${k})" style="mix-blend-mode:multiply" opacity=".95" transform="translate(7 -5)">${inner(under)}</g><g filter="url(#f${k})" style="mix-blend-mode:multiply" opacity=".9">${inner(top)}</g>`+lightRect;
+  } else if(m==='stamp'){
+    const ink=acc||'#1d2a44';
+    defs+=`<filter id="f${k}" x="-4%" y="-4%" width="108%" height="108%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" result="dn"/><feDisplacementMap in="SourceGraphic" in2="dn" scale="2.6" result="d"/>
+      <feTurbulence type="fractalNoise" baseFrequency=".012" numOctaves="2" seed="21" result="press"/><feColorMatrix in="press" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.5 1.55" result="pr"/>
+      ${speck(1,.65,-2.6,2.25,13)}<feComposite in="sp1" in2="pr" operator="in" result="m"/><feComposite in="d" in2="m" operator="in"/></filter>`;
+    body=bg('kraft')+`<g transform="rotate(-3 400 500)"><g filter="url(#f${k})" style="mix-blend-mode:multiply" opacity=".9">${inner(ink)}</g></g>`+lightRect;
+  } else if(m==='spray'){
+    defs+=`<filter id="f${k}" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="halo"/>
+      <feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="1" seed="8" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -4 2.7" result="dots"/>
+      <feComposite in="halo" in2="dots" operator="in" result="over"/>
+      <feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="2" seed="3" result="n2"/><feDisplacementMap in="SourceGraphic" in2="n2" scale="1.5" result="crisp"/>
+      <feMerge><feMergeNode in="over"/><feMergeNode in="crisp"/></feMerge></filter>`;
+    body=bg('concrete')+`<g filter="url(#f${k})" style="mix-blend-mode:multiply" opacity=".92">${inner('#141414')}</g>`+lightRect;
+  } else if(m==='tee'){
+    defs+=`<filter id="f${k}" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="turbulence" baseFrequency=".05 .09" numOctaves="3" seed="14" result="c"/><feColorMatrix in="c" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 24 -14" result="cr"/>
+      <feComposite in="SourceGraphic" in2="cr" operator="out"/></filter>`;
+    body=bg('cotton')+`<g filter="url(#f${k})" opacity=".9">${inner('#ece8df')}</g>`+lightRect;
+  } else if(m==='screen'){
+    const c=acc||'#3dff8a';
+    defs+=`<pattern id="sl${k}" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="1.4" fill="#000" opacity=".5"/></pattern>
+      <radialGradient id="vg${k}" cx="50%" cy="48%" r="70%"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".75"/></radialGradient>
+      <filter id="f${k}" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur in="SourceGraphic" stdDeviation="14" result="g1"/><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="g2"/><feMerge><feMergeNode in="g1"/><feMergeNode in="g2"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`;
+    body=`<rect width="${W}" height="${H}" fill="#070908"/><g filter="url(#f${k})">${inner(c)}</g><rect width="${W}" height="${H}" fill="url(#sl${k})"/><rect width="${W}" height="${H}" fill="url(#vg${k})"/>`;
+  } else if(m==='glass'){
+    defs+=`<filter id="bl${k}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="60"/></filter>
+      <linearGradient id="rim${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#fff" stop-opacity=".7"/></linearGradient>
+      <filter id="f${k}" x="-15%" y="-15%" width="130%" height="130%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="9" result="b"/>
+        <feSpecularLighting in="b" surfaceScale="9" specularConstant="1.2" specularExponent="32" lighting-color="#fff" result="s"><fePointLight x="250" y="120" z="420"/></feSpecularLighting>
+        <feComposite in="s" in2="SourceAlpha" operator="in" result="spec"/>
+        <feComponentTransfer in="SourceAlpha" result="inv"><feFuncA type="table" tableValues="1 0"/></feComponentTransfer><feGaussianBlur in="inv" stdDeviation="6" result="ib"/>
+        <feFlood flood-color="#fff" flood-opacity=".55"/><feComposite in2="ib" operator="in"/><feComposite in2="SourceAlpha" operator="in" result="edge"/>
+        <feFlood flood-color="#fff" flood-opacity=".06"/><feComposite in2="SourceAlpha" operator="in" result="body"/>
+        <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="dsb"/><feOffset in="dsb" dy="20" result="dso"/><feFlood flood-color="#001" flood-opacity=".4"/><feComposite in2="dso" operator="in"/><feComposite in2="SourceAlpha" operator="out" result="ds"/>
+        <feMerge><feMergeNode in="ds"/><feMergeNode in="body"/><feMergeNode in="edge"/><feMergeNode in="spec"/></feMerge></filter>`;
+    const blobs=`<circle cx="230" cy="330" r="230" fill="#17b13a"/><circle cx="590" cy="640" r="260" fill="#0aa3a8"/><circle cx="560" cy="250" r="150" fill="#d9ff5a"/><circle cx="260" cy="780" r="170" fill="#0e5c2a"/>`;
+    const tf=`translate(${X-x0*s} ${Y-y0*s}) scale(${s})`;
+    defs+=`<clipPath id="cp${k}">${l.parts.map(([d])=>`<path transform="${tf}" d="${d}"/>`).join('')}</clipPath>`;
+    body=`<rect width="${W}" height="${H}" fill="#0f1a14"/><g filter="url(#bl${k})">${blobs}</g><g clip-path="url(#cp${k})"><g filter="url(#bl${k})" transform="translate(400 500) scale(1.35) rotate(18) translate(-400 -500)" style="filter:url(#bl${k}) saturate(1.5) brightness(1.15)">${blobs}</g></g><g filter="url(#f${k})">${inner('#fff')}</g>`;
+  }
+  return `<svg class="matsvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs>${defs}</defs>${body}</svg>`;
+}
+function innerAccent(l,X,Y,w,h,acc){return `<svg x="${X}" y="${Y}" width="${w}" height="${h}" viewBox="${vb(l)}" overflow="visible"><g fill="${acc}">${l.parts.filter(p=>p[1]==='a').map(([d])=>`<path d="${d}"/>`).join('')}</g></svg>`}
+
+/* ---------- pages ---------- */
+const mag=document.getElementById('mag'); let html='';
+html+=`<section class="page cover pad" id="seite-1"><div class="top"><span>Logobuch</span><span>Ausgabe 02 · November 2026</span></div>
+<h1><span>JOEL VAN</span><span>HEES</span></h1>
+<div class="row"><p class="sub">33 Zeichen für Design, Code, KI und Kunst. Jedes auf einem echten Material.</p><div class="bot"><span>Wischen oder ← →</span></div></div></section>`;
+html+=`<section class="page index pad" id="seite-2"><h2>INHALT</h2><nav class="thumbs">${LG.map((l,i)=>`<a href="#seite-${i+3}" data-p="${i+3}"><span><b>${pad(i+1)}</b>${l.t}</span>${mark(l)}</a>`).join('')}</nav></section>`;
+LG.forEach((l,i)=>{const p=i+3;html+=`<section class="page spread" id="seite-${p}">
+<div class="L pad"><div class="head"><span class="num">${pad(i+1)}</span><h3>${l.t}</h3><span class="tag">${pad(i+1)} / 33</span></div>
+<div class="stage">${mark(l)}</div>
+<div class="foot"><div><p>${l.n}</p><dl><dt>Referenz</dt><dd>${l.ref}</dd><dt>Schrift</dt><dd>${l.f}</dd></dl></div>
+<div class="checks"><div class="chk inv" title="Einfarbig, negativ">${mark(l)}</div><div class="chk sm" title="20 px">${mark(l)}</div></div></div></div>
+<div class="R">${matsvg(l)}<span class="lab">${MATNAME[l.mat]}</span></div></section>`});
+html+=`<section class="page end pad" id="seite-${LG.length+3}"><h2>SHORTLIST</h2><p>Wenn ich mich entscheiden müsste, würde ich mit diesen drei weiterarbeiten.</p><div class="picks">${PICKS.map(n=>`<a href="#seite-${n+2}" data-p="${n+2}">${pad(n)}</a>`).join('')}</div></section>`;
+mag.innerHTML=html;
+
+/* ---------- navigation ---------- */
+const pages=[...mag.children],tot=pages.length;
+document.getElementById('tot').textContent=pad(tot);
+const cur=document.getElementById('cur'),prog=document.getElementById('prog');
+const idx=()=>Math.round(mag.scrollLeft/mag.clientWidth);
+const go=n=>{n=Math.max(0,Math.min(tot-1,n));mag.scrollTo({left:n*mag.clientWidth})};
+function upd(){const i=idx();cur.textContent=pad(i+1);prog.style.width=((i+1)/tot*100)+'%';const h='#seite-'+(i+1);if(location.hash!==h)history.replaceState(null,'',h)}
+mag.addEventListener('scroll',()=>requestAnimationFrame(upd),{passive:true});
+document.getElementById('prev').onclick=()=>go(idx()-1);
+document.getElementById('next').onclick=()=>go(idx()+1);
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();go(idx()+1)}if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(idx()-1)}});
+mag.querySelectorAll('[data-p]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();go(+a.dataset.p-1)}));
+addEventListener('resize',()=>{mag.style.scrollBehavior='auto';go(idx());mag.style.scrollBehavior=''});
+function fromHash(){const m=location.hash.match(/^#seite-(\d+)$/);if(m){mag.style.scrollBehavior='auto';go(+m[1]-1);mag.style.scrollBehavior=''}}
+addEventListener('hashchange',fromHash);fromHash();upd();
+const root=document.documentElement;
+document.getElementById('theme').onclick=()=>{const dark=root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;root.dataset.theme=dark?'light':'dark'};
+</script>

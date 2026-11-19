@@ -237,9 +237,8 @@ add("Schablone", "Echte Stege in jedem Buchstaben mit Innenraum. Lässt sich wir
 
 # 26 ── Glass J ──────────────────────────────────────────────────
 j = at0(outline("J", "Ouroboros.otf", 300)[0], 0, 0)
-jf = move(j, W(j) + 70)
-add("Glas", "Links Glas für Bildschirm und Motion, rechts die flache Druckversion. Gleiche Form, beide funktionieren.",
-    "Apple Liquid Glass 2025, mit 2D-Pendant", "Ouroboros J · Velvetyne", "glass", [(j, "g"), (jf, "i")])
+add("Glas", "Auf dem Bildschirm Glas, gedruckt eine flache Form. Die Silhouette ist so prägnant, dass beides trägt.",
+    "Apple Liquid Glass 2025, mit 2D-Pendant", "Ouroboros J · Velvetyne", "glass", [(j, "g")])
 
 # 27 ── Mona Sans width ramp ─────────────────────────────────────
 x = 0; parts = []

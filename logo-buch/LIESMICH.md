@@ -28,3 +28,9 @@ GitHub Mona Sans, Departure Mono. Alle unter SIL Open Font License.
 - `finale.html` – drei zusammengeführte Systeme (Atelier, Kasten, Presse) + Entscheidungsseite
 - `final-artifact.html` – Fragment für claude.ai
 - Generator: `tools/final.html`, `tools/final_extra.js`, `tools/final_extra.css`, `tools/build_final.py`
+
+## Atelier & Presse (Ausgabe 06) – das zusammengeführte System
+- `atelier-presse.html` – Siegel mit Symbolik, Logo-Familie, Typo, Farbe, zwei Räume, Korrespondenz, Editorial, Web, Merch, Regeln
+- `haus-artifact.html` – Fragment für claude.ai
+- `haus.js` – neu gezeichnetes Siegel (Vierzeichen), Lockups, Kleinform
+- Generator: `tools/logos_haus.py`, `tools/haus.html`, `tools/haus_extra.js`, `tools/haus_extra.css`, `tools/build_haus.py`

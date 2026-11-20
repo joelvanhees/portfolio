@@ -8,15 +8,14 @@
 // of the width, shield centre at 87.7 % / 50 %, shield 11.3 % wide.
 
 // SE Legal house colours: navy #0f305d, gold #b09069, dark gold #8a6d47,
-// light grey #f2f2f2. Blocked requests and the filter line are light grey,
-// the shield is gold in both tones.
+// light grey #f2f2f2. Requests fly in red and turn light grey once they hit
+// the light grey filter line; the shield is gold in both tones.
 const C = {
-  bg: ['#0f305d', '#0f305d'],
-  stripe: 'rgba(242,242,242,',
+  bg: '#0f305d',
   line: '242,242,242',
   gold: '176,144,105',
   goldDark: '138,109,71',
-  red: [242, 242, 242],     // incoming malicious request
+  red: [214, 74, 58],       // incoming malicious request
   green: [104, 196, 70],
   grey: [242, 242, 242],    // the same request once stopped at the line
 };
@@ -60,43 +59,17 @@ export function createWafStream(canvas, opts = {}) {
     buildBackground();
   }
 
-  // Static layer: navy with a lighter wash behind the line, faint vertical
-  // bands, and the filter line itself.
+  // Static layer: one flat navy, nothing else, plus the filter line.
   function buildBackground() {
     bg = document.createElement('canvas');
     bg.width = canvas.width; bg.height = canvas.height;
     const b = bg.getContext('2d');
     b.scale(dpr, dpr);
-    const g = b.createLinearGradient(0, 0, 0, h);
-    g.addColorStop(0, C.bg[0]); g.addColorStop(1, C.bg[1]);
-    b.fillStyle = g; b.fillRect(0, 0, w, h);
-    const wash = b.createRadialGradient(lineX, h * 0.45, 0, lineX, h * 0.45, Math.max(w, h) * 0.6);
-    wash.addColorStop(0, 'rgba(255,255,255,0.035)');
-    wash.addColorStop(1, 'rgba(255,255,255,0)');
-    b.fillStyle = wash; b.fillRect(0, 0, w, h);
-
-    let x = 0, i = 0;
-    while (x < w) {
-      const bw = 4 + ((i * 37) % 23);
-      b.fillStyle = C.stripe + (0.006 + ((i * 53) % 7) * 0.003) + ')';
-      b.fillRect(x, 0, bw, h);
-      b.fillStyle = C.stripe + '0.018)';
-      b.fillRect(x + bw, 0, 1, h);
-      x += bw + 6 + ((i * 29) % 19); i++;
-    }
-
+    b.fillStyle = C.bg;
+    b.fillRect(0, 0, w, h);
     // the filter line runs the full height, edge to edge
-    const top = 0, bot = h;
     b.fillStyle = `rgba(${C.line},0.85)`;
-    b.fillRect(lineX - 0.5, top, 1, bot - top);
-    const halo = b.createLinearGradient(lineX - 6, 0, lineX + 6, 0);
-    halo.addColorStop(0, `rgba(${C.line},0)`);
-    halo.addColorStop(0.5, `rgba(${C.line},0.06)`);
-    halo.addColorStop(1, `rgba(${C.line},0)`);
-    b.globalCompositeOperation = 'lighter';
-    b.fillStyle = halo;
-    b.fillRect(lineX - 6, top, 12, bot - top);
-    b.globalCompositeOperation = 'source-over';
+    b.fillRect(lineX - 0.5, 0, 1, h);
   }
 
   // Travel time from the left edge to the line: ~3.6 s red, ~1.8 s green,

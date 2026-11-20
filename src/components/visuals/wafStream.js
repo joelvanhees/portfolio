@@ -7,15 +7,18 @@
 // Proportions measured from a 389px-wide reference recording: line at 72.9 %
 // of the width, shield centre at 87.7 % / 50 %, shield 11.3 % wide.
 
+// SE Legal house colours: navy #0f305d, gold #b09069, dark gold #8a6d47,
+// light grey #f2f2f2. Blocked requests and the filter line are light grey,
+// the shield is gold in both tones.
 const C = {
-  bg: ['#0e202d', '#0a1822'],
-  stripe: 'rgba(120,170,210,',
-  line: '52,108,140',
-  shieldStroke: '32,112,145',
-  shieldCheck: '48,146,186',
-  red: [204, 70, 58],
+  bg: ['#0f305d', '#0f305d'],
+  stripe: 'rgba(242,242,242,',
+  line: '242,242,242',
+  gold: '176,144,105',
+  goldDark: '138,109,71',
+  red: [242, 242, 242],     // incoming malicious request
   green: [104, 196, 70],
-  grey: [168, 175, 182],
+  grey: [242, 242, 242],    // the same request once stopped at the line
 };
 
 const rand = (a, b) => a + Math.random() * (b - a);
@@ -68,35 +71,31 @@ export function createWafStream(canvas, opts = {}) {
     g.addColorStop(0, C.bg[0]); g.addColorStop(1, C.bg[1]);
     b.fillStyle = g; b.fillRect(0, 0, w, h);
     const wash = b.createRadialGradient(lineX, h * 0.45, 0, lineX, h * 0.45, Math.max(w, h) * 0.6);
-    wash.addColorStop(0, 'rgba(36,72,98,0.14)');
-    wash.addColorStop(1, 'rgba(40,80,110,0)');
+    wash.addColorStop(0, 'rgba(255,255,255,0.035)');
+    wash.addColorStop(1, 'rgba(255,255,255,0)');
     b.fillStyle = wash; b.fillRect(0, 0, w, h);
 
     let x = 0, i = 0;
     while (x < w) {
       const bw = 4 + ((i * 37) % 23);
-      b.fillStyle = C.stripe + (0.008 + ((i * 53) % 7) * 0.004) + ')';
+      b.fillStyle = C.stripe + (0.006 + ((i * 53) % 7) * 0.003) + ')';
       b.fillRect(x, 0, bw, h);
-      b.fillStyle = C.stripe + '0.022)';
+      b.fillStyle = C.stripe + '0.018)';
       b.fillRect(x + bw, 0, 1, h);
       x += bw + 6 + ((i * 29) % 19); i++;
     }
 
-    const top = h * 0.1, bot = h * 0.92;
-    const lg = b.createLinearGradient(0, top, 0, bot);
-    lg.addColorStop(0, `rgba(${C.line},0)`);
-    lg.addColorStop(0.12, `rgba(${C.line},0.6)`);
-    lg.addColorStop(0.85, `rgba(${C.line},0.45)`);
-    lg.addColorStop(1, `rgba(${C.line},0)`);
-    b.fillStyle = lg;
+    // the filter line runs the full height, edge to edge
+    const top = 0, bot = h;
+    b.fillStyle = `rgba(${C.line},0.85)`;
     b.fillRect(lineX - 0.5, top, 1, bot - top);
     const halo = b.createLinearGradient(lineX - 6, 0, lineX + 6, 0);
     halo.addColorStop(0, `rgba(${C.line},0)`);
-    halo.addColorStop(0.5, `rgba(${C.line},0.07)`);
+    halo.addColorStop(0.5, `rgba(${C.line},0.06)`);
     halo.addColorStop(1, `rgba(${C.line},0)`);
     b.globalCompositeOperation = 'lighter';
     b.fillStyle = halo;
-    b.fillRect(lineX - 6, top + (bot - top) * 0.1, 12, (bot - top) * 0.8);
+    b.fillRect(lineX - 6, top, 12, bot - top);
     b.globalCompositeOperation = 'source-over';
   }
 
@@ -170,33 +169,37 @@ export function createWafStream(canvas, opts = {}) {
       col = mix(C.red, C.grey, k);
       scale = lerp(1, 2.8, k);
       tail = d.tail * lerp(1, 1.5, k);
-      a = 1;
+      a = lerp(1, 0.8, k);
     } else if (t < HIT_HOLD) {                   // hold, big and bright
-      col = C.grey; scale = 2.8; tail = d.tail * 1.5; a = 0.95;
+      col = C.grey; scale = 2.8; tail = d.tail * 1.5; a = 0.8;
     } else if (t < HIT_SHRINK) {                 // shrink to a speck, tail retracts
       const k = easeOut((t - HIT_HOLD) / (HIT_SHRINK - HIT_HOLD));
-      col = C.grey; scale = lerp(2.8, 0.7, k); tail = d.tail * 1.5 * (1 - k); a = lerp(0.95, 0.6, k);
+      col = C.grey; scale = lerp(2.8, 0.7, k); tail = d.tail * 1.5 * (1 - k); a = lerp(0.8, 0.55, k);
     } else {                                     // speck fades out
       const k = (t - HIT_SHRINK) / (HIT_END - HIT_SHRINK);
-      col = C.grey; scale = 0.7; tail = 0; a = 0.6 * (1 - k);
+      col = C.grey; scale = 0.7; tail = 0; a = 0.55 * (1 - k);
     }
     // the dot turns grey, the tail stays red: the request is stopped, not changed
-    drawComet(d.x, d.y, d.r * scale, tail, col, a * d.alpha, 0.34, C.red, 0.35);
+    drawComet(d.x, d.y, d.r * scale, tail, col, a * d.alpha, 0.26, C.red, 0.35);
   }
 
   function drawShield() {
     ctx.save();
     ctx.translate(shieldX - 50 * shieldS, shieldY - 58 * shieldS);
     ctx.scale(shieldS, shieldS);
-    ctx.fillStyle = `rgba(${C.shieldStroke},0.14)`;
+    ctx.fillStyle = `rgba(${C.goldDark},0.16)`;
     ctx.fill(shieldPath);
     ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-    ctx.shadowColor = `rgba(${C.shieldStroke},0.45)`;
+    ctx.shadowColor = `rgba(${C.gold},0.5)`;
     ctx.shadowBlur = 10 * shieldS * 2;
-    ctx.strokeStyle = `rgba(${C.shieldStroke},0.85)`;
+    // outline runs gold to dark gold, top to bottom
+    const sg = ctx.createLinearGradient(0, 0, 0, 116);
+    sg.addColorStop(0, `rgb(${C.gold})`);
+    sg.addColorStop(1, `rgb(${C.goldDark})`);
+    ctx.strokeStyle = sg;
     ctx.lineWidth = 4;
     ctx.stroke(shieldPath);
-    ctx.strokeStyle = `rgba(${C.shieldCheck},0.9)`;
+    ctx.strokeStyle = `rgb(${C.gold})`;
     ctx.lineWidth = 6.5;
     ctx.stroke(checkPath);
     ctx.restore();

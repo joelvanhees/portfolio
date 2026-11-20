@@ -23,3 +23,8 @@ GitHub Mona Sans, Departure Mono. Alle unter SIL Open Font License.
 - `top5-artifact.html` – Fragment für claude.ai
 - Generator: `tools/top5.html`, `tools/top5_extra.js`, `tools/top5_extra.css`, `tools/build_top5.py`
 - Navigation repariert: Zurück-Button war durch `all:unset` nicht klickbar; Seitenstand wird nicht mehr in die Adresse geschrieben
+
+## Finale (Ausgabe 05)
+- `finale.html` – drei zusammengeführte Systeme (Atelier, Kasten, Presse) + Entscheidungsseite
+- `final-artifact.html` – Fragment für claude.ai
+- Generator: `tools/final.html`, `tools/final_extra.js`, `tools/final_extra.css`, `tools/build_final.py`

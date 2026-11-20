@@ -1,0 +1,15 @@
+.xrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;align-items:center}
+.xrow .mat{max-width:100%}
+.xt{display:flex;flex-direction:column;gap:14px}.xt p{margin:0;font:400 calc(17px*var(--bs,1))/1.55 var(--fb);max-width:46ch}.xt svg{height:110px;width:auto;color:var(--fg);align-self:flex-start}
+.badge2{align-self:flex-start;font:400 11px/1 var(--fm);letter-spacing:.12em;text-transform:uppercase;background:var(--acc);color:var(--onacc);padding:7px 9px}
+.clogo2{background:var(--card);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:18%}.clogo2 svg{width:100%;height:100%;color:var(--fg)}
+.mats3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.loved{display:flex;flex-wrap:wrap;gap:8px}.loved span{font:400 13px/1 var(--fm);padding:9px 11px;border:1px solid var(--fg);letter-spacing:.02em}
+.pc2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}.pc2>div{background:var(--card);padding:16px}.pc2 b{font:400 11px/1 var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}.pc2 p{margin:8px 0 0;font:400 17px/1.5 var(--fb)}
+.dec{justify-content:flex-start;padding-top:28px}.dec>*{max-width:1100px;width:100%}
+.dec p{max-width:62ch}.dec p b{font-weight:400;text-decoration:underline;text-underline-offset:4px}
+.mtx{display:flex;flex-direction:column;border-top:1px solid var(--chrome-line);font-size:13px}
+.mh,.mr{display:grid;grid-template-columns:minmax(120px,1.4fr) repeat(3,minmax(0,1fr));gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--chrome-line)}
+.mhn{display:flex;align-items:center;gap:10px;background:var(--bg);color:var(--fg);padding:10px}.mhn svg{height:34px;width:auto;max-width:46px;color:var(--fg)}.mhn b{font:400 22px/1 var(--fd);text-transform:var(--dtt,none);letter-spacing:var(--dt,0)}
+.mr .d{letter-spacing:.18em;font-size:15px}.mr.tot{font-size:15px}
+@media (max-width:760px){.mats3{grid-template-columns:1fr}.pc2{grid-template-columns:1fr}.mh,.mr{grid-template-columns:minmax(90px,1fr) repeat(3,minmax(0,1fr));font-size:11px}.mr .d{letter-spacing:0;font-size:11px}.mhn b{font-size:15px}.mhn svg{display:none}}

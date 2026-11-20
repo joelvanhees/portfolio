@@ -226,6 +226,9 @@ export function createWafStream(canvas, opts = {}) {
       running = true; last = 0; raf = requestAnimationFrame(frame);
     },
     stop() { running = false; cancelAnimationFrame(raf); },
+    // frame-exact stepping, for offline rendering (video export)
+    advance(dt) { update(Math.min(dt, 0.05)); },
+    render,
     destroy() { api.stop(); ro.disconnect(); },
   };
   return api;

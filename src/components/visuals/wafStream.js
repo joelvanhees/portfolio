@@ -10,6 +10,8 @@
 // SE Legal house colours: navy #0f305d, gold #b09069, dark gold #8a6d47,
 // light grey #f2f2f2. Requests fly in red and turn light grey once they hit
 // the light grey filter line; the shield is gold in both tones.
+import { LOGO_STACK_PATH, LOGO_STACK_H } from './logoStack.js';
+
 const C = {
   bg: '#0f305d',
   line: '242,242,242',
@@ -36,6 +38,7 @@ export function createWafStream(canvas, opts = {}) {
   const ctx = canvas.getContext('2d');
   const shieldPath = new Path2D(SHIELD);
   const checkPath = new Path2D(CHECK);
+  const logoPath = new Path2D(LOGO_STACK_PATH);
   const reduce = opts.reducedMotion ?? window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
   let w = 0, h = 0, dpr = 1, unit = 1;
@@ -70,6 +73,17 @@ export function createWafStream(canvas, opts = {}) {
     // the filter line runs the full height, edge to edge
     b.fillStyle = `rgba(${C.line},0.85)`;
     b.fillRect(lineX - 0.5, 0, 1, h);
+
+    // signature, small and quiet, bottom left. Static, so it lives here.
+    const lh = Math.min(84, Math.max(52, h * 0.12));
+    const ls = lh / LOGO_STACK_H;
+    const m = Math.max(18, Math.min(w, h) * 0.05);
+    b.save();
+    b.translate(m, h - m - lh);
+    b.scale(ls, ls);
+    b.fillStyle = `rgba(${C.line},0.42)`;
+    b.fill(logoPath, 'evenodd');
+    b.restore();
   }
 
   // Travel time from the left edge to the line: ~3.6 s red, ~1.8 s green,

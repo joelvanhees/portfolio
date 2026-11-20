@@ -11,15 +11,15 @@ const sv=(k,cls='')=>svgOf(HAUS[k],cls);
 const pg=(id,name,inner,extra='')=>`<section class="page sys pad haus ${extra}" id="seite-${id}" data-name="${name}" style="${vars(HV)}"><div class="wrap">${inner}</div></section>`;
 const head=(no,t,sub)=>`<div class="sh"><span class="no">${no}</span><span>${sub}</span><span class="ix">Atelier &amp; Presse</span></div><h2 class="disp hh">${t}</h2>`;
 
-function symbolSvg(){const R=HAUS.raw;const m=[[1,78,-78],[2,98,0],[3,0,-118],[4,-34,-176],[5,10,52],[6,46,-48]];
- return `<svg viewBox="-150 -240 300 375" class="sym" role="img" aria-label="Siegel mit Erklärungen"><path class="i" d="${R.frame}"/><path class="i" d="${R.J}"/><path class="i" d="${R.H}"/><path class="i" d="${R.v}"/>
+function symbolSvg(){const R=HAUS.raw;const m=[[1,78,-78],[2,98,0],[3,0,-118],[4,24,-238],[5,-2,52],[6,46,-48]];
+ return `<svg viewBox="-150 -260 300 395" class="sym" role="img" aria-label="Siegel mit Erklärungen"><path class="i" d="${R.frame}"/><path class="i" d="${R.J}"/><path class="i" d="${R.H}"/><path class="i" d="${R.v}"/>
  ${m.map(([n,x,y])=>`<g transform="translate(${x} ${y})"><circle r="11" fill="var(--acc)"/><text y="4.5" text-anchor="middle" style="font:400 13px var(--fm);fill:var(--onacc)">${n}</text></g>`).join('')}</svg>`}
 const SYMB=[
  ["Kreis","Die Welt, in der gearbeitet wird. Frühe Drucker führten oft einen Kreis als Erdkugel, also als Anspruch auf Reichweite. Hier heißt er: Alles, was du machst, passt in eine Form."],
  ["Horizont","Die Linie teilt oben und unten. Oben steht die Idee, unten das Handwerk. Deine Initialen stehen unten, auf dem Boden der Arbeit."],
  ["Achse","Der Stab verbindet beide Hälften und ragt aus dem Kreis heraus. Die Idee zeigt über das Gemachte hinaus."],
- ["Vierzeichen","Das historische Herz der Marke. Eine Form wie eine 4 war vom 15. bis 17. Jahrhundert das Grundgerüst vieler Kaufmanns- und Druckermarken in Europa. Woher sie stammt, ist nicht geklärt; gedeutet wird sie als Kreuz, als Merkurzeichen oder als reines Handelszeichen. Neu: Statt des Kreuzes steht jetzt die klare 4. So liest sich das Zeichen nicht religiös und bleibt trotzdem alt."],
- ["Initialen","J und H in Le Murmure, das kleine v in Fraktur. Damit trägt das Siegel beide Stimmen: das Atelier und die Presse."],
+ ["Haken","Der offene Haken über dem Stab stammt aus deinem ersten Entwurf. Haken, Fähnchen und Winkel waren typische Spitzen alter Haus- und Druckermarken. Hier bleibt er offen und ohne Kreuz: ein Zeichen für Arbeit, die nie ganz abgeschlossen ist."],
+ ["Initialen","J, v und H in Fraktur, den Buchstaben der Presse. Le Murmure trägt den Namen daneben. So stehen beide Stimmen im Zeichen: Presse im Siegel, Atelier im Namen."],
  ["Freies Viertel","Oben rechts bleibt Luft. Bei Editionen steht hier die Nummer, bei Zertifikaten das Jahr. So wird das Siegel zum Stempel, der mitzählt."]];
 
 function buildHaus(){let h='',p=1;
@@ -29,7 +29,7 @@ function buildHaus(){let h='',p=1;
  <div class="symg"><div class="symv">${symbolSvg()}</div><ol class="syml">${SYMB.map(([t,x],i)=>`<li><b><i>${i+1}</i>${t}</b><span>${x}</span></li>`).join('')}</ol></div>
  <h4 class="lab"><b>A</b> Vorher und nachher</h4>
  <div class="ba"><div class="lc"><div class="v">${sv('old')}</div><div class="t">Vorher · Logobuch Nº 22</div></div><div class="lc"><div class="v">${sv('seal')}</div><div class="t">Nachher · neu gezeichnet</div></div>
- <ul class="chg"><li>Buchstaben berührten den Ring. Jetzt haben sie überall Abstand.</li><li>Vier verschiedene Strichstärken sind jetzt eine.</li><li>Das Kreuz ist dem Vierzeichen gewichen.</li><li>IM Fell ist durch Le Murmure und Fraktur ersetzt, die Schriften des Systems.</li><li>Neu ist eine Kleinform ohne Buchstaben, die ab 16 px funktioniert.</li></ul></div>
+ <ul class="chg"><li>Buchstaben berührten den Ring. Jetzt haben sie überall Abstand.</li><li>Vier verschiedene Strichstärken sind jetzt eine.</li><li>Das Kreuz ist weg, der offene Haken bleibt.</li><li>IM Fell ist durch Fraktur ersetzt, die Schrift der Presse.</li><li>Neu ist eine Kleinform ohne Buchstaben, die ab 16 px funktioniert.</li></ul></div>
  <h4 class="lab"><b>B</b> Varianten</h4>
  <div class="logos"><div class="lc w2"><div class="v">${sv('seal')}</div><div class="t">Siegel · ab 24 px</div></div><div class="lc w2"><div class="v">${sv('edition')}</div><div class="t">Edition · Nummer im freien Viertel</div></div><div class="lc w2"><div class="v">${sv('small')}</div><div class="t">Kleinform · Favicon ab 16 px</div></div></div>`);
 
@@ -51,10 +51,10 @@ function buildHaus(){let h='',p=1;
  const TR=[["Titel","Le Murmure","Velvetyne · OFL · Versal · 120/100",`<div class="s-title">Bilder, Systeme, Skulpturen.</div>`],
   ["Text","Libre Caslon Text","Google Fonts · OFL · 17/26 · kursiv für Werke",`<div class="s-body">Joel van Hees entwirft Marken, baut Websites und trainiert Modelle. Im Atelier entstehen <em>Skulpturen</em>, die zurückschauen. Alles folgt derselben Frage: Wie fühlt sich eine Idee an, wenn man sie anfassen kann?</div>`],
   ["Struktur","Compagnon","Velvetyne · OFL · Labels, Buttons, Zitate, Absender",`<div class="s-sub">„Die Maschine liefert Varianten, die Hand trifft die Entscheidung.“</div><div class="s-mono" style="margin-top:8px">Nº 014 — Augen-Skulptur, Gips, 2026</div>`],
-  ["Edition","UnifrakturMaguntia + Space Mono Bold","Google Fonts · OFL · nur für Drops und Merch",`<div style="font:400 64px/1 'JM Fraktur'">van Hees</div><div style="font:400 14px/1.4 'JM Space Mono Bold';letter-spacing:.14em;margin-top:6px">SHIRTS, PRINTS, FLASH</div>`]];
+  ["Edition","UnifrakturMaguntia","Google Fonts · OFL · Siegel, Drops, Merch",`<div style="font:400 64px/1 'JM Fraktur'">van Hees</div><div style="font:400 14px/1.4 'JM Compagnon';letter-spacing:.18em;margin-top:8px">SHIRTS · PRINTS · FLASH</div>`]];
  h+=pg(p++,"Typografie",head("03 · Typografie","Vier Rollen","Lesen, Struktur, Stimme, Edition")+`
  <div class="type">${TR.map(t=>`<div class="tr"><div class="role">${t[0]}</div><div class="meta"><b>${t[1]}</b>${t[2]}</div><div class="spec">${t[3]}</div></div>`).join('')}</div>
- <div class="rules3"><div><b>Lesen</b><p>Alles, was man liest, steht in Caslon: Texte, Briefe, Navigation, Formulare.</p></div><div><b>Bedienen</b><p>Alles, was man klickt, beschriftet oder zitiert, steht in Compagnon.</p></div><div><b>Rausgeflogen</b><p>Trickster, Familjen, Sligoil, Archivo und Bodoni. Fünf Schriften weniger, damit nichts überladen wirkt.</p></div></div>`);
+ <div class="rules3"><div><b>Lesen</b><p>Alles, was man liest, steht in Caslon: Texte, Briefe, Navigation, Formulare.</p></div><div><b>Bedienen</b><p>Alles, was man klickt, beschriftet oder zitiert, steht in Compagnon.</p></div><div><b>Rausgeflogen</b><p>Trickster, Familjen, Sligoil, Archivo, Bodoni und Space Mono. Sechs Schriften weniger, damit nichts überladen wirkt.</p></div></div>`);
 
  const COL=[["Papier","#F1F0EC","Fläche",62],["Tinte","#141414","Text, Siegel, Buttons",30],["Stein","#77756f","Sekundär",5],["Atelierrot","#C4392C","Sonderfarbe Plakat",2],["Presseblau","#24398F","Sonderfarbe Riso",1]];
  h+=pg(p++,"Farbe",head("04 · Farbe","Papier und Tinte","Farbe nur als Sonderfarbe im Druck")+`
@@ -63,7 +63,7 @@ function buildHaus(){let h='',p=1;
  <div class="rules3"><div><b>Grundton</b><p>Papier und Tinte, sonst nichts. Website, Briefe, Komponenten und Social bleiben schwarz auf Papier.</p></div><div><b>Sonderfarben</b><p>Rot und Blau gibt es nur dort, wo wirklich gedruckt wird: Ausstellungsplakat in Rot, Riso und Merch in Blau.</p></div><div><b>Textur statt Farbe</b><p>Der Charakter kommt aus dem Druck: Körnung, Prägung, Stempel. Die Titel tragen das Druckkorn vom Cover.</p></div></div>`);
 
  const atelierV=Object.assign({},HV,{fs:"'JM Caslon Display'",ss:1.15,pbg:RED,pfg:"#F6F1E8"});
- const presseV=Object.assign({},HV,{fd:"'JM Fraktur'",fs:"'JM Space Mono Bold'",stt:"uppercase",st:".14em",ss:.8,pbg:"#ECE7DC",pfg:"#0C0C0C",dl:1,dtt:"none",ds:1});
+ const presseV=Object.assign({},HV,{fd:"'JM Fraktur'",fs:"'JM Compagnon'",stt:"uppercase",st:".18em",ss:.8,pbg:"#ECE7DC",pfg:"#0C0C0C",dl:1,dtt:"none",ds:1});
  const ex={vb:HAUS.seal.vb,parts:HAUS.seal.parts,mat:"stamp",accent:RED};
  const tee={vb:HAUS.fraktur.vb,parts:HAUS.fraktur.parts,mat:"tee"};
  const riso={vb:HAUS.seal.vb,parts:HAUS.seal.parts,mat:"riso",accent:"#EE55AE"};
@@ -73,7 +73,7 @@ function buildHaus(){let h='',p=1;
   <div class="mat">${matsvg(ex)}</div></div><p class="rp">Le Murmure, Caslon und Rot. Das Siegel wird zum Exlibris auf jeder Rückseite.</p></div>
  <div class="room"><h4 class="lab"><b>Presse</b> Drucke · Merch · Editionen</h4><div class="rg" style="${vars(presseV)}">
   <div class="poster"><div class="pt">Drop<br>Nº 3</div><div class="pd">Shirts, Prints, Flash</div><div class="pm"><span>Nur 100 Stück<br>Presse Joel van Hees</span>${sv('frakJ')}</div></div>
-  <div class="mat">${matsvg(tee)}</div></div><p class="rp">Fraktur, Space Mono und Blau. Gedruckt in Riso, auf Baumwolle, mit dem Siegel als Stempel.</p></div></div>
+  <div class="mat">${matsvg(tee)}</div></div><p class="rp">Fraktur, Schreibmaschine und Blau. Gedruckt in Riso, auf Baumwolle, mit dem Siegel als Stempel.</p></div></div>
  <div class="mats3"><div class="mat">${matsvg(riso)}</div><div class="mat">${matsvg(Object.assign({},ex,{mat:'press'}))}</div><div class="mat">${matsvg(Object.assign({},ex,{mat:'foil'}))}</div></div>`);
 
  h+=pg(p++,"Korrespondenz",head("06 · Korrespondenz","Brief &amp; Karte","Caslon für Text, Compagnon für den Absender")+`
@@ -89,6 +89,6 @@ function buildHaus(){let h='',p=1;
  h+=pg(p++,"Social & Merch",head("09 · Social &amp; Merch","Profil, Tasche, Folie","")+social(HS,HL));
 
  h+=pg(p++,"Regeln",head("10 · Regeln","Sechs Regeln","Damit es nie überladen wirkt")+`
- <ol class="rl">${["Ein Zeichen pro Fläche. Siegel oder Stapel, nie beide groß nebeneinander.","Le Murmure nur in Versalien und nur für Titel.","Caslon für alles, was gelesen wird. Compagnon für alles, was bedient wird.","Fraktur nur bei Editionen und Merch.","Papier und Tinte als Grundton. Rot und Blau nur als Sonderfarbe im Druck.","Papier statt Weiß, Tinte statt Schwarz. Materialien dürfen sichtbar sein."].map(t=>`<li>${t}</li>`).join('')}</ol>
+ <ol class="rl">${["Ein Zeichen pro Fläche. Siegel oder Stapel, nie beide groß nebeneinander.","Le Murmure nur in Versalien, nur für Titel und nie tiefschwarz: immer mit Druckkorn.","Caslon für alles, was gelesen wird. Compagnon für alles, was bedient wird.","Fraktur nur bei Editionen und Merch.","Papier und Tinte als Grundton. Rot und Blau nur als Sonderfarbe im Druck.","Papier statt Weiß, Tinte statt Schwarz. Materialien dürfen sichtbar sein."].map(t=>`<li>${t}</li>`).join('')}</ol>
  <p class="lead" style="margin-top:20px">Nächster Schritt: Logo-Dateien als SVG und PNG, Favicon, Druckvorlagen für Visitenkarte und Briefbogen, Website-Variablen und Styleguide als PDF.</p>`);
  return h}

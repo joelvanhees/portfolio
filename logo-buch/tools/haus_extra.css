@@ -38,3 +38,6 @@
 .haus .lc.acc{background:#141414}
 .haus .sh{letter-spacing:.16em}
 .haus .rules3 p,.haus .rp,.haus .chg{font-family:'JM Caslon Display';font-size:18px}
+/* Le Murmure never pure black: always printed grain. Logos are printed too. */
+.haus .disp,.haus .hh,.haus .s-title,.haus .web h5,.haus .spread2 .st,.haus .poster .pt,.haus .sl16 .stt,.haus .ig .w2,.haus .rl li::before,.nav .mid b,.cover h1{filter:url(#f-ink-cover)}
+.haus svg:not(.matsvg):not(.sym){filter:url(#f-ink-cover)}

@@ -1,5 +1,5 @@
 /* ---------- Atelier & Presse: one married system ---------- */
-const HV={bg:"#F2EFE6",fg:"#141414",mut:"#77736a",card:"#E8E4D8",line:"#d3cdbf",acc:"#24398F",onacc:"#F2EFE6",
+const HV={bg:"#F1F0EC",fg:"#141414",mut:"#77756f",card:"#E8E6E0",line:"#d6d4cd",acc:"#141414",onacc:"#F1F0EC",
   fd:"'JM Murmure'",fs:"'JM Compagnon'",fb:"'JM Caslon Text'",fm:"'JM Compagnon'",ds:1.25,dl:.84,dt:"0",dtt:"uppercase",ss:1,pbg:"#C4392C",pfg:"#F6F1E8"};
 const RED="#C4392C";
 const SEAL={t:"Siegel",vb:HAUS.seal.vb,parts:HAUS.seal.parts};
@@ -56,11 +56,11 @@ function buildHaus(){let h='',p=1;
  <div class="type">${TR.map(t=>`<div class="tr"><div class="role">${t[0]}</div><div class="meta"><b>${t[1]}</b>${t[2]}</div><div class="spec">${t[3]}</div></div>`).join('')}</div>
  <div class="rules3"><div><b>Lesen</b><p>Alles, was man liest, steht in Caslon: Texte, Briefe, Navigation, Formulare.</p></div><div><b>Bedienen</b><p>Alles, was man klickt, beschriftet oder zitiert, steht in Compagnon.</p></div><div><b>Rausgeflogen</b><p>Trickster, Familjen, Sligoil, Archivo und Bodoni. Fünf Schriften weniger, damit nichts überladen wirkt.</p></div></div>`);
 
- const COL=[["Papier","#F2EFE6","Fläche",56],["Tinte","#141414","Text, Siegel",28],["Presseblau","#24398F","Klicken, Drucken",8],["Leinen","#E8E4D8","Flächen 2",5],["Atelierrot","#C4392C","Nur Ausstellung",3]];
- h+=pg(p++,"Farbe",head("04 · Farbe","Zwei Akzente, klare Regeln","Blau für die Presse, Rot für das Atelier")+`
+ const COL=[["Papier","#F1F0EC","Fläche",62],["Tinte","#141414","Text, Siegel, Buttons",30],["Stein","#77756f","Sekundär",5],["Atelierrot","#C4392C","Sonderfarbe Plakat",2],["Presseblau","#24398F","Sonderfarbe Riso",1]];
+ h+=pg(p++,"Farbe",head("04 · Farbe","Papier und Tinte","Farbe nur als Sonderfarbe im Druck")+`
  <div class="colors">${COL.map(c=>`<div class="sw"><div class="chip" style="background:${c[1]}"></div><b>${c[0]}</b><span>${c[1]} · ${c[2]}</span></div>`).join('')}</div>
  <div class="ratio">${COL.map(c=>`<i style="background:${c[1]};width:${c[3]}%"></i>`).join('')}</div>
- <div class="rules3"><div><b>Presseblau</b><p>Buttons, Links, Zitate, Riso-Drucke. Die Farbe für alles, was man benutzt.</p></div><div><b>Atelierrot</b><p>Ausstellungsplakate, Einladungen, Signale. Selten und dafür groß.</p></div><div><b>Nie beides gleich stark</b><p>Auf einer Fläche dominiert immer nur ein Akzent. Der andere taucht höchstens als Detail auf.</p></div></div>`);
+ <div class="rules3"><div><b>Grundton</b><p>Papier und Tinte, sonst nichts. Website, Briefe, Komponenten und Social bleiben schwarz auf Papier.</p></div><div><b>Sonderfarben</b><p>Rot und Blau gibt es nur dort, wo wirklich gedruckt wird: Ausstellungsplakat in Rot, Riso und Merch in Blau.</p></div><div><b>Textur statt Farbe</b><p>Der Charakter kommt aus dem Druck: Körnung, Prägung, Stempel. Die Titel tragen das Druckkorn vom Cover.</p></div></div>`);
 
  const atelierV=Object.assign({},HV,{fs:"'JM Caslon Display'",ss:1.15,pbg:RED,pfg:"#F6F1E8"});
  const presseV=Object.assign({},HV,{fd:"'JM Fraktur'",fs:"'JM Space Mono Bold'",stt:"uppercase",st:".14em",ss:.8,pbg:"#ECE7DC",pfg:"#0C0C0C",dl:1,dtt:"none",ds:1});
@@ -77,7 +77,7 @@ function buildHaus(){let h='',p=1;
  <div class="mats3"><div class="mat">${matsvg(riso)}</div><div class="mat">${matsvg(Object.assign({},ex,{mat:'press'}))}</div><div class="mat">${matsvg(Object.assign({},ex,{mat:'foil'}))}</div></div>`);
 
  h+=pg(p++,"Korrespondenz",head("06 · Korrespondenz","Brief &amp; Karte","Caslon für Text, Compagnon für den Absender")+`
- <div class="corr">${letter(HS,HL)}<div class="corr-r"><div class="cards"><div class="card front" style="--cbg:#24398F;--cfg:#F2EFE6;color:#F2EFE6">${sv('seal')}</div><div class="card back"><div class="n">Joel van Hees</div><div class="r">Design · Code · KI · Kunst<br>@joelvanhees</div></div></div>
+ <div class="corr">${letter(HS,HL)}<div class="corr-r"><div class="cards"><div class="card front" style="--cbg:#141414;--cfg:#F1F0EC;color:#F1F0EC">${sv('seal')}</div><div class="card back"><div class="n">Joel van Hees</div><div class="r">Design · Code · KI · Kunst<br>@joelvanhees</div></div></div>
  <div class="esig"><div class="ei">${sv('seal')}</div><div><div class="en">Joel van Hees</div><div class="er">Design · Code · KI · Kunst<br>@joelvanhees</div></div></div></div></div>`);
 
  h+=pg(p++,"Editorial",head("07 · Editorial","Doppelseite","Murmure, Fraktur-Initiale, Caslon, blaues Zitat")+spreadMock(HL,true));
@@ -89,6 +89,6 @@ function buildHaus(){let h='',p=1;
  h+=pg(p++,"Social & Merch",head("09 · Social &amp; Merch","Profil, Tasche, Folie","")+social(HS,HL));
 
  h+=pg(p++,"Regeln",head("10 · Regeln","Sechs Regeln","Damit es nie überladen wirkt")+`
- <ol class="rl">${["Ein Zeichen pro Fläche. Siegel oder Stapel, nie beide groß nebeneinander.","Le Murmure nur in Versalien und nur für Titel.","Caslon für alles, was gelesen wird. Compagnon für alles, was bedient wird.","Fraktur nur bei Editionen und Merch.","Blau für die Presse, Rot für das Atelier. Nie beide gleich stark.","Papier statt Weiß, Tinte statt Schwarz. Materialien dürfen sichtbar sein."].map(t=>`<li>${t}</li>`).join('')}</ol>
+ <ol class="rl">${["Ein Zeichen pro Fläche. Siegel oder Stapel, nie beide groß nebeneinander.","Le Murmure nur in Versalien und nur für Titel.","Caslon für alles, was gelesen wird. Compagnon für alles, was bedient wird.","Fraktur nur bei Editionen und Merch.","Papier und Tinte als Grundton. Rot und Blau nur als Sonderfarbe im Druck.","Papier statt Weiß, Tinte statt Schwarz. Materialien dürfen sichtbar sein."].map(t=>`<li>${t}</li>`).join('')}</ol>
  <p class="lead" style="margin-top:20px">Nächster Schritt: Logo-Dateien als SVG und PNG, Favicon, Druckvorlagen für Visitenkarte und Briefbogen, Website-Variablen und Styleguide als PDF.</p>`);
  return h}

@@ -30,3 +30,11 @@
 .mats3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 @media (max-width:760px){.mats3{grid-template-columns:1fr}}
 .web nav{flex-wrap:wrap}.web{overflow:hidden;min-width:0}
+/* Grundton: the cover look everywhere — paper, ink grain, typewriter labels, Caslon Display leads */
+.haus{background:var(--bg) url(tex/paper.jpg) center/cover fixed}
+.haus .hh,.haus .s-title,.haus .web h5,.haus .spread2 .st{filter:url(#f-ink-cover);mix-blend-mode:multiply}
+.haus .hero-logo svg,.haus .lc:not(.neg):not(.acc) .v svg{filter:url(#f-ink-cover)}
+.haus .hero-logo,.haus .lc:not(.neg):not(.acc),.haus .symv{background:rgba(255,255,255,.28)}
+.haus .lc.acc{background:#141414}
+.haus .sh{letter-spacing:.16em}
+.haus .rules3 p,.haus .rp,.haus .chg{font-family:'JM Caslon Display';font-size:18px}

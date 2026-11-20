@@ -90,5 +90,15 @@ sb = s.bounds; sh = sb[3] - sb[1]
 sl = U(*[poly([(sb[0] - 150 + i * 26 + 18, sb[1] + sh * (.18 + i * .26)), (sb[0] - 12 + 18, sb[1] + sh * (.18 + i * .26)), (sb[0] - 12, sb[1] + sh * (.18 + i * .26) + sh * .13), (sb[0] - 150 + i * 26, sb[1] + sh * (.18 + i * .26) + sh * .13)]) for i in range(3)])
 F['tempo'] = dict(primary=prim(32), secondary=pack([(p, "i"), (lines, "i")]), signet=pack([(s, "i"), (sl, "i")]))
 
+# ── combination marks for the top 5 ──
+sq = rect(0, 0, 300, 300)
+fk = [outline(t, "Unifraktur.ttf", 70, 24, y)[0] for t, y in (("Joel", 176), ("van", 226), ("Hees", 276))]
+F['frakturbox'] = dict(primary=pack([(D(sq, *fk), "i")]), signet=pack([(D(sq, outline("J", "Unifraktur.ttf", 190, 30, 262)[0]), "i")]), secondary=None)
+tg, _ = glyph_paths("jvh", "Compagnon-Roman.otf", 120, 24, 262)
+tv = tg[1].bounds
+F['typebox'] = dict(primary=pack([(D(sq, *tg), "i"), (rect(tv[0] - 8, (tv[1] + tv[3]) / 2 - 4, tv[2] - tv[0] + 16, 8), "a")]), signet=None, secondary=None)
+mt = [outline(t, "LeMurmure.otf", 74, 24, y)[0] for t, y in (("JOEL", 150), ("VAN", 214), ("HEES", 278))]
+F['murmurebox'] = dict(primary=pack([(D(sq, *mt), "i")]), signet=None, secondary=None)
+
 open(os.path.join(R, 'fin.js'), 'w').write('window.FIN=' + json.dumps(F, separators=(',', ':')) + ';\n')
 print('fin.js', os.path.getsize(os.path.join(R, 'fin.js')) // 1024, 'KB')

@@ -1,0 +1,329 @@
+<title>Joel van Hees Top 5</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+{{FONTS}}
+{{UIFONTS}}
+/* Layout: horizontal magazine; one page per finalist = one complete identity system, styled in its own fonts and colors.
+   Each system page is a deliberate single look, so every color is set explicitly per page. */
+:root{--chrome-bg:#F0EFEB;--chrome-fg:#151515;--chrome-line:#d6d4cd;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--chrome-bg:#141413;--chrome-fg:#ECEAE4;--chrome-line:#33322f;color-scheme:dark}}
+:root[data-theme="dark"]{--chrome-bg:#141413;--chrome-fg:#ECEAE4;--chrome-line:#33322f;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--chrome-bg);color:var(--chrome-fg);font-family:"Compagnon",ui-monospace,monospace;overflow:hidden;-webkit-font-smoothing:antialiased}
+.mag{height:100%;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;overscroll-behavior-x:contain}
+.mag::-webkit-scrollbar{display:none}
+.page{flex:0 0 100%;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow-y:auto;overflow-x:hidden}
+.pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* ---------- system page ---------- */
+.sys{background:var(--bg);color:var(--fg)}
+.wrap{max-width:1320px;margin:0 auto;padding-block:26px 120px;display:flex;flex-direction:column;gap:22px}
+.sh{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:12px;font:400 12px/1.2 var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.sh .no{color:var(--fg)}
+.sh .ix{margin-left:auto}
+.lab{margin:18px 0 0;display:flex;gap:12px;align-items:baseline;font:400 12px/1 var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--mut);border-top:1px solid var(--line);padding-top:12px}
+.lab b{font-weight:400;color:var(--fg)}
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:28px;align-items:stretch}
+.hero-logo{background:var(--card);min-height:clamp(300px,46vh,500px);display:flex;align-items:center;justify-content:center;padding:8%;position:relative}
+.hero-logo svg{width:100%;height:100%;max-height:360px;color:var(--fg)}
+.hero-txt{display:flex;flex-direction:column;justify-content:flex-end;gap:16px;min-width:0}
+.disp{margin:0;font-family:var(--fd);font-weight:400;font-size:calc(clamp(44px,6vw,92px)*var(--ds,1));line-height:var(--dl,.92);letter-spacing:var(--dt,-.01em);text-transform:var(--dtt,none);text-wrap:balance;overflow-wrap:break-word}
+.lead{margin:0;font:400 calc(17px*var(--bs,1))/1.5 var(--fb);max-width:46ch}
+.kw{display:flex;gap:8px;flex-wrap:wrap;margin:0;padding:0;list-style:none}
+.kw li{font:400 11.5px/1 var(--fm);letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);padding:7px 9px}
+
+.logos{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.lc{background:var(--card);display:grid;grid-template-rows:190px auto;min-width:0}
+.lc .v{display:flex;align-items:center;justify-content:center;padding:18px 12%;min-height:0;height:190px}
+.lc .v svg{width:100%;height:100%;max-height:110px}
+.lc .t{padding:8px 10px;font:400 10.5px/1.3 var(--fm);letter-spacing:.08em;text-transform:uppercase;color:var(--mut);border-top:1px solid var(--line)}
+.lc.w2{grid-column:span 2}.lc.w3{grid-column:span 3}
+.lc.neg{background:var(--fg)}.lc.neg svg{color:var(--bg)}.lc.neg .t{color:var(--bg);opacity:.7;border-color:rgba(127,127,127,.35)}
+.lc.acc{background:var(--acc)}.lc.acc svg{color:var(--onacc)}.lc.acc .t{color:var(--onacc);opacity:.75;border-color:rgba(127,127,127,.35)}
+.lc.acc .a,.lc.neg .a{fill:currentColor}
+.sizes{display:flex;align-items:flex-end;justify-content:center;gap:22px}
+.sizes div{display:flex;flex-direction:column;align-items:center;gap:6px;font:400 10px/1 var(--fm);color:var(--mut)}
+.clear{position:relative;padding:22px;outline:1px dashed var(--mut);outline-offset:-1px;display:flex;align-items:center;justify-content:center;height:100%;width:100%}
+.clear svg{max-height:100%;width:100%;height:100%}
+.clear i{position:absolute;font:400 9.5px/1 var(--fm);color:var(--mut);font-style:normal}
+.clear i.x{top:4px;left:50%;transform:translateX(-50%)}
+.clear i.y{left:4px;top:50%;transform:translateY(-50%)}
+
+.type{display:flex;flex-direction:column}
+.tr{display:grid;grid-template-columns:150px 230px minmax(0,1fr);gap:20px;align-items:baseline;padding:16px 0;border-bottom:1px solid var(--line)}
+.tr:first-child{border-top:1px solid var(--line)}
+.tr .role{font:400 11px/1.3 var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.tr .meta{font:400 12px/1.45 var(--fm);color:var(--mut)}
+.tr .meta b{display:block;font-weight:400;color:var(--fg);font-size:13px}
+.tr .spec{min-width:0;overflow-wrap:anywhere}
+.s-title{font-family:var(--fd);font-size:calc(clamp(40px,5vw,76px)*var(--ds,1));line-height:var(--dl,.95);letter-spacing:var(--dt,-.01em);text-transform:var(--dtt,none)}
+.s-sub{font-family:var(--fs);font-size:calc(24px*var(--ss,1));line-height:1.2;letter-spacing:var(--st,0);text-transform:var(--stt,none);font-style:var(--sst,normal)}
+.s-body{font-family:var(--fb);font-size:calc(17px*var(--bs,1));line-height:1.55;max-width:62ch}
+.s-body em{font-style:italic}
+.s-mono{font-family:var(--fm);font-size:13px;line-height:1.4;letter-spacing:.04em}
+.glyphs{font-family:var(--fd);font-size:calc(30px*var(--ds,1));line-height:1.1;color:var(--mut);margin-top:8px;text-transform:var(--dtt,none);letter-spacing:var(--dt,0)}
+
+.colors{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.sw{min-width:0}
+.sw .chip{height:110px;border:1px solid var(--line)}
+.sw b{display:block;margin-top:8px;font:400 13px/1.2 var(--fb)}
+.sw span{display:block;font:400 11px/1.4 var(--fm);color:var(--mut);letter-spacing:.04em}
+.ratio{display:flex;height:14px;margin-top:4px;border:1px solid var(--line)}
+.ratio i{display:block;height:100%}
+
+.apps{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:10px}
+.app{min-width:0;display:flex;flex-direction:column;gap:6px}
+.app .t{font:400 10.5px/1.3 var(--fm);letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.a-cards{grid-column:span 5}.a-web{grid-column:span 7}.a-poster{grid-column:span 4}.a-social{grid-column:span 4}.a-mat{grid-column:span 4}
+.cards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;background:var(--card);padding:22px}
+.card{aspect-ratio:85/55;min-width:0;position:relative;box-shadow:0 1px 2px rgba(0,0,0,.18),0 8px 22px rgba(0,0,0,.12);overflow:hidden;container-type:inline-size}
+.card.front{background:var(--cbg,var(--bg));color:var(--cfg,var(--fg));display:flex;align-items:center;justify-content:center}
+.card.front svg{width:58%;height:58%;color:inherit}
+.card.back{background:var(--bg);color:var(--fg);padding:7% 8%;display:flex;flex-direction:column;justify-content:space-between}
+.card.back .n{font-family:var(--fs);font-size:9cqw;line-height:1.05;text-transform:var(--stt,none);letter-spacing:var(--st,0);font-style:var(--sst,normal)}
+.card.back .r{font-family:var(--fm);font-size:4.4cqw;line-height:1.5;color:var(--mut)}
+.web{background:var(--card);padding:0;border:1px solid var(--line);display:flex;flex-direction:column;min-height:100%}
+.web .bar{display:flex;gap:5px;padding:9px 12px;border-bottom:1px solid var(--line)}
+.web .bar i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.web .site{background:var(--bg);flex:1;padding:18px 22px 24px;display:flex;flex-direction:column;gap:18px}
+.web nav{display:flex;align-items:center;gap:18px;font-family:var(--fb);font-size:13px}
+.web nav svg{height:26px;width:auto;max-width:90px;color:var(--fg);margin-right:auto}
+.web h5{margin:0;font-family:var(--fd);font-weight:400;font-size:calc(clamp(30px,3.4vw,54px)*var(--ds,1));line-height:var(--dl,.95);letter-spacing:var(--dt,0);text-transform:var(--dtt,none);max-width:14ch}
+.web p{margin:0;font-family:var(--fb);font-size:14px;line-height:1.5;max-width:44ch;color:var(--mut)}
+.web .btn{align-self:flex-start;font-family:var(--fs);font-size:14px;padding:10px 16px;background:var(--acc);color:var(--onacc);border-radius:var(--rad,0);text-transform:var(--stt,none);letter-spacing:var(--st,0);font-style:var(--sst,normal)}
+.poster{aspect-ratio:1/1.414;background:var(--pbg,var(--acc));color:var(--pfg,var(--onacc));padding:9%;display:flex;flex-direction:column;justify-content:space-between;container-type:inline-size;position:relative;overflow:hidden}
+.poster .pt{font-family:var(--fd);font-size:calc(19cqw*var(--ds,1));line-height:var(--dl,.9);letter-spacing:var(--dt,0);text-transform:var(--dtt,none);word-break:break-word}
+.poster .pd{font-family:var(--fs);font-size:5.6cqw;line-height:1.2;text-transform:var(--stt,none);letter-spacing:var(--st,0);font-style:var(--sst,normal)}
+.poster .pm{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;font-family:var(--fm);font-size:3.4cqw;line-height:1.4}
+.poster svg{height:15cqw;width:auto;max-width:45%;color:inherit}
+.social{aspect-ratio:4/5;background:var(--card);padding:8%;display:flex;flex-direction:column;justify-content:space-between;container-type:inline-size;border:1px solid var(--line)}
+.social .q{font-family:var(--fs);font-size:8.6cqw;line-height:1.15;text-transform:var(--stt,none);letter-spacing:var(--st,0);font-style:var(--sst,normal)}
+.social .qm{font-family:var(--fm);font-size:3.6cqw;color:var(--mut);display:flex;justify-content:space-between;align-items:center}
+.social svg{height:9cqw;width:auto;max-width:40%;color:var(--fg)}
+.mat{aspect-ratio:4/5;position:relative;overflow:hidden;background:#222}
+.lc .mat{aspect-ratio:auto;height:190px}
+.mat svg.matsvg{position:absolute;inset:0;width:100%;height:100%}
+.i{fill:currentColor}.a{fill:var(--acc)}.r{fill:currentColor}.g{fill:currentColor}
+
+/* ---------- cover / overview / end (chrome-styled) ---------- */
+.cover{background:#e9e8e3 url(tex/paper.jpg) center/cover;color:#141414;display:flex;flex-direction:column;justify-content:space-between;padding-block:24px 110px}
+.cover .top{display:flex;justify-content:space-between;gap:16px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;flex-wrap:wrap}
+.cover h1{margin:0;font:400 clamp(96px,19vw,280px)/.8 "Le Murmure",Impact,sans-serif;mix-blend-mode:multiply;filter:url(#f-ink-cover)}
+.cover p{margin:0;font:400 clamp(19px,2.2vw,28px)/1.25 "Libre Caslon Display",Georgia,serif;max-width:32ch}
+.over{padding-block:24px 110px;display:flex;flex-direction:column;gap:16px}
+.over h2{margin:0;font:400 clamp(60px,8vw,110px)/.8 "Le Murmure",Impact,sans-serif}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.tiles a{display:grid;grid-template-rows:minmax(0,1fr) auto;aspect-ratio:1/1;text-decoration:none;min-width:0}
+.tiles .tv{display:flex;align-items:center;justify-content:center;padding:14% 18%;min-height:0}
+.tiles .tv svg{width:100%;height:100%;max-height:100%}
+.tiles .tm{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.tiles .chips{display:flex}.tiles .chips i{width:12px;height:12px;display:block;border:1px solid rgba(127,127,127,.4);margin-left:-3px}
+.end{display:flex;flex-direction:column;justify-content:center;gap:22px;padding-block:24px 110px}
+.end h2{margin:0;font:400 clamp(70px,11vw,160px)/.8 "Le Murmure",Impact,sans-serif}
+.end p{margin:0;font:400 20px/1.45 "Libre Caslon Display",Georgia,serif;max-width:46ch}
+
+/* nav */
+.nav{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:5;pointer-events:none;
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.nav>*{pointer-events:auto}
+.nav button{all:unset;pointer-events:auto;cursor:pointer;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:var(--chrome-bg);color:var(--chrome-fg);border:1px solid var(--chrome-line);font:400 18px/1 "Compagnon",monospace}
+.nav button:focus-visible{outline:2px solid var(--chrome-fg);outline-offset:2px}
+.nav .mid{display:flex;gap:12px;align-items:center;background:var(--chrome-bg);color:var(--chrome-fg);border:1px solid var(--chrome-line);padding:0 14px;height:46px;font-size:12px;letter-spacing:.08em}
+.nav .mid b{font:400 26px/.8 "Le Murmure",Impact,sans-serif;letter-spacing:0}
+.nav .mid span.nm{opacity:.7;max-width:34vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav .r{display:flex;gap:6px}
+
+@media (max-width:980px){
+  .hero{grid-template-columns:1fr}
+  .logos{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lc.w2,.lc.w3{grid-column:span 2}
+  .tr{grid-template-columns:1fr;gap:6px}
+  .colors{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .a-cards,.a-web{grid-column:span 12}.a-poster,.a-social,.a-mat{grid-column:span 6}
+}
+@media (max-width:560px){.a-poster,.a-social,.a-mat{grid-column:span 12}.cards{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.mag{scroll-behavior:auto}}
+{{TOPCSS}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="f-ink-cover" x="-2%" y="-2%" width="104%" height="104%">
+    <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="4" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="9" result="n2"/>
+    <feColorMatrix in="n2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 2.15" result="sp"/>
+    <feComposite in="d" in2="sp" operator="in"/>
+  </filter>
+  <filter id="f-rough" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="3" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="9"/></filter>
+</defs></svg>
+
+<main class="mag" id="mag" aria-label="Finalisten"></main>
+<nav class="nav" aria-label="Blättern">
+  <button id="prev" aria-label="Vorherige Seite">←</button>
+  <div class="mid"><b id="cur">01</b><span class="nm" id="nm"></span></div>
+  <div class="r"><button id="theme" aria-label="Hell oder dunkel">◐</button><button id="next" aria-label="Nächste Seite">→</button></div>
+</nav>
+
+<script>window.LOGOS={{LOGOS}};window.FIN={{FIN}};</script>
+<script>
+const LG=window.LOGOS, FIN=window.FIN, pad=n=>String(n).padStart(2,'0');
+const vb=l=>l.vb.join(' ');
+{{MATERIAL}}
+const BODY="Joel van Hees entwirft Marken, baut Websites und trainiert Modelle. Im Atelier entstehen Skulpturen, die zurückschauen. Alles folgt derselben Frage: Wie fühlt sich eine Idee an, wenn man sie anfassen kann?";
+const SYS=[
+{key:"murmure",n:1,name:"Le Murmure",fit:"Editorial · Mode · Ausstellung",head:"Bilder, Systeme, Skulpturen.",
+ lead:"Hochformatig, leise und sehr bestimmt. Das System lebt von großen Versalien, viel Weißraum und einer Antiqua für alles Lange. Rot taucht nur auf, wenn etwas wirklich zählt.",
+ kw:["Plakat","Katalog","Ausstellung"],
+ v:{bg:"#EEEAE1",fg:"#0F0E0D",mut:"#7d776c",card:"#E5E0D5",line:"#cfc8ba",acc:"#D7261E",onacc:"#F6F1E8",
+    fd:"'JM Murmure'",fs:"'JM Caslon Display'",fb:"'JM Caslon Text'",fm:"'JM Sligoil'",ds:1.25,dl:.84,dt:"0",dtt:"uppercase",ss:1.15},
+ type:[["Titel","Le Murmure","Velvetyne · OFL<br>Versal · 120/100 · 0"],["Untertitel","Libre Caslon Display","Google Fonts · OFL<br>28/34 · 0"],["Fließtext","Libre Caslon Text","Google Fonts · OFL<br>17/26 · kursiv für Werke"],["Auszeichnung","Sligoil Micro","Velvetyne · OFL<br>12/17 · +4 %"]],
+ col:[["Knochen","#EEEAE1","Fläche",58],["Tinte","#0F0E0D","Text, Logo",30],["Stein","#7d776c","Sekundär",6],["Leinen","#E5E0D5","Flächen 2",4],["Signalrot","#D7261E","Nur Akzent",2]],
+ poster:{t:"Werk-<br>schau",d:"Skulptur, Code, Bild",m:"14.–16. Mai 2027"},quote:"Ein Zeichen, das man auch im Flüstern erkennt.",web:"Arbeiten aus Bild, Code und Raum."},
+
+{key:"fraktur",n:5,name:"Fraktur",fit:"Kunst · Merch · Streetwear",head:"Handwerk mit Haltung.",
+ lead:"Die gebrochene Schrift ist das Ornament, alles andere bleibt hart und technisch. Schwarz ist die Grundfläche, Ochsenblut und Chrom sind die einzigen Farben.",
+ kw:["Merch","Tattoo-Flash","Drop"],
+ v:{bg:"#0C0C0C",fg:"#ECE7DC",mut:"#8f8a80",card:"#171716",line:"#2c2b29",acc:"#7E1015",onacc:"#ECE7DC",
+    fd:"'JM Fraktur'",fs:"'JM Space Mono Bold'",fb:"'JM Archivo'",fm:"'JM Space Mono'",ds:1.05,dl:1,dt:"0",ss:.8,st:".14em",stt:"uppercase",pbg:"#ECE7DC",pfg:"#0C0C0C"},
+ type:[["Titel","UnifrakturMaguntia","Google Fonts · OFL<br>Gemischt · 96/96"],["Untertitel","Space Mono Bold","Google Fonts · OFL<br>Versal · 14/18 · +14 %"],["Fließtext","Archivo","Google Fonts · OFL<br>16/25 · 400"],["Auszeichnung","Space Mono","Google Fonts · OFL<br>12/16 · Tabellenziffern"]],
+ col:[["Nacht","#0C0C0C","Fläche",62],["Knochen","#ECE7DC","Text, Logo",26],["Asche","#3A3A38","Linien",6],["Chrom","#BFC2C6","Metall, Druck",4],["Ochsenblut","#7E1015","Akzent",2]],
+ poster:{t:"Drop<br>Nº 3",d:"Shirts, Prints, Flash",m:"Nur 100 Stück"},quote:"Gebrochene Schrift, gerade Haltung.",web:"Kunst, die man tragen kann."},
+
+{key:"trickster",n:8,name:"Trickster",fit:"Musik · Druckgrafik · Events",head:"Laut gedruckt, sauber gebaut.",
+ lead:"Ein Label-System. Die Wortmarke darf Lärm machen, die Typo darunter bleibt freundlich. Gedruckt wird in Riso-Farben, und die dürfen sich überlagern.",
+ kw:["Riso","Plattencover","Flyer"],
+ v:{bg:"#F2EFE6",fg:"#1B1B1B",mut:"#77736a",card:"#E8E4D8",line:"#d3cdbf",acc:"#24398F",onacc:"#F2EFE6",
+    fd:"'JM Trickster'",fs:"'JM Compagnon'",fb:"'JM Familjen'",fm:"'JM Compagnon'",ds:1.05,dl:.95,dt:"-.01em",ss:1,pbg:"#FF48B0",pfg:"#24398F"},
+ type:[["Titel","Trickster","Velvetyne · OFL<br>80/80 · -1 %"],["Untertitel","Compagnon","Velvetyne · OFL<br>22/28"],["Fließtext","Familjen Grotesk","Google Fonts · OFL<br>16/25 · 400"],["Auszeichnung","Compagnon","Velvetyne · OFL<br>12/16"]],
+ col:[["Papier","#F2EFE6","Fläche",55],["Riso-Blau","#24398F","Logo, Text",25],["Fluo-Pink","#FF48B0","Zweitfarbe",12],["Gelb","#FFD23F","Drittfarbe",5],["Druckschwarz","#1B1B1B","Fließtext",3]],
+ poster:{t:"Live im<br>Keller",d:"Drei Bands, ein Drucker",m:"Fr 21 Uhr"},quote:"Lieber eine Farbe zu viel als eine zu wenig.",web:"Platten, Plakate, Abende."},
+
+{key:"streifen",n:16,name:"Streifen",fit:"Tech · KI · Beratung",head:"Gute Gestaltung ist ein gutes System.",
+ lead:"Rationale Grotesk, eine Werkschrift mit Haltung und ein einziges Blau. Die Streifen sind ein Muster für Trenner, Ladezustände und Diagramme, nicht nur im Logo.",
+ kw:["KI-Workshops","Produkt","Interface"],
+ v:{bg:"#F5F5F2",fg:"#0D1117",mut:"#6B7280",card:"#EAEAE5",line:"#d4d4ce",acc:"#2047E0",onacc:"#F5F5F2",
+    fd:"'JM Archivo Expanded'",fs:"'JM Plex Mono Medium'",fb:"'JM Plex Sans'",fm:"'JM Plex Mono'",ds:.78,dl:.98,dt:"-.02em",dtt:"uppercase",ss:.85,st:".02em",stt:"uppercase",rad:"0"},
+ type:[["Titel","Archivo Expanded Black","Google Fonts · OFL<br>Versal · 64/62 · -2 %"],["Untertitel","IBM Plex Mono Medium","IBM · OFL<br>Versal · 14/20 · +2 %"],["Fließtext","IBM Plex Sans","IBM · OFL<br>16/25 · 400"],["Auszeichnung","IBM Plex Mono","IBM · OFL<br>12/16"]],
+ col:[["Weiß","#F5F5F2","Fläche",56],["Graphit","#0D1117","Text",24],["Rand-Blau","#2047E0","Logo, Aktion",12],["Himmel","#A9BCFF","Diagramme",5],["Grau","#6B7280","Sekundär",3]],
+ poster:{t:"KI ohne<br>Nebel",d:"Workshop für Teams",m:"2 Tage · vor Ort"},quote:"Ein Raster, das Ideen trägt statt sie zu verstecken.",web:"Design und KI für Teams, die bauen."},
+
+{key:"vignelli",n:18,name:"Vignelli",fit:"Studio · Architektur · Systeme",head:"weniger, aber richtig.",
+ lead:"Eine Grotesk in drei Gewichten, eine kursive Bodoni als Gegenstimme und ein rotes Quadrat. Alles steht im Raster, alles klein geschrieben.",
+ kw:["Studio","Leitsystem","Bücher"],
+ v:{bg:"#FFFFFF",fg:"#111111",mut:"#8a8a8a",card:"#F2F2F2",line:"#dddddd",acc:"#E1251B",onacc:"#FFFFFF",
+    fd:"'JM Archivo Medium'",fs:"'JM Bodoni'",fb:"'JM Archivo'",fm:"'JM Archivo Bold'",ds:1,dl:.95,dt:"-.035em",dtt:"lowercase",ss:1.2,sst:"italic",pbg:"#111111",pfg:"#FFFFFF"},
+ type:[["Titel","Archivo Medium","Google Fonts · OFL<br>Gemeine · 80/76 · -3,5 %"],["Untertitel","Bodoni Moda Italic","Google Fonts · OFL<br>28/34"],["Fließtext","Archivo","Google Fonts · OFL<br>16/24 · 400"],["Auszeichnung","Archivo Bold","Google Fonts · OFL<br>Versal · 11/14 · +8 %"]],
+ col:[["Weiß","#FFFFFF","Fläche",60],["Schwarz","#111111","Text, Logo",30],["Grau","#8a8a8a","Sekundär",5],["Hellgrau","#F2F2F2","Flächen 2",3],["Rot","#E1251B","Nur Quadrat",2]],
+ poster:{t:"raster<br>und raum",d:"Vortrag über Systeme",m:"Do 19 Uhr"},quote:"Wenn alles im Raster steht, darf ein Ding laut sein.",web:"marken, websites, systeme."},
+
+{key:"schreibmaschine",n:24,name:"Schreibmaschine",fit:"Konzeptkunst · Texte · Kataloge",head:"Notizen zu Bildern, Code und Dingen.",
+ lead:"Das System sieht aus wie ein gut geführtes Arbeitsheft. Schreibmaschine für Struktur, eine ruhige Zeitungsantiqua für Text und ein Korrekturrot, das streicht und markiert.",
+ kw:["Katalog","Essay","Archiv"],
+ v:{bg:"#F3F1EA",fg:"#1A1A1A",mut:"#8A8780",card:"#EAE7DE",line:"#d6d2c6",acc:"#E2412F",onacc:"#F3F1EA",
+    fd:"'JM Compagnon'",fs:"'JM Compagnon Light'",fb:"'JM Newsreader'",fm:"'JM Compagnon'",ds:.82,dl:1.02,dt:"-.03em",ss:1,sst:"italic",pbg:"#F3F1EA",pfg:"#1A1A1A"},
+ type:[["Titel","Compagnon Roman","Velvetyne · OFL<br>56/58 · -3 %"],["Untertitel","Compagnon Light Italic","Velvetyne · OFL<br>22/28"],["Fließtext","Newsreader","Production Type · OFL<br>17/27 · Text-Optik"],["Auszeichnung","Compagnon Roman","Velvetyne · OFL<br>12/16"]],
+ col:[["Papier","#F3F1EA","Fläche",62],["Farbband","#1A1A1A","Text",28],["Bleistift","#8A8780","Notizen",6],["Durchschlag","#EAE7DE","Flächen 2",2],["Korrekturrot","#E2412F","Streichen, Markieren",2]],
+ poster:{t:"Ohne<br>Titel<br>(Joel)",d:"Arbeiten 2020–2027",m:"Katalog, 96 Seiten"},quote:"Was gestrichen ist, bleibt lesbar.",web:"Ein Archiv aus Bildern, Code und Dingen."},
+
+{key:"schablone",n:25,name:"Schablone",fit:"Werkstatt · Objekte · Raum",head:"Gebaut, um benutzt zu werden.",
+ lead:"Ein System für Kisten, Wände und Werkbänke. Fette Antiqua mit Stegen, eine schmale Werkschrift für Beschriftung und Signalorange für alles, was man nicht übersehen darf.",
+ kw:["Werkstatt","Verpackung","Beschilderung"],
+ v:{bg:"#ECEBE6",fg:"#1C1C1C",mut:"#7f7e78",card:"#DEDDD6",line:"#c9c7bf",acc:"#FF5B1F",onacc:"#1C1C1C",
+    fd:"'JM Avara'",fs:"'JM Barlow Condensed'",fb:"'JM Barlow'",fm:"'JM Space Mono'",ds:.95,dl:.95,dt:"-.01em",ss:1.15,st:".04em",stt:"uppercase",pbg:"#1C1C1C",pfg:"#FF5B1F"},
+ type:[["Titel","Avara Black","Velvetyne · OFL<br>72/70 · -1 %"],["Untertitel","Barlow Condensed Bold","Google Fonts · OFL<br>Versal · 26/28 · +4 %"],["Fließtext","Barlow","Google Fonts · OFL<br>16/25 · 400"],["Auszeichnung","Space Mono","Google Fonts · OFL<br>12/16 · Maße, Nummern"]],
+ col:[["Kreide","#ECEBE6","Fläche",50],["Asphalt","#1C1C1C","Text, Logo",30],["Beton","#9A9A94","Flächen 2",10],["Signalorange","#FF5B1F","Akzent",8],["Grau","#7f7e78","Sekundär",2]],
+ poster:{t:"Offene<br>Werk-<br>statt",d:"Objekte, Schablonen, Kaffee",m:"Sa 11–18 Uhr"},quote:"Ein Logo, das man mit Sprühdose und Pappe nachbauen kann.",web:"Objekte und Räume, gebaut zum Benutzen."},
+
+{key:"konstrukt",n:28,name:"Konstrukt",fit:"Experiment · Kunst · Lehre",head:"Form folgt Experiment.",
+ lead:"Dein eigenes Zeichen als Kern. Geometrische Grotesk, ein Raster aus Kreis, Bogen und Balken und ein Riso-Pink als Zweitfarbe. Bausteine aus dem Zeichen werden zu Illustrationen.",
+ kw:["Labor","Workshop","Edition"],
+ v:{bg:"#EFEBE2",fg:"#121212",mut:"#7a766d",card:"#E4DFD3",line:"#cec8ba",acc:"#FF4F7B",onacc:"#121212",
+    fd:"'JM Syne'",fs:"'JM Syne Bold'",fb:"'JM Hanken'",fm:"'JM Space Mono'",ds:.66,dl:.92,dt:"-.01em",dtt:"uppercase",ss:.95,st:".06em",stt:"uppercase",pbg:"#121212",pfg:"#FF4F7B"},
+ type:[["Titel","Syne ExtraBold","Bonjour Monde · OFL<br>Versal · 72/66"],["Untertitel","Syne Bold","Bonjour Monde · OFL<br>Versal · 20/24 · +6 %"],["Fließtext","Hanken Grotesk","Google Fonts · OFL<br>16/25 · 400"],["Auszeichnung","Space Mono","Google Fonts · OFL<br>12/16"]],
+ col:[["Papier","#EFEBE2","Fläche",52],["Schwarz","#121212","Logo, Text",32],["Riso-Pink","#FF4F7B","Zweitfarbe",10],["Leinen","#E4DFD3","Flächen 2",4],["Grau","#7a766d","Sekundär",2]],
+ poster:{t:"Labor<br>für<br>Formen",d:"Workshop, 3 Abende",m:"Ab 4. März"},quote:"Kreis, Bogen, Balken. Mehr braucht es nicht.",web:"Experimente aus Bild, Code und Material."},
+
+{key:"tempo",n:33,name:"Tempo",fit:"Motion · Web · Produkte",head:"Ideen in Bewegung.",
+ lead:"Ein dunkles, schnelles System für Bildschirm und Motion. Schräge Wortmarke, breite Grotesk für Überschriften, Pixel-Mono für Daten. Gelb nur für Bewegung und Aktion.",
+ kw:["Motion","Launch","App"],
+ v:{bg:"#111316",fg:"#F3F3F1",mut:"#8b9097",card:"#1A1D21",line:"#2b2f35",acc:"#FFC800",onacc:"#111316",
+    fd:"'JM Mona Expanded'",fs:"'JM Lack'",fb:"'JM Mona'",fm:"'JM Departure'",ds:.82,dl:.95,dt:"-.02em",dtt:"uppercase",ss:1.1,sst:"italic",rad:"0",pbg:"#FFC800",pfg:"#111316"},
+ type:[["Titel","Mona Sans Expanded ExtraBold","GitHub · OFL<br>Versal · 64/60 · -2 %"],["Untertitel","Lack Italic","Lack · OFL<br>24/28"],["Fließtext","Mona Sans","GitHub · OFL<br>16/25 · 420"],["Auszeichnung","Departure Mono","Helena Zhang · OFL<br>12/16 · Daten"]],
+ col:[["Asphalt","#111316","Fläche",60],["Weiß","#F3F3F1","Text, Logo",25],["Graphit","#1A1D21","Flächen 2",9],["Renngelb","#FFC800","Aktion",4],["Petrol","#0F4C5C","Daten",2]],
+ poster:{t:"Launch<br>27",d:"Neues Produkt, neue Website",m:"Live ab 09:00"},quote:"Alles, was sich bewegt, bekommt Gelb.",web:"Websites und Motion, die nicht stillstehen."}
+];
+
+const LOGOIDX={murmure:0,fraktur:4,trickster:7,streifen:15,vignelli:17,schreibmaschine:23,schablone:24,konstrukt:27,tempo:32};
+function svgOf(m,cls=''){ if(!m) return ''; const rough=m.parts.some(p=>p[1]==='r'); return `<svg viewBox="${vb(m)}" class="${cls}" role="img" aria-label="Logo"><g ${rough?'filter="url(#f-rough)"':''}>${m.parts.map(([d,c])=>`<path class="${c}" d="${d}"/>`).join('')}</g></svg>`}
+function lockups(s){const f=FIN[s.key];const pr=svgOf(f.primary);
+  const sec=f.secondary?svgOf(f.secondary):(f.word?`<div style="display:flex;align-items:center;gap:8%;width:100%;height:100%">${svgOf(f.primary)}${svgOf(f.word)}</div>`:'');
+  const sig=f.signet?svgOf(f.signet):svgOf(f.primary);return {pr,sec,sig};}
+
+const vars=v=>Object.entries({'--bg':v.bg,'--fg':v.fg,'--mut':v.mut,'--card':v.card,'--line':v.line,'--acc':v.acc,'--onacc':v.onacc,'--fd':v.fd,'--fs':v.fs,'--fb':v.fb,'--fm':v.fm,'--ds':v.ds,'--dl':v.dl,'--dt':v.dt,'--dtt':v.dtt,'--ss':v.ss,'--st':v.st,'--stt':v.stt,'--sst':v.sst,'--rad':v.rad,'--pbg':v.pbg,'--pfg':v.pfg}).filter(([k,x])=>x!=null).map(([k,x])=>`${k}:${x}`).join(';').replace(/"/g,"'");
+
+function sysPage(s,i,p){const v=s.v,{pr,sec,sig}=lockups(s);
+ const spec=[`<div class="s-title">${s.head}</div><div class="glyphs">Aa Bb Gg Hh Jj Oo Vv 0123</div>`,
+   `<div class="s-sub">Design, Code, KI und Kunst aus einer Hand</div>`,
+   `<div class="s-body">${BODY.replace('Skulpturen','<em>Skulpturen</em>')}</div>`,
+   `<div class="s-mono">Nº 014 — Augen-Skulptur, Gips, 2026 · 32 × 24 cm</div>`];
+ return `<section class="page sys pad" id="seite-${p}" data-name="${pad(s.n)} ${s.name}" style="${vars(v)}"><div class="wrap">
+ <div class="sh"><span class="no">Nº ${pad(s.n)} · ${s.name}</span><span>${s.fit}</span><span class="ix">System ${i+1} / 5</span></div>
+ <div class="hero"><div class="hero-logo ${s.key==='vignelli'?'both':''}">${pr}${s.key==='vignelli'?sig:''}</div><div class="hero-txt"><h2 class="disp">${s.head}</h2><p class="lead">${s.lead}</p><ul class="kw">${s.kw.map(k=>`<li>${k}</li>`).join('')}</ul></div></div>
+
+ <h4 class="lab"><b>01</b> Logo-Familie</h4>
+ <div class="logos">
+  <div class="lc w3"><div class="v">${sec}</div><div class="t">Querformat · Website, Briefkopf</div></div>
+  <div class="lc"><div class="v">${sig}</div><div class="t">Signet · Favicon, Profil</div></div>
+  <div class="lc neg"><div class="v">${pr}</div><div class="t">Negativ</div></div>
+  <div class="lc acc"><div class="v">${sig}</div><div class="t">Auf Akzent</div></div>
+  <div class="lc w2"><div class="v"><div class="clear"><i class="x">¼ H</i><i class="y">¼ H</i>${pr}</div></div><div class="t">Schutzzone · ¼ der Logohöhe</div></div>
+  <div class="lc w2"><div class="v"><div class="sizes">${[16,24,40].map(px=>`<div><span style="display:block;width:${px*1.6}px;height:${px}px">${sig}</span>${px} px</div>`).join('')}</div></div><div class="t">Mindestgrößen · Signet ab 16 px</div></div>
+  <div class="lc w2"><div class="v" style="padding:0"><div style="width:100%;height:100%;aspect-ratio:auto;position:relative" class="mat">${matsvg(LG[LOGOIDX[s.key]])}</div></div><div class="t">Material</div></div>
+ </div>
+
+ <h4 class="lab"><b>02</b> Typografie</h4>
+ <div class="type">${s.type.map((t,k)=>`<div class="tr"><div class="role">${t[0]}</div><div class="meta"><b>${t[1]}</b>${t[2]}</div><div class="spec">${spec[k]}</div></div>`).join('')}</div>
+
+ <h4 class="lab"><b>03</b> Farbe</h4>
+ <div class="colors">${s.col.map(c=>`<div class="sw"><div class="chip" style="background:${c[1]}"></div><b>${c[0]}</b><span>${c[1]} · ${c[2]}</span></div>`).join('')}</div>
+ <div class="ratio" title="Flächenanteile">${s.col.map(c=>`<i style="background:${c[1]};width:${c[3]}%"></i>`).join('')}</div>
+
+ <h4 class="lab"><b>04</b> Anwendung</h4>
+ <div class="apps">
+  <div class="app a-cards"><div class="cards"><div class="card front" style="--cbg:${v.cardfront||v.fg};--cfg:${v.bg}">${pr}</div><div class="card back"><div class="n">Joel van Hees</div><div class="r">Design · Code · KI · Kunst<br>@joelvanhees</div></div></div><span class="t">Visitenkarte · 85 × 55 mm</span></div>
+  <div class="app a-web"><div class="web"><div class="bar"><i></i><i></i><i></i></div><div class="site"><nav>${f2(sec,sig)}<span>Arbeiten</span><span>Labor</span><span>Kontakt</span></nav><h5>${s.web}</h5><p>${BODY.split('. ')[0]}.</p><span class="btn">Projekte ansehen</span></div></div><span class="t">Website · Startseite</span></div>
+  <div class="app a-poster"><div class="poster"><div class="pt">${s.poster.t}</div><div><div class="pd">${s.poster.d}</div></div><div class="pm"><span>${s.poster.m}<br>Atelier Joel van Hees</span>${sig}</div></div><span class="t">Plakat · DIN A</span></div>
+  <div class="app a-social"><div class="social"><div class="qm">${sig}<span>@joelvanhees</span></div><div class="q">„${s.quote}“</div><div class="qm"><span>Post 1/6</span><span>→</span></div></div><span class="t">Social · 4:5</span></div>
+  <div class="app a-mat"><div class="mat">${matsvg(LG[LOGOIDX[s.key]])}</div><span class="t">Material aus dem Logobuch</span></div>
+ </div>
+${more(s)}
+</div></section>`}
+function f2(sec,sig){return sec&&!sec.startsWith('<div')?sec:sig}
+
+{{TOPJS}}
+/* ---------- pages ---------- */
+const mag=document.getElementById('mag');let html='';
+html+=`<section class="page cover pad" id="seite-1" data-name="Finalisten"><div class="top"><span>Logobuch · Top 5</span><span>Ausgabe 04 · November 2026</span></div><h1>TOP<br>FÜNF</h1><p>Fünf Systeme, weiter ausgebaut: Briefpapier, Editorial, Komponenten, Merch und die Kombinationen, die zusammenpassen.</p></section>`;
+html+=`<section class="page over pad" id="seite-2" data-name="Übersicht"><h2>ÜBERSICHT</h2><nav class="tiles">${S5.map((s,i)=>`<a href="#seite-${i+3}" data-p="${i+3}" style="background:${s.v.card};color:${s.v.fg};--acc:${s.v.acc}"><div class="tv" style="background:${s.v.bg}">${svgOf(FIN[s.key].primary)}</div><div class="tm"><span>${pad(s.n)} ${s.name}</span><span class="chips">${s.col.map(c=>`<i style="background:${c[1]}"></i>`).join('')}</span></div></a>`).join('')}</nav></section>`;
+S5.forEach((s,i)=>{html+=sysPage(s,i,i+3)});
+html+=`<section class="page end pad" id="seite-${S5.length+3}" data-name="Auswahl"><h2>DREI AUS FÜNF</h2><p>Schreib mir deine drei Nummern. Die bauen wir als vollständige Marken aus: mit Logo-Dateien, Schrift-Lizenzen, Vorlagen und einem Styleguide.</p></section>`;
+mag.innerHTML=html;
+
+/* ---------- navigation ---------- */
+const pages=[...mag.children],tot=pages.length,cur=document.getElementById('cur'),nm=document.getElementById('nm');
+function upd(){const i=at;cur.textContent=pad(i+1);nm.textContent=pages[i]?.dataset.name||''}
+let at=0,settle=null;
+const idx=()=>at;
+const go=n=>{n=Math.max(0,Math.min(tot-1,n));at=n;upd();mag.scrollTo({left:n*mag.clientWidth})};
+mag.addEventListener('scroll',()=>{clearTimeout(settle);settle=setTimeout(()=>{at=Math.round(mag.scrollLeft/mag.clientWidth);upd()},90)},{passive:true});
+document.getElementById('prev').onclick=()=>go(at-1);
+document.getElementById('next').onclick=()=>go(at+1);
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();go(at+1)}if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(at-1)}});
+mag.querySelectorAll('[data-p]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();go(+a.dataset.p-1)}));
+addEventListener('resize',()=>{mag.style.scrollBehavior='auto';mag.scrollLeft=at*mag.clientWidth;mag.style.scrollBehavior=''});
+/* the hash is only read once on load: writing it while paging let the host echo stale hashes back and snap pages forward */
+(()=>{const m=location.hash.match(/^#seite-(\d+)$/);if(m){at=Math.max(0,Math.min(tot-1,+m[1]-1));mag.style.scrollBehavior='auto';mag.scrollLeft=at*mag.clientWidth;mag.style.scrollBehavior=''}upd()})();
+const root=document.documentElement;
+document.getElementById('theme').onclick=()=>{const dark=root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;root.dataset.theme=dark?'light':'dark'};
+</script>

@@ -17,3 +17,9 @@ GitHub Mona Sans, Departure Mono. Alle unter SIL Open Font License.
 - `fin.js` – Querformat- und Signet-Varianten je Finalist
 - `fonts/fin-fonts.css` – Schriftschnitte (Latin-Subset, WOFF2, base64)
 - Generator: `tools/logos_fin.py`, `tools/fonts_fin.py`, `tools/fin.html`, `tools/build_fin.py`
+
+## Top 5 (Ausgabe 04)
+- `top5.html` – Le Murmure, Fraktur, Trickster, Vignelli, Schreibmaschine: Korrespondenz, Editorial, Komponenten, Social/Merch, Kombinationen
+- `top5-artifact.html` – Fragment für claude.ai
+- Generator: `tools/top5.html`, `tools/top5_extra.js`, `tools/top5_extra.css`, `tools/build_top5.py`
+- Navigation repariert: Zurück-Button war durch `all:unset` nicht klickbar; Seitenstand wird nicht mehr in die Adresse geschrieben

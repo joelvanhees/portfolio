@@ -82,7 +82,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--type);overflow:h
 .nav{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:5;
   padding:10px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));pointer-events:none}
 .nav>*{pointer-events:auto}
-.nav button{all:unset;cursor:pointer;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:var(--paper);color:var(--ink);border:1px solid var(--rule);font:400 18px/1 var(--type)}
+.nav button{all:unset;pointer-events:auto;cursor:pointer;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:var(--paper);color:var(--ink);border:1px solid var(--rule);font:400 18px/1 var(--type)}
 .nav button:hover{border-color:var(--ink)}
 .nav button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .nav .mid{display:flex;gap:12px;align-items:center;background:var(--paper);border:1px solid var(--rule);padding:0 14px;height:46px;font-size:12px;letter-spacing:.08em;color:var(--mute)}
@@ -237,17 +237,18 @@ mag.innerHTML=html;
 const pages=[...mag.children],tot=pages.length;
 document.getElementById('tot').textContent=pad(tot);
 const cur=document.getElementById('cur'),prog=document.getElementById('prog');
-const idx=()=>Math.round(mag.scrollLeft/mag.clientWidth);
-const go=n=>{n=Math.max(0,Math.min(tot-1,n));mag.scrollTo({left:n*mag.clientWidth})};
-function upd(){const i=idx();cur.textContent=pad(i+1);prog.style.width=((i+1)/tot*100)+'%';const h='#seite-'+(i+1);if(location.hash!==h)history.replaceState(null,'',h)}
-mag.addEventListener('scroll',()=>requestAnimationFrame(upd),{passive:true});
-document.getElementById('prev').onclick=()=>go(idx()-1);
-document.getElementById('next').onclick=()=>go(idx()+1);
-addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();go(idx()+1)}if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(idx()-1)}});
+function upd(){const i=at;cur.textContent=pad(i+1);prog.style.width=((i+1)/tot*100)+'%'}
+let at=0,settle=null;
+const idx=()=>at;
+const go=n=>{n=Math.max(0,Math.min(tot-1,n));at=n;upd();mag.scrollTo({left:n*mag.clientWidth})};
+mag.addEventListener('scroll',()=>{clearTimeout(settle);settle=setTimeout(()=>{at=Math.round(mag.scrollLeft/mag.clientWidth);upd()},90)},{passive:true});
+document.getElementById('prev').onclick=()=>go(at-1);
+document.getElementById('next').onclick=()=>go(at+1);
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();go(at+1)}if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(at-1)}});
 mag.querySelectorAll('[data-p]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();go(+a.dataset.p-1)}));
-addEventListener('resize',()=>{mag.style.scrollBehavior='auto';go(idx());mag.style.scrollBehavior=''});
-function fromHash(){const m=location.hash.match(/^#seite-(\d+)$/);if(m){mag.style.scrollBehavior='auto';go(+m[1]-1);mag.style.scrollBehavior=''}}
-addEventListener('hashchange',fromHash);fromHash();upd();
+addEventListener('resize',()=>{mag.style.scrollBehavior='auto';mag.scrollLeft=at*mag.clientWidth;mag.style.scrollBehavior=''});
+/* the hash is only read once on load: writing it while paging let the host echo stale hashes back and snap pages forward */
+(()=>{const m=location.hash.match(/^#seite-(\d+)$/);if(m){at=Math.max(0,Math.min(tot-1,+m[1]-1));mag.style.scrollBehavior='auto';mag.scrollLeft=at*mag.clientWidth;mag.style.scrollBehavior=''}upd()})();
 const root=document.documentElement;
 document.getElementById('theme').onclick=()=>{const dark=root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;root.dataset.theme=dark?'light':'dark'};
 </script>

@@ -35,9 +35,14 @@
 .haus .hh,.haus .s-title,.haus .web h5,.haus .spread2 .st{filter:url(#f-ink-cover);mix-blend-mode:multiply}
 .haus .hero-logo svg,.haus .lc:not(.neg):not(.acc) .v svg{filter:url(#f-ink-cover)}
 .haus .hero-logo,.haus .lc:not(.neg):not(.acc),.haus .symv{background:rgba(255,255,255,.28)}
-.haus .lc.acc{background:#141414}
 .haus .sh{letter-spacing:.16em}
 .haus .rules3 p,.haus .rp,.haus .chg{font-family:'JM Caslon Display';font-size:18px}
 /* Le Murmure never pure black: always printed grain. Logos are printed too. */
 .haus .disp,.haus .hh,.haus .s-title,.haus .web h5,.haus .spread2 .st,.haus .poster .pt,.haus .sl16 .stt,.haus .ig .w2,.haus .rl li::before,.nav .mid b,.cover h1{filter:url(#f-ink-cover)}
 .haus svg:not(.matsvg):not(.sym){filter:url(#f-ink-cover)}
+.mainlogo{display:grid;grid-template-columns:1.4fr 1fr;gap:12px}
+.mainlogo>div{display:flex;align-items:center;justify-content:center;padding:8%;min-height:clamp(260px,46vh,480px)}
+.mainlogo svg{width:100%;max-height:360px}
+.ml1{background:rgba(255,255,255,.28)}.ml1 svg{color:var(--fg)}
+.ml2{background:var(--acc)}.ml2 svg{color:var(--onacc)}
+@media (max-width:820px){.mainlogo{grid-template-columns:1fr}}

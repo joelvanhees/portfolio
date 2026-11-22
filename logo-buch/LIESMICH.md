@@ -34,3 +34,8 @@ GitHub Mona Sans, Departure Mono. Alle unter SIL Open Font License.
 - `haus-artifact.html` – Fragment für claude.ai
 - `haus.js` – neu gezeichnetes Siegel (Vierzeichen), Lockups, Kleinform
 - Generator: `tools/logos_haus.py`, `tools/haus.html`, `tools/haus_extra.js`, `tools/haus_extra.css`, `tools/build_haus.py`
+
+## Logo-Werkstatt (Ausgabe 07)
+- `logo.html` – Neuanfang: Siegel ohne Stab („van“ oben), Stempel mit Umschrift, Wortmarken A–C, Anwendungen
+- `logo-artifact.html` – Fragment für claude.ai
+- Generator: `tools/logos_logo.py`, `tools/logo_page.html`, `tools/build_logo.py`

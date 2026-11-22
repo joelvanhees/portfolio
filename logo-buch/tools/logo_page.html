@@ -1,0 +1,90 @@
+<title>Joel van Hees Logo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+{{FONTS}}
+/* Layout: one long editorial sheet on paper; recommendation first, then numbered variants to choose from, then applications.
+   Deliberate single look (paper + ink + press blue), every color set explicitly. */
+:root{--paper:#F1F0EC;--ink:#141414;--mut:#77756f;--line:#d6d4cd;--card:rgba(255,255,255,.3);--blue:#24398F;--onblue:#F1F0EC;
+ --fd:'JM Murmure',Impact,sans-serif;--fb:'JM Caslon Text',Georgia,serif;--fm:'JM Compagnon',ui-monospace,monospace;--fk:'JM Fraktur',serif}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper) url(tex/paper.jpg) center/cover fixed;color:var(--ink);font-family:var(--fb)}
+.w{max-width:1240px;margin:0 auto;padding-block:30px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+.top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:400 12px/1 var(--fm);letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+h1{margin:10px 0 0;font:400 clamp(70px,13vw,190px)/.82 var(--fd);filter:url(#ink);text-transform:uppercase}
+h2{margin:34px 0 0;font:400 clamp(40px,6vw,76px)/.9 var(--fd);filter:url(#ink);text-transform:uppercase;border-top:1px solid var(--line);padding-top:18px}
+.lead{margin:0;font:400 clamp(18px,1.6vw,22px)/1.5 var(--fb);max-width:58ch}
+.lab{font:400 11px/1.3 var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.badge{display:inline-block;font:400 11px/1 var(--fm);letter-spacing:.14em;text-transform:uppercase;background:var(--blue);color:var(--onblue);padding:7px 9px}
+svg.m{width:100%;height:100%;overflow:visible}
+.g svg.m{filter:url(#ink)}
+.i{fill:currentColor}
+.hero{display:grid;grid-template-columns:1.5fr 1fr;gap:12px}
+.tile{display:flex;flex-direction:column;gap:8px;min-width:0}
+.box{display:flex;align-items:center;justify-content:center;padding:9%;background:var(--card);min-height:220px;color:var(--ink)}
+.box.blue{background:var(--blue);color:var(--onblue)}.box.ink{background:var(--ink);color:#ECE7DC}
+.hero .box{min-height:clamp(280px,44vh,460px)}
+.hero .box svg{max-height:300px}
+.row{display:grid;gap:12px}.r2{grid-template-columns:repeat(2,minmax(0,1fr))}.r3{grid-template-columns:repeat(3,minmax(0,1fr))}.r4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.box svg{max-height:240px}
+.num{font:400 44px/.8 var(--fd);filter:url(#ink)}
+.vh{display:flex;align-items:baseline;gap:12px}
+.vh p{margin:0;font:400 15.5px/1.5 var(--fb);color:var(--ink)}
+.pick{outline:2px solid var(--blue);outline-offset:4px}
+.why{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.why div{border-top:2px solid var(--ink);padding-top:12px}.why b{font:400 12px/1 var(--fm);letter-spacing:.12em;text-transform:uppercase}.why p{margin:8px 0 0;font:400 16px/1.5 var(--fb)}
+.mat{position:relative;aspect-ratio:4/5;overflow:hidden;background:#222}.mat svg.matsvg{position:absolute;inset:0;width:100%;height:100%}
+.site{background:var(--paper);border:1px solid var(--line);padding:22px 26px 30px;display:flex;flex-direction:column;gap:20px}
+.site nav{display:flex;align-items:center;gap:20px;font:400 15px var(--fb);flex-wrap:wrap}.site nav .lg{height:40px;width:auto;margin-right:auto;color:var(--ink)}.site nav .lg svg{height:40px;width:auto}
+.site .on{text-decoration:underline;text-decoration-color:var(--blue);text-decoration-thickness:2px;text-underline-offset:6px}
+.btn{font:400 14px var(--fm);background:var(--blue);color:var(--onblue);padding:10px 15px;align-self:flex-start}
+.site h3{margin:0;font:400 clamp(40px,5vw,72px)/.9 var(--fd);filter:url(#ink);text-transform:uppercase}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:22px;background:var(--card)}
+.card{aspect-ratio:85/55;display:flex;align-items:center;justify-content:center;padding:12%;box-shadow:0 1px 3px rgba(0,0,0,.18),0 10px 24px rgba(0,0,0,.12)}
+.card.f{background:var(--blue);color:var(--onblue)}.card.b{background:var(--paper);color:var(--ink);flex-direction:column;align-items:flex-start;justify-content:space-between;padding:8%}
+.card.b span{font:400 12px/1.5 var(--fm);color:var(--mut)}
+.small{display:flex;align-items:flex-end;gap:26px;justify-content:center}.small div{display:flex;flex-direction:column;align-items:center;gap:6px;font:400 10px var(--fm);color:var(--mut)}
+.w>*,.row>*{min-width:0}.small{flex-wrap:wrap}.site nav .lg svg{max-width:160px}.box{overflow:hidden}
+@media (max-width:900px){.hero,.r3,.r4,.why{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.hero,.r2,.r3,.r4,.why,.cards{grid-template-columns:1fr}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+ <filter id="ink" x="-2%" y="-2%" width="104%" height="104%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2" result="d"/><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="9" result="n2"/><feColorMatrix in="n2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.2 2.1" result="sp"/><feComposite in="d" in2="sp" operator="in"/></filter>
+ <filter id="f-rough"><feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="3" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="9"/></filter>
+</defs></svg>
+<main class="w" id="app"></main>
+<script>window.LOGO={{LOGO}};</script>
+<script>
+const vb=l=>l.vb.join(' ');
+{{MATERIAL}}
+const O=window.LOGO;
+const S=(k,cls='m')=>`<svg class="${cls}" viewBox="${vb(O[k])}" role="img" aria-label="Logo">${O[k].parts.map(([d,c])=>`<path class="${c}" d="${d}"/>`).join('')}</svg>`;
+const M=(k,mat,accent)=>matsvg({vb:O[k].vb,parts:O[k].parts,mat,accent});
+const tile=(k,cls,lab)=>`<div class="tile"><div class="box ${cls} g">${S(k)}</div><span class="lab">${lab}</span></div>`;
+const vrow=(n,k,t,lab,pick)=>`<div class="tile"><div class="box g ${pick?'pick':''}">${S(k)}</div><div class="vh"><span class="num">${n}</span><p><b>${t}</b><br>${lab}</p></div></div>`;
+document.getElementById('app').innerHTML=`
+<div class="top"><span>Logobuch · Werkstatt</span><span>Ausgabe 07 · November 2026</span></div>
+<h1>Dein Logo</h1>
+<p class="lead">Du hattest recht: Stab und Haken haben das Siegel zerrissen, und Le Murmure in drei Zeilen ist kein Logo. Hier ist der Neuanfang. Das Siegel hat keinen Stab mehr, oben steht „van“, wie du es wolltest. Die Wortmarke kommt aus deinem Lieblingsbild, der Fraktur auf Baumwolle.</p>
+
+<h2>Meine Empfehlung</h2>
+<span><span class="badge">Hauptlogo</span></span>
+<div class="hero"><div class="tile"><div class="box g">${S('lock')}</div><span class="lab">Stempel + Wortmarke · Website, Briefbogen, Katalog</span></div>
+<div class="tile"><div class="box blue g">${S('w1')}</div><span class="lab">Wortmarke allein · auf Presseblau</span></div></div>
+<div class="row r4">${tile('w1','ink','Wortmarke · Schwarz')}${tile('s3','','Stempel · Bildmarke')}${tile('s3','blue','Stempel auf Blau')}${tile('small','','Kleinform · Favicon')}</div>
+<div class="why"><div><b>Wortmarke</b><p>„JOEL“ in der Schreibmaschine, „van Hees“ in Fraktur. Das ist dein Lieblingsbild, und es ist sofort deins: Handwerk, Kunst und Haltung in einer Zeile.</p></div><div><b>Stempel</b><p>Ein echter Stempel mit Umschrift. Oben steht „van“, unten J und H. Die Umschrift nennt alles, was du machst. Er kommt auf Rückseiten, Editionen, Verpackung und Profilbild.</p></div><div><b>Kleinform</b><p>Für alles unter 32 px: nur „vH“ im Ring. So bleibt das Zeichen auch als Favicon und App-Icon lesbar.</p></div></div>
+
+<h2>Siegel zur Auswahl</h2>
+<p class="lead">Vier Siegel ohne Stab und ohne Kreuz. Nummer 3 ist meine Wahl, weil die Umschrift aus dem Kreis einen Stempel macht und nicht nur ein Rund.</p>
+<div class="row r4">${vrow(1,'s1','van · J H','Dein Vorschlag, wörtlich umgesetzt.')}${vrow(2,'s2','van · Hees','Der Name komplett im Kreis.')}${vrow(3,'s3','Stempel','van · J H mit Umschrift.',1)}${vrow(4,'s4','Stempel vH','Monogramm mit Umschrift.')}</div>
+
+<h2>Wortmarken zur Auswahl</h2>
+<div class="row r3">${vrow('A','w1','JOEL · van Hees','Schreibmaschine und Fraktur.',1)}${vrow('B','w2','Joel van Hees','Alles in Fraktur, eine Zeile.')}${vrow('C','w3','JOEL VAN HEES','Le Murmure in einer Zeile, mit Druckkorn.')}</div>
+
+<h2>In Anwendung</h2>
+<div class="site"><nav><span class="lg g">${S('w1')}</span><span class="on">Arbeiten</span><span>Labor</span><span>Kunst</span><span>Über</span><span class="btn">Kontakt</span></nav><h3>Bilder, Systeme, Skulpturen.</h3><p class="lead" style="font-size:17px">Joel van Hees entwirft Marken, baut Websites und trainiert Modelle. Im Atelier entstehen Skulpturen, die zurückschauen.</p><span class="btn">Projekte ansehen</span></div>
+<div class="row r2"><div class="cards"><div class="card f g">${S('s3')}</div><div class="card b"><span class="g" style="width:75%">${S('w1')}</span><span>Design · Code · KI · Kunst<br>@joelvanhees</span></div></div>
+<div class="tile"><div class="box"><div class="small">${[16,24,32,48].map(px=>`<div><span style="width:${px}px;height:${px}px;display:block">${S('small')}</span>${px} px</div>`).join('')}</div></div><span class="lab">Kleinform in Favicon-Größen</span></div></div>
+<div class="row r3"><div class="mat">${M('w1','tee')}</div><div class="mat">${M('s3','stamp','#24398F')}</div><div class="mat">${M('s3','riso','#EE55AE')}</div></div>
+<div class="row r3"><div class="mat">${M('lock','press')}</div><div class="mat">${M('s3','foil')}</div><div class="mat">${M('w1','print')}</div></div>
+<p class="lead">Sag mir einfach die Nummer für das Siegel und den Buchstaben für die Wortmarke, zum Beispiel „3 + A“. Dann baue ich das System neu darauf auf.</p>`;
+</script>

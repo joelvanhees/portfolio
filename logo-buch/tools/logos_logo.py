@@ -1,0 +1,68 @@
+"""Logo workshop: seals without staff ('van' above the horizon), ring-text stamps, one-line wordmarks. Writes ../logo.js"""
+import json, math, os, sys
+sys.path.insert(0, os.path.dirname(__file__))
+from lettering import *
+R = os.path.join(os.path.dirname(__file__), '..')
+FR, CP, MU = "Unifraktur.ttf", "Compagnon-Roman.otf", "LeMurmure.otf"
+def fit(p, x, y, w, h):
+    b = p.bounds; s = min(w / (b[2] - b[0]), h / (b[3] - b[1])); q = move(p, 0, 0, s, s); bb = q.bounds
+    return move(q, x + (w - (bb[2] - bb[0])) / 2 - bb[0], y + (h - (bb[3] - bb[1])) / 2 - bb[1])
+def pack(parts, pad=.04):
+    bs = [p.bounds for p, _ in parts]
+    x0 = min(b[0] for b in bs); y0 = min(b[1] for b in bs); x1 = max(b[2] for b in bs); y1 = max(b[3] for b in bs)
+    pd = max(x1 - x0, y1 - y0) * pad
+    return dict(vb=[round(x0 - pd, 1), round(y0 - pd, 1), round(x1 - x0 + 2 * pd, 1), round(y1 - y0 + 2 * pd, 1)], parts=[[d(p), c] for p, c in parts])
+def ring(r, w): return D(ellipse(0, 0, r, r, 200), ellipse(0, 0, r - w, r - w, 200))
+def ringtext(text, r, size, start=0.0, spacing=0):
+    gl, _ = glyph_paths(text, CP, size, track=spacing)
+    out = []
+    for g in gl:
+        b = g.bounds
+        if b[2] - b[0] < .5: continue
+        cx = (b[0] + b[2]) / 2
+        a = start + cx / r
+        q = move(g, -cx, -r)                     # baseline sits on radius, glyph points outward
+        out.append(move(q, rot=math.degrees(a), origin=(0, 0)))
+    return U(*out)
+def fill_ring(base, r, size):
+    # repeat text and set tracking so it closes the circle exactly
+    circ = 2 * math.pi * r
+    _, w = outline(base, CP, size)
+    n = max(1, round(circ / w))
+    txt = base * n
+    _, w2 = outline(txt, CP, size)
+    gl, _ = glyph_paths(txt, CP, size)
+    track = (circ - w2) / len(txt)
+    return ringtext(txt, r, size, start=0, spacing=track)
+
+W = 9
+inner = ring(110, W); hz = rect(-104, -W / 2, 208, W)
+van = fit(outline("van", FR, 300)[0], -62, -82, 124, 66)
+JH_J = fit(outline("J", FR, 300)[0], -58, 16, 46, 66); JH_H = fit(outline("H", FR, 300)[0], 12, 16, 50, 66)
+hees = fit(outline("Hees", FR, 300)[0], -70, 16, 140, 64)
+s1 = U(inner, hz, van, JH_J, JH_H)
+s2 = U(inner, hz, van, hees)
+# stamp with ring text
+outer = ring(158, 7); mid = ring(124, 3)
+rt = fill_ring("ATELIER · PRESSE · DESIGN · CODE · KI · KUNST · ", 132, 17)
+van3 = fit(outline("van", FR, 300)[0], -66, -86, 132, 70)
+J3 = fit(outline("J", FR, 300)[0], -62, 14, 50, 72); H3 = fit(outline("H", FR, 300)[0], 12, 14, 54, 72)
+hz3 = rect(-115, -3.5, 230, 7)
+s3 = U(outer, mid, rt, hz3, van3, J3, H3)
+vh = fit(outline("vH", FR, 300)[0], -80, -70, 160, 140)
+s4 = U(outer, mid, rt, vh)
+small = U(ring(110, 14), fit(outline("vH", FR, 300)[0], -74, -62, 148, 124))
+# wordmarks
+joel = outline("JOEL", CP, 40, track=22)[0]
+vh_w = outline("van Hees", FR, 200)[0]; vb = vh_w.bounds
+jb = joel.bounds; joel = move(joel, vb[0] + 8 - jb[0], vb[1] - 26 - jb[3])
+w1 = U(joel, vh_w)
+w2 = outline("Joel van Hees", FR, 200)[0]
+w3 = outline("JOEL VAN HEES", MU, 200, track=6)[0]
+# lockup: stamp left, wordmark right
+wb = w1.bounds; sc = 300 / (wb[3] - wb[1]) * .62
+w1l = move(w1, 0, 0, sc, sc); b = w1l.bounds; w1l = move(w1l, 200 - b[0], -(b[1] + b[3]) / 2)
+L = dict(s1=pack([(s1, "i")]), s2=pack([(s2, "i")]), s3=pack([(s3, "i")]), s4=pack([(s4, "i")]), small=pack([(small, "i")]),
+         w1=pack([(w1, "i")]), w2=pack([(w2, "i")]), w3=pack([(w3, "i")]), lock=pack([(s3, "i"), (w1l, "i")]))
+open(os.path.join(R, 'logo.js'), 'w').write('window.LOGO=' + json.dumps(L, separators=(',', ':')) + ';\n')
+print('logo.js', os.path.getsize(os.path.join(R, 'logo.js')) // 1024, 'KB')

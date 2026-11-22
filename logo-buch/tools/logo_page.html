@@ -64,18 +64,19 @@ const vrow=(n,k,t,lab,pick)=>`<div class="tile"><div class="box g ${pick?'pick':
 document.getElementById('app').innerHTML=`
 <div class="top"><span>Logobuch · Werkstatt</span><span>Ausgabe 07 · November 2026</span></div>
 <h1>Dein Logo</h1>
-<p class="lead">Le Murmure mit Druckkorn, in zwei Zeilen. Dazu ein Stempel ohne Stab, ohne Kreuz und ohne Fraktur. Weiter unten stehen die Alternativen zum Vergleich.</p>
+<p class="lead">Le Murmure mit Druckkorn, in zwei Zeilen. Dazu ein schlichtes Siegel: VAN über der Linie, HEES darunter. Weiter unten stehen die Alternativen zum Vergleich.</p>
 
 <h2>Le Murmure</h2>
-<p class="lead">Deine Wahl: Le Murmure mit Druckkorn. Zwei Zeilen statt drei, eine kurze über einer langen, genau wie auf den Covern „Drei Systeme“ und „Atelier &amp; Presse“. Der Stempel spricht dieselbe Sprache.</p>
+<p class="lead">Deine Wahl: Le Murmure mit Druckkorn. Zwei Zeilen statt drei, eine kurze über einer langen, genau wie auf den Covern „Drei Systeme“ und „Atelier &amp; Presse“. Das J behält seinen vollen Schwung und läuft in das V hinein. Das Siegel ist wieder schlicht: VAN über der Linie, HEES darunter, ohne Umschrift.</p>
 <span><span class="badge">Hauptlogo</span></span>
 <div class="hero"><div class="tile"><div class="box g">${S('wm2')}</div><span class="lab">Wortmarke · zweizeilig</span></div>
 <div class="tile"><div class="box blue g">${S('wm2')}</div><span class="lab">Wortmarke auf Presseblau</span></div></div>
 <div class="row r2"><div class="tile"><div class="box g">${S('lockm')}</div><span class="lab">Stempel + Wortmarke · große Auftritte</span></div><div class="tile"><div class="box g">${S('w3')}</div><span class="lab">Einzeiler · Navigation, Fußzeile</span></div></div>
-<div class="row r4">${tile('s3m','','Stempel · Bildmarke')}${tile('s3m','blue','Stempel auf Blau')}${tile('wm2','ink','Wortmarke · Schwarz')}${tile('smallm','','Kleinform · Favicon')}</div>
-<div class="row r3"><div class="mat">${M('s3m','stamp','#24398F')}</div><div class="mat">${M('wm2','tee')}</div><div class="mat">${M('s3m','foil')}</div></div>
+<div class="row r2">${tile('wm2','','J läuft ins V · empfohlen')}${tile('wm2k','','Alternative · J vor dem V, feine Lücke')}</div>
+<div class="row r4">${tile('s2m','','Siegel · VAN / HEES')}${tile('s2m','blue','Siegel auf Blau')}${tile('wm2','ink','Wortmarke · Schwarz')}${tile('smallm','','Kleinform · Favicon')}</div>
+<div class="row r3"><div class="mat">${M('s2m','stamp','#24398F')}</div><div class="mat">${M('wm2','tee')}</div><div class="mat">${M('s2m','foil')}</div></div>
 <div class="site"><nav><span class="lg g">${S('w3')}</span><span class="on">Arbeiten</span><span>Labor</span><span>Kunst</span><span>Über</span><span class="btn">Kontakt</span></nav><h3>Bilder, Systeme, Skulpturen.</h3><span class="btn">Projekte ansehen</span></div>
-<div class="row r2"><div class="cards"><div class="card f g">${S('s3m')}</div><div class="card b"><span class="g" style="width:62%">${S('wm2')}</span><span>Design · Code · KI · Kunst<br>@joelvanhees</span></div></div>
+<div class="row r2"><div class="cards"><div class="card f g">${S('s2m')}</div><div class="card b"><span class="g" style="width:62%">${S('wm2')}</span><span>Design · Code · KI · Kunst<br>@joelvanhees</span></div></div>
 <div class="tile"><div class="box"><div class="small">${[16,24,32,48].map(px=>`<div><span style="width:${px}px;height:${px}px;display:block" class="g">${S('smallm')}</span>${px} px</div>`).join('')}</div></div><span class="lab">Kleinform in Favicon-Größen</span></div></div>
 
 <h2>Ohne Fraktur</h2>

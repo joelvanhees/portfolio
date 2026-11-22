@@ -94,16 +94,25 @@ vb_ = l2.bounds; vh_ = vb_[3] - vb_[1]
 v_top = left_at(l2, vb_[1] + vh_ * .12, vb_[1] + vh_ * .18)  # perceived edge of the V's thick stroke
 l1 = move(l1, v_top - j_stem, 0)
 # keep the J tail clear of the second line
-# tight leading as on the covers: the J tail is trimmed just above the second line so nothing floats or collides
-vt = l2.bounds[1]
-l1 = D(l1, rect(-1e4, vt - capH * .035, 2e4, 1e4))
+# tight leading as on the covers; the J keeps its full tail and passes in front of the V (V gets a hairline gap)
+l2k = D(l2, grow(l1, 4))
+wm2u = U(l1, l2)            # variant: J flows into the V (ligature)
 print('J stem shift', round(v_top - j_stem, 1))
-wm2 = U(l1, l2)
+wm2 = U(l1, l2)   # J flows into the V
+wm2k = U(l1, l2k)
 sJ = outline("JvH", MU, 300, track=-4)[0]
 smallm = U(ring(110, 14), grow(fit(sJ, -60, -66, 120, 132), 1.5))
 wb3 = wm2.bounds; sc3 = 300 / (wb3[3] - wb3[1]) * .78
 wml = move(wm2, 0, 0, sc3, sc3); b3 = wml.bounds; wml = move(wml, 196 - b3[0], -(b3[1] + b3[3]) / 2)
-L.update(wm2=pack([(wm2, "i")]), smallm=pack([(smallm, "i")]), lockm=pack([(s3m, "i"), (wml, "i")]))
+L.update(wm2k=pack([(wm2k, "i")]), wm2=pack([(wm2, "i")]), smallm=pack([(smallm, "i")]), lockm=pack([(s3m, "i"), (wml, "i")]))
+
+# ── simple seal, no ring text: VAN over the horizon, HEES below (Le Murmure) ──
+vanS = grow(fit(outline("VAN", MU, 300)[0], -44, -74, 88, 56), 1.3)
+heesS = grow(fit(outline("HEES", MU, 300)[0], -54, 18, 108, 56), 1.3)
+s2m = U(ring(110, W), hz, vanS, heesS)
+wb4 = wm2.bounds; sc4 = 220 / (wb4[3] - wb4[1]) * .9
+wml2 = move(wm2, 0, 0, sc4, sc4); b4 = wml2.bounds; wml2 = move(wml2, 150 - b4[0], -(b4[1] + b4[3]) / 2)
+L.update(s2m=pack([(s2m, "i")]), lockm=pack([(s2m, "i"), (wml2, "i")]))
 
 open(os.path.join(R, 'logo.js'), 'w').write('window.LOGO=' + json.dumps(L, separators=(',', ':')) + ';\n')
 print('logo.js', os.path.getsize(os.path.join(R, 'logo.js')) // 1024, 'KB')

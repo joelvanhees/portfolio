@@ -81,5 +81,16 @@ wcb = wc.bounds; sc2 = 300 / (wcb[3] - wcb[1]) * .62
 wcl = move(wc, 0, 0, sc2, sc2); b2 = wcl.bounds; wcl = move(wcl, 200 - b2[0], -(b2[1] + b2[3]) / 2)
 L.update(s3c=pack([(s3c, "i")]), s3m=pack([(s3m, "i")]), smallc=pack([(smallc, "i")]), wc=pack([(wc, "i")]), lockc=pack([(s3c, "i"), (wcl, "i")]))
 
+# ── Le Murmure: two-line wordmark (short over long, like the covers) ──
+l1 = outline("JOEL", MU, 200, track=4)[0]; l2 = outline("VAN HEES", MU, 200, track=4)[0]
+b1 = l1.bounds; b2 = l2.bounds; capH = b2[3] - b2[1]
+l1 = move(l1, -b1[0], -b1[1]); l2 = move(l2, -b2[0], capH * 1.08 - b2[1])
+wm2 = U(l1, l2)
+sJ = outline("JvH", MU, 300, track=-4)[0]
+smallm = U(ring(110, 14), grow(fit(sJ, -60, -66, 120, 132), 1.5))
+wb3 = wm2.bounds; sc3 = 300 / (wb3[3] - wb3[1]) * .78
+wml = move(wm2, 0, 0, sc3, sc3); b3 = wml.bounds; wml = move(wml, 196 - b3[0], -(b3[1] + b3[3]) / 2)
+L.update(wm2=pack([(wm2, "i")]), smallm=pack([(smallm, "i")]), lockm=pack([(s3m, "i"), (wml, "i")]))
+
 open(os.path.join(R, 'logo.js'), 'w').write('window.LOGO=' + json.dumps(L, separators=(',', ':')) + ';\n')
 print('logo.js', os.path.getsize(os.path.join(R, 'logo.js')) // 1024, 'KB')

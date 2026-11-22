@@ -64,5 +64,22 @@ wb = w1.bounds; sc = 300 / (wb[3] - wb[1]) * .62
 w1l = move(w1, 0, 0, sc, sc); b = w1l.bounds; w1l = move(w1l, 200 - b[0], -(b[1] + b[3]) / 2)
 L = dict(s1=pack([(s1, "i")]), s2=pack([(s2, "i")]), s3=pack([(s3, "i")]), s4=pack([(s4, "i")]), small=pack([(small, "i")]),
          w1=pack([(w1, "i")]), w2=pack([(w2, "i")]), w3=pack([(w3, "i")]), lock=pack([(s3, "i"), (w1l, "i")]))
+
+# ── without Fraktur: classic printer's capitals (Caslon) and Le Murmure ──
+CS = "LibreCaslonDisplay.ttf"
+vanC = fit(outline("van", CS, 300)[0], -60, -84, 120, 62)
+JC = fit(outline("J", CS, 300)[0], -56, 16, 42, 70); HC = fit(outline("H", CS, 300)[0], 10, 16, 52, 70)
+s3c = U(outer, mid, rt, hz3, grow(vanC, 1.2), grow(JC, 1.2), grow(HC, 1.2))
+vanM = fit(outline("VAN", MU, 300)[0], -58, -88, 116, 70)
+JM = grow(fit(outline("J", MU, 300)[0], -52, 14, 40, 74), 1.6); HM = grow(fit(outline("H", MU, 300)[0], 12, 14, 44, 74), 1.6)
+s3m = U(outer, mid, rt, hz3, grow(vanM, 1.2), JM, HM)
+smallc = U(ring(110, 14), grow(fit(outline("vH", CS, 300)[0], -70, -56, 140, 112), 1.5))
+vhc = outline("van Hees", CS, 200)[0]; vb2 = vhc.bounds
+jc = outline("JOEL", CP, 40, track=22)[0]; jb2 = jc.bounds; jc = move(jc, vb2[0] + 6 - jb2[0], vb2[1] - 26 - jb2[3])
+wc = U(jc, vhc)
+wcb = wc.bounds; sc2 = 300 / (wcb[3] - wcb[1]) * .62
+wcl = move(wc, 0, 0, sc2, sc2); b2 = wcl.bounds; wcl = move(wcl, 200 - b2[0], -(b2[1] + b2[3]) / 2)
+L.update(s3c=pack([(s3c, "i")]), s3m=pack([(s3m, "i")]), smallc=pack([(smallc, "i")]), wc=pack([(wc, "i")]), lockc=pack([(s3c, "i"), (wcl, "i")]))
+
 open(os.path.join(R, 'logo.js'), 'w').write('window.LOGO=' + json.dumps(L, separators=(',', ':')) + ';\n')
 print('logo.js', os.path.getsize(os.path.join(R, 'logo.js')) // 1024, 'KB')

@@ -66,8 +66,16 @@ document.getElementById('app').innerHTML=`
 <h1>Dein Logo</h1>
 <p class="lead">Du hattest recht: Stab und Haken haben das Siegel zerrissen, und Le Murmure in drei Zeilen ist kein Logo. Hier ist der Neuanfang. Das Siegel hat keinen Stab mehr, oben steht „van“, wie du es wolltest. Die Wortmarke kommt aus deinem Lieblingsbild, der Fraktur auf Baumwolle.</p>
 
-<h2>Meine Empfehlung</h2>
-<span><span class="badge">Hauptlogo</span></span>
+<h2>Ohne Fraktur</h2>
+<p class="lead">Fraktur trägt in Deutschland Ballast. Die Nazis haben sie anfangs propagiert und 1941 selbst verboten, trotzdem verbinden viele sie heute mit der rechten Szene, besonders in einem runden Abzeichen und auf schwarzen Shirts. Deshalb hier dieselbe Idee in Libre Caslon, der Schrift der klassischen Druckerzeichen.</p>
+<span><span class="badge">Neue Empfehlung</span></span>
+<div class="hero"><div class="tile"><div class="box g">${S('lockc')}</div><span class="lab">Stempel + Wortmarke in Caslon</span></div>
+<div class="tile"><div class="box blue g">${S('wc')}</div><span class="lab">Wortmarke auf Presseblau</span></div></div>
+<div class="row r4">${tile('s3c','','Stempel Caslon')}${tile('s3m','','Stempel Le Murmure')}${tile('s3c','blue','Stempel auf Blau')}${tile('smallc','','Kleinform Caslon')}</div>
+<div class="row r3"><div class="mat">${M('s3c','stamp','#24398F')}</div><div class="mat">${M('s3c','foil')}</div><div class="mat">${M('wc','tee')}</div></div>
+
+<h2>Erster Entwurf mit Fraktur</h2>
+<span><span class="badge" style="background:#77756f">Zum Vergleich</span></span>
 <div class="hero"><div class="tile"><div class="box g">${S('lock')}</div><span class="lab">Stempel + Wortmarke · Website, Briefbogen, Katalog</span></div>
 <div class="tile"><div class="box blue g">${S('w1')}</div><span class="lab">Wortmarke allein · auf Presseblau</span></div></div>
 <div class="row r4">${tile('w1','ink','Wortmarke · Schwarz')}${tile('s3','','Stempel · Bildmarke')}${tile('s3','blue','Stempel auf Blau')}${tile('small','','Kleinform · Favicon')}</div>

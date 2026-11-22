@@ -1,8 +1,28 @@
+import { useRef, useState } from 'react';
 import portraitImg from '../assets/images/portrait.jpg';
 import ScrollTypewriter from '../components/ScrollTypewriter';
+import VaultConsole from '../components/VaultConsole';
 
-const AboutView = ({ darkMode }) => (
+// Three quick taps on the portrait open the vault. No cursor change, no hint:
+// it is a door for people who were told about it.
+const useTripleTap = (onTriple) => {
+  const taps = useRef([]);
+  return () => {
+    const now = Date.now();
+    taps.current = [...taps.current.filter((t) => now - t < 700), now];
+    if (taps.current.length >= 3) {
+      taps.current = [];
+      onTriple();
+    }
+  };
+};
+
+const AboutView = ({ darkMode }) => {
+  const [vaultOpen, setVaultOpen] = useState(false);
+  const onPortraitTap = useTripleTap(() => setVaultOpen(true));
+  return (
   <div className="pt-32 px-6 min-h-screen max-w-7xl mx-auto pb-14 md:pb-40">
+    {vaultOpen && <VaultConsole onClose={() => setVaultOpen(false)} />}
     <div data-reveal className="mb-5 md:mb-12">
       <h1 className="text-[15vw] md:text-9xl font-rubik font-bold leading-none break-words uppercase">
         <span className="glitch-hover cursor-default block">ABOUT</span>
@@ -15,7 +35,7 @@ const AboutView = ({ darkMode }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-16 items-start">
       <div data-reveal>
         <div className={`aspect-[3/4] w-full max-w-md rounded-2xl overflow-hidden relative transition-all duration-700 ${darkMode ? 'bg-[#111]' : 'bg-[#ccc]'}`}>
-          <img src={portraitImg} alt="Joel van Hees" className="w-full h-full object-cover" />
+          <img src={portraitImg} alt="Joel van Hees" className="w-full h-full object-cover select-none" onClick={onPortraitTap} draggable={false} />
         </div>
       </div>
 
@@ -61,5 +81,6 @@ const AboutView = ({ darkMode }) => (
     </div>
   </div>
 );
+};
 
 export default AboutView;

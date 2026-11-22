@@ -4,6 +4,7 @@ import ShellBlob from './ShellBlob';
 import { playClickSound } from '../utils/clickSound';
 import { matchIntent } from '../utils/shellMatch';
 import { shellIntents } from '../content/shellIntents';
+import { mightOpen, tryCommand, walkThrough } from '../utils/vault';
 
 
 // TypewriterText component to emulate realistic human typing with variable speeds and pauses
@@ -123,7 +124,17 @@ const FloatingConsole = ({
     setInput('');
     setIsThinking(true);
 
-    setTimeout(() => {
+    // Some commands are not in the list and never will be. They are tried as a
+    // key first (see utils/vault.js); everything else falls through untouched.
+    const door = !awaitingName && mightOpen(rawInput) ? tryCommand(rawInput) : Promise.resolve(null);
+
+    door.then((opened) => {
+      if (!opened) return false;
+      setHistory((prev) => [...prev, { text: 'Signal erkannt. Zugang offen.\nVerbindung wird aufgebaut …', isInput: false }]);
+      setIsThinking(false);
+      setTimeout(() => walkThrough(opened), 1100);
+      return true;
+    }).then((handled) => { if (!handled) setTimeout(() => {
       let responseText = '';
       let customRender = null;
 
@@ -197,7 +208,7 @@ const FloatingConsole = ({
 
       setHistory((prev) => [...prev, { text: responseText, customRender, isInput: false }]);
       setIsThinking(false);
-    }, 500 + Math.random() * 300); // 500ms - 800ms natural processing delay
+    }, 500 + Math.random() * 300); }); // 500ms - 800ms natural processing delay
   };
 
   return (

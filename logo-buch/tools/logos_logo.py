@@ -84,7 +84,7 @@ L.update(s3c=pack([(s3c, "i")]), s3m=pack([(s3m, "i")]), smallc=pack([(smallc, "
 # ── Le Murmure: two-line wordmark (short over long, like the covers) ──
 l1 = outline("JOEL", MU, 200, track=4)[0]; l2 = outline("VAN HEES", MU, 200, track=4)[0]
 b1 = l1.bounds; b2 = l2.bounds; capH = b2[3] - b2[1]
-l1 = move(l1, -b1[0], -b1[1]); l2 = move(l2, -b2[0], capH * 1.08 - b2[1])
+l1 = move(l1, -b1[0], -b1[1]); l2 = move(l2, -b2[0], capH * 1.045 - b2[1])
 # optical alignment: J stem (not its tail) flush with the top-left of V
 def left_at(p, y0, y1):
     q = I(p, rect(-1e4, y0, 2e4, y1 - y0)); return q.bounds[0]
@@ -94,9 +94,10 @@ vb_ = l2.bounds; vh_ = vb_[3] - vb_[1]
 v_top = left_at(l2, vb_[1] + vh_ * .12, vb_[1] + vh_ * .18)  # perceived edge of the V's thick stroke
 l1 = move(l1, v_top - j_stem, 0)
 # keep the J tail clear of the second line
-gap = l2.bounds[1] - l1.bounds[3]
-if gap < capH * .04: l2 = move(l2, 0, capH * .04 - gap)
-print('J stem shift', round(v_top - j_stem, 1), 'gap', round(gap, 1))
+# tight leading as on the covers: the J tail is trimmed just above the second line so nothing floats or collides
+vt = l2.bounds[1]
+l1 = D(l1, rect(-1e4, vt - capH * .035, 2e4, 1e4))
+print('J stem shift', round(v_top - j_stem, 1))
 wm2 = U(l1, l2)
 sJ = outline("JvH", MU, 300, track=-4)[0]
 smallm = U(ring(110, 14), grow(fit(sJ, -60, -66, 120, 132), 1.5))

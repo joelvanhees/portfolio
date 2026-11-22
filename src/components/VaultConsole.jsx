@@ -110,11 +110,22 @@ const VaultConsole = ({ onClose }) => {
               autoComplete="off"
               autoCapitalize="off"
               spellCheck={false}
+              enterKeyHint="send"
               disabled={busy}
-              className="flex-1 bg-transparent outline-none placeholder:opacity-30"
+              className="min-w-0 flex-1 bg-transparent py-2 text-[16px] outline-none placeholder:opacity-30"
               style={{ color: ACID, caretColor: ACID }}
               aria-label={step === 'code' ? 'Code' : 'Antwort'}
             />
+            {/* The numeric keypad on phones has no return key, so the form needs
+                a button of its own. */}
+            <button
+              type="submit"
+              disabled={busy || !input.trim()}
+              className="shrink-0 rounded-lg border px-3 py-2 text-[11px] font-bold uppercase tracking-wider transition-opacity active:scale-95 disabled:opacity-30"
+              style={{ borderColor: ACID, color: ACID }}
+            >
+              Senden ↵
+            </button>
           </label>
         )}
       </form>

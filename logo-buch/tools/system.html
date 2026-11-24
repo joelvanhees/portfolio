@@ -85,6 +85,10 @@ svg.lg{display:block;width:100%;height:100%;overflow:visible}
 .sp1{height:2.4cqw}.sp2{height:4.8cqw}.sp3{height:8cqw}
 .over{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;mix-blend-mode:multiply;opacity:.9}
 .smear{filter:url(#smear)}
+/* overprint frame: always wraps a group with its own padding, so the line never touches text */
+.ovf{position:relative;padding:var(--ovp,max(28px,7cqw));display:flex;flex-direction:column;align-items:center;width:100%}
+.ovs{position:absolute;inset:0;width:100%;height:100%;overflow:visible;mix-blend-mode:multiply;pointer-events:none;z-index:0}
+.ovf>*:not(.ovs){position:relative;z-index:1}
 
 /* ---------- spec helpers ---------- */
 .spec{width:100%;border-collapse:collapse;font:400 13px/1.45 var(--f-ui)}
@@ -180,13 +184,20 @@ svg.lg{display:block;width:100%;height:100%;overflow:visible}
     <feComposite in="d" in2="sp" operator="in"/>
   </filter>
   <filter id="smear" x="-10%" y="-20%" width="120%" height="140%">
-    <feGaussianBlur in="SourceGraphic" stdDeviation="2.6" result="b"/>
+    <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="b"/>
     <feComponentTransfer in="b" result="t"><feFuncA type="table" tableValues="0 0 .55 1 1"/></feComponentTransfer>
     <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="7" result="w"/>
     <feDisplacementMap in="t" in2="w" scale="7" result="m"/>
     <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="2" result="n3"/>
     <feColorMatrix in="n3" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.8 1.9" result="sp3"/>
     <feComposite in="m" in2="sp3" operator="in"/>
+  </filter>
+  <filter id="riso2" x="-4%" y="-4%" width="108%" height="108%">
+    <feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="2" seed="5" result="w"/>
+    <feDisplacementMap in="SourceGraphic" in2="w" scale="6" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="2" seed="3" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.9 1.85" result="sp"/>
+    <feComposite in="d" in2="sp" operator="in"/>
   </filter>
   <filter id="riso" x="-5%" y="-5%" width="110%" height="110%">
     <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="5" result="w"/>
@@ -217,6 +228,7 @@ function barcode(seed,n=54){let h=2166136261;for(const c of seed)h=Math.imul(h^c
   b+=`<rect x="${x+1}" width="1" height="40"/><rect x="${x+3}" width="1" height="40"/>`;
   return `<svg class="bc" viewBox="0 0 ${x+4} 40" preserveAspectRatio="none" aria-hidden="true">${b}</svg>`}
 const overRect=(rot=-2,inset='14% 9% 30% 9%')=>`<svg class="over" viewBox="0 0 100 125" preserveAspectRatio="none" aria-hidden="true"><rect x="8" y="22" width="84" height="64" fill="none" stroke="#FF4FA3" stroke-width="2.2" vector-effect="non-scaling-stroke" style="stroke-width:7px" transform="rotate(${rot} 50 54)" filter="url(#riso)"/></svg>`;
+const ov=(inner,rot=-1,pad)=>`<div class="ovf"${pad?` style="--ovp:${pad}"`:''}><svg class="ovs" aria-hidden="true" style="transform:rotate(${rot}deg)"><rect x="1%" y="1.5%" width="98%" height="97%" fill="none" stroke="#24398F" stroke-width="5" filter="url(#riso2)"/></svg>${inner}</div>`;
 const overFull=(rot=-1.5)=>`<svg class="over" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect x="2" y="3" width="96" height="94" fill="none" stroke="#FF4FA3" vector-effect="non-scaling-stroke" style="stroke-width:7px" transform="rotate(${rot} 50 50)" filter="url(#riso)"/></svg>`;
 const page=(name,inner,cls='')=>({name,html:`<div class="wrap ${cls}">${inner}</div>`});
 const ph=(no,chapter,title,lead)=>`<header class="ph"><div class="ph-meta"><span class="t-label">( ${no} )</span><span class="t-label">${chapter}</span><span class="t-label mute">JVH–DS–01</span></div><h2 class="t-h1">${title}</h2>${lead?`<p class="t-lead">${lead}</p>`:''}</header>`;
@@ -226,12 +238,11 @@ const P=[];
 /* 01 · Cover ----------------------------------------------------------- */
 P.push({name:"Designsystem",cover:true,html:`<div class="wrap" style="min-height:100%;justify-content:center;align-items:center">
  <div class="ett crop open" style="width:min(100%,560px);aspect-ratio:auto;padding:64px 36px;background:transparent">${crop()}
-  ${overFull(-1.5)}
-  <div class="e-k" style="font-size:12px">( Atelier &amp; Presse )</div><div class="sp1"></div>
+  ${ov(`<div class="e-k" style="font-size:12px">( Atelier &amp; Presse )</div><div class="sp1"></div>
   <div class="e-s" style="font-size:12px">→ Designsystem 01 ©2026</div><div class="sp3" style="height:40px"></div>
   <div class="e-logo gr" style="width:78%">${S('wm2')}</div><div class="sp3" style="height:32px"></div>
   <div class="e-c" style="font-size:22px">Design, Code, KI und Kunst</div><div class="sp1"></div>
-  <div class="e-s" style="font-size:11px;color:var(--stone)">Schrift · Farbe · Abstand · Raster · Komponenten · Anwendung</div><div class="sp3" style="height:40px"></div>
+  <div class="e-s" style="font-size:11px;color:var(--stone)">Schrift · Farbe · Abstand · Raster · Komponenten · Anwendung</div>`,-1,'40px 32px')}<div class="sp3" style="height:36px"></div>
   <div class="e-s" style="font-size:11px">ID: JVH–DS–01 / 241126 · MEZ (UTC+1)</div><div class="sp1" style="height:12px"></div>
   <div style="width:46%;height:34px">${barcode('JVH-DS-01')}</div>
  </div></div>`});
@@ -348,12 +359,12 @@ P.push(page("Abstand & Raster",ph("06","Abstand &amp; Raster","4-px-Raster","Jed
  <p class="t-body">Inhalt läuft maximal 1312 px breit (1440 minus zweimal 64). Bilder dürfen bis an den Rand laufen, Text nie.</p>`));
 
 /* 08 · Colour -------------------------------------------------------------- */
-const CO=[["Papier","#F1F0EC","Flächen",60,"—"],["Tinte","#141414","Text, Logo, Linien",28,"16,2 : 1"],["Presseblau","#24398F","Aktionen, Highlights, große Flächen",8,"9,0 : 1"],["Stein","#6E6C66","Meta, Labels, Bildunterschriften",3,"4,6 : 1"],["Linie","#D6D4CD","Trennlinien, Rahmen",0.6,"—"],["Überdruck","#FF4FA3","Nur Stempel und Überdruck, nie Text",0.4,"2,7 : 1"]];
-P.push(page("Farbe",ph("07","Farbe","Papier, Tinte, Blau","Zwei Grundtöne, ein Akzent, ein Überdruck. Der Kontrastwert gilt jeweils auf Papier.")+
+const CO=[["Papier","#F1F0EC","Flächen",60,"—"],["Tinte","#141414","Text, Logo, Linien",28,"16,2 : 1"],["Presseblau","#24398F","Aktionen, Highlights, große Flächen",8,"9,0 : 1"],["Stein","#6E6C66","Meta, Labels, Bildunterschriften",3,"4,6 : 1"],["Linie","#D6D4CD","Trennlinien, Rahmen",1,"—"]];
+P.push(page("Farbe",ph("07","Farbe","Papier, Tinte, Blau","Zwei Grundtöne und ein Akzent. Presseblau ist auch die Farbe des Überdrucks. Der Kontrastwert gilt jeweils auf Papier.")+
  `<div class="grid g3">${CO.map(c=>`<div class="tile"><div style="height:140px;background:${c[1]};border:1px solid var(--line)"></div><span class="t-label">${c[0]}</span><span class="t-meta" style="color:var(--ink)">${c[1]} · Kontrast ${c[4]}</span><span class="t-small mute">${c[2]}</span></div>`).join('')}</div>
- <div style="display:flex;height:18px;border:1px solid var(--ink)">${CO.map(c=>`<i style="display:block;width:${c[3]}%;background:${c[1]}"></i>`).join('')}</div><span class="t-meta">Flächenanteile auf einer typischen Seite</span>
+ <div style="display:flex;height:18px;border:1px solid var(--ink)">${CO.map(c=>`<i style="display:block;width:${c[3]}%;background:${c[1]}"></i>`).join('')}</div><span class="t-meta">Flächenanteile auf einer typischen Seite. Pink erscheint in diesem Buch nur als Maßlinie und ist keine Markenfarbe.</span>
  ${sh("Kombinationen")}
- <div class="grid g4">${[["Tinte auf Papier","var(--paper)","var(--ink)",1],["Papier auf Blau","var(--blue)","var(--paper)",1],["Blau auf Papier","var(--paper)","var(--blue)",1],["Pink als Text","var(--paper)","var(--pink)",0]].map(k=>`<div class="tile ${k[3]?'do':'dont'}"><div class="box" style="background:${k[1]};color:${k[2]};min-height:150px"><span class="t-h2">Werkschau</span></div><span class="t-meta">${k[3]?'Ja':'Nein'} · ${k[0]}</span></div>`).join('')}</div>`));
+ <div class="grid g4">${[["Tinte auf Papier","var(--paper)","var(--ink)",1],["Papier auf Blau","var(--blue)","var(--paper)",1],["Blau auf Papier","var(--paper)","var(--blue)",1],["Tinte auf Blau","var(--blue)","var(--ink)",0]].map(k=>`<div class="tile ${k[3]?'do':'dont'}"><div class="box" style="background:${k[1]};color:${k[2]};min-height:150px"><span class="t-h2">Werkschau</span></div><span class="t-meta">${k[3]?'Ja':'Nein'} · ${k[0]}</span></div>`).join('')}</div>`));
 
 /* 09 · Details (label grammar) ---------------------------------------------- */
 const DT=[["Klammer","( Atelier &amp; Presse )","Absender, Kategorie, Kapitel. Compagnon versal, Leerzeichen innen."],
@@ -368,7 +379,7 @@ P.push(page("Details",ph("08","Details","Etikett-Grammatik","Die zweite Stimme d
  <div class="grid g4">
   <div class="tile"><div class="box crop" style="margin:12px">${crop()}<span class="t-label">Schneidemarken</span></div><span class="t-meta">14 px Schenkel · 1,5 px · 10 px Abstand</span></div>
   <div class="tile"><div class="box"><div style="width:70%;height:60px">${barcode('JVH-026')}</div></div><span class="t-meta">Strichcode · nur unten als Abschluss</span></div>
-  <div class="tile"><div class="box" style="position:relative">${overRect(-3)}<span class="t-h3" style="position:relative">Überdruck</span></div><span class="t-meta">Pinker Rahmen · −2 bis −3° · multipliziert</span></div>
+  <div class="tile"><div class="box">${ov(`<span class="t-h3">Überdruck</span>`,-1.5,"28px 32px")}</div><span class="t-meta">Blauer Rahmen · −1 bis −2° · mind. 28 px Abstand zum Inhalt</span></div>
   <div class="tile"><div class="box"><span class="t-h1"><span class="smear">Ver</span>wischt</span></div><span class="t-meta">Genau ein verwischtes Wort pro Plakat</span></div>
  </div>`));
 
@@ -396,8 +407,8 @@ const ettA=`<div class="ett crop">${crop()}<div class="e-k">( Atelier &amp; Pres
  <div class="e-logo gr">${S('wm2')}</div><div class="sp3"></div><div class="e-c">Marken, Websites, Modelle<br>und Objekte aus einer Hand</div><div class="sp3"></div><div class="e-s" style="color:var(--stone)">JVH–000 / 241126 · MEZ (UTC+1)</div></div>`;
 const ettB=`<div class="ett crop">${crop()}<div class="e-k">( Edition )</div><div class="sp1"></div><div class="e-s">Nº 003 / 025</div><div class="sp2"></div>
  <div class="e-big" style="font-size:17cqw">Augen-<br>Serie</div><div class="sp2"></div><div class="e-c">Gips, Pigment · 32 × 24 cm</div><div class="e-s">signiert, datiert, nummeriert</div><div class="sp3"></div><div class="e-s">©2026 Joel van Hees</div><div class="sp1"></div>${barcode('EDITION-003')}</div>`;
-const ettC=`<div class="ett crop">${crop()}${overRect(-2)}<div class="e-k">( Presse )</div><div class="sp1"></div><div class="e-s">→ Drop 01 ©2026</div><div class="sp3"></div>
- <div class="gr" style="width:34%">${S('jvh')}</div><div class="sp3"></div><div class="e-c">100 % Baumwolle · Siebdruck</div><div class="e-s">Größe M</div><div class="sp3"></div><div class="e-s">Prod: 24/11/2026</div><div class="sp1"></div>${barcode('DROP-01-M')}</div>`;
+const ettC=`<div class="ett crop">${crop()}<div class="e-k">( Presse )</div><div class="sp1"></div><div class="e-s">→ Drop 01 ©2026</div><div class="sp2"></div>
+ ${ov(`<div class="gr" style="width:40%">${S('jvh')}</div><div class="sp2"></div><div class="e-c">100 % Baumwolle · Siebdruck</div><div class="e-s">Größe M</div>`,-1.2,'7cqw 9cqw')}<div class="sp2"></div><div class="e-s">Prod: 24/11/2026</div><div class="sp1"></div>${barcode('DROP-01-M')}</div>`;
 P.push(page("Etiketten",ph("10","Etiketten","Drei Etiketten","Das Etikett ersetzt das Siegel. Zentriert, gestapelt, mit Schneidemarken. Es steht dort, wo früher ein Stempel gewesen wäre.")+
  `<div class="grid g3"><div class="tile">${ettA}<span class="t-meta">A · Studio · Website, Angebot, Rechnung</span></div><div class="tile">${ettB}<span class="t-meta">B · Edition · Rückseite von Werken und Drucken</span></div><div class="tile">${ettC}<span class="t-meta">C · Produkt · Anhänger, Verpackung, Merch</span></div></div>
  <table class="spec"><tr><td>Satz</td><td>Mittelachse, Zeilen in Compagnon versal, eine Zeile Caslon Display, maximal ein Logo oder Titel</td></tr><tr><td>Rhythmus</td><td>kleine Abstände 2,4 % · mittlere 4,8 % · große 8 % der Etikettbreite</td></tr><tr><td>Abschluss</td><td>ID oder Datum, darunter optional Strichcode</td></tr></table>`));
@@ -408,8 +419,8 @@ const pB=`<div class="poster ett" style="aspect-ratio:1/1.414;padding:14% 8%"><d
  <div class="e-s">Bilder, Code und Objekte</div><div class="e-s">aus einem Atelier</div><div class="sp2"></div>
  <div class="e-flank"><span>20</span><span class="e-big" style="font-size:16cqw;white-space:nowrap">van Hees</span><span>27</span></div><div class="sp2"></div>
  <div class="e-s">Eröffnung 14.05. // Eintritt frei</div><div class="e-s">Alles neu, nichts fertig</div><div class="sp2"></div><div class="e-k" style="font-size:4.4cqw">ID: 014 – 05 / 140527</div><div class="e-k" style="font-size:4.4cqw">MEZ (UTC+1)</div></div>`;
-const pC=`<div class="poster ett crop" style="aspect-ratio:1/1.414;padding:12% 8%">${overRect(-3)}<div class="e-big" style="font-size:9cqw;letter-spacing:.02em">( Aus dem Labor )</div><div class="e-big" style="font-size:9cqw">→ <span class="smear">2026</span>©</div><div class="sp2"></div>
- <div class="e-c">Experimentelle Arbeit</div><div class="sp2"></div><div class="e-big" style="font-size:15cqw">Bilder Systeme</div><div class="sp3"></div>
+const pC=`<div class="poster ett crop" style="aspect-ratio:1/1.414;padding:12% 8%">${crop()}<div class="e-big" style="font-size:9cqw;letter-spacing:.02em">( Aus dem Labor )</div><div class="e-big" style="font-size:9cqw">→ 2026©</div><div class="sp2"></div>
+ ${ov(`<div class="e-c">Experimentelle Arbeit</div><div class="sp1"></div><div class="e-big" style="font-size:15cqw"><span class="smear">Bilder</span> Systeme</div>`,-1.5,'6cqw 8cqw')}<div class="sp3"></div>
  <div style="border:1.5px solid currentColor;padding:3cqw 6cqw;display:flex;flex-direction:column;align-items:center;gap:1cqw"><span class="gr" style="width:16cqw;display:block">${S('jvh')}</span><span class="e-s">Nov 26</span></div><div class="sp3"></div>
  <div class="e-s">Prod: 24/11/2026</div><div class="sp1"></div>${barcode('LABOR-2026')}</div>`;
 P.push(page("Plakate",ph("11","Anwendung","Plakate","Drei Formate aus denselben Bausteinen: die blaue Fläche, der Etikett-Stapel und der Überdruck.")+
@@ -439,7 +450,7 @@ P.push(page("Web &amp; Print",ph("12","Anwendung","Website &amp; Papier","Die St
 /* 14 · Social & merch ------------------------------------------------------------------ */
 const post1=`<div class="post" style="background:var(--blue);color:var(--paper);display:flex;flex-direction:column;justify-content:space-between;padding:8%"><span style="font:400 3.4cqw/1.3 var(--f-ui);letter-spacing:.16em;text-transform:uppercase;position:relative;z-index:1">( Neue Arbeit ) → Nº 014</span><div class="gr" style="width:72%;position:relative;z-index:1">${S('wm2')}</div></div>`;
 const post2=`<div class="post ett" style="aspect-ratio:4/5"><div class="e-k">( Notiz )</div><div class="sp2"></div><div class="e-c" style="font-size:7cqw;line-height:1.2">„Die Maschine liefert Varianten, die Hand trifft die Entscheidung.“</div><div class="sp3"></div><div class="e-s" style="color:var(--stone)">JVH–026 / 241126</div></div>`;
-const post3=`<div class="post ett crop" style="aspect-ratio:4/5">${crop()}${overRect(-2.5)}<div class="e-k">( Werkschau )</div><div class="sp2"></div><div class="e-big" style="font-size:24cqw">2027</div><div class="sp2"></div><div class="e-s">14.05. // Atelier</div></div>`;
+const post3=`<div class="post ett crop" style="aspect-ratio:4/5">${crop()}<div class="e-k">( Werkschau )</div><div class="sp3"></div>${ov(`<div class="e-big" style="font-size:24cqw">2027</div>`,-1.5,'5cqw 12cqw')}<div class="sp3"></div><div class="e-s">14.05. // Atelier</div></div>`;
 P.push(page("Social &amp; Merch",ph("13","Anwendung","Social &amp; Merch","Drei Beitragstypen im Wechsel und eine kleine Merch-Linie. Das Etikett hält beides zusammen.")+
  `<div class="grid g3"><div class="tile">${post1}<span class="t-meta">Typ 1 · Blaufeld · neue Arbeit</span></div><div class="tile">${post2}<span class="t-meta">Typ 2 · Notiz · Zitat in Caslon Display</span></div><div class="tile">${post3}<span class="t-meta">Typ 3 · Ankündigung · Überdruck</span></div></div>
  ${sh("Merch")}
@@ -450,7 +461,7 @@ P.push(page("Social &amp; Merch",ph("13","Anwendung","Social &amp; Merch","Drei 
 /* 15 · Rules ---------------------------------------------------------------------------- */
 P.push(page("Regeln",ph("14","Regeln","Kurz und verbindlich","Wenn du nur eine Seite liest, dann diese.")+
  `<div class="grid g2"><div class="tile" style="gap:var(--s4)"><span class="t-label">Ja</span>${["Le Murmure immer versal und mit Druckkorn","Zweizeiler, wo Platz ist, sonst Einzeiler, sonst Monogramm","Papier als Grund, Blau als einziger Akzent","Etikett-Grammatik für alle kleinen Angaben","Jeder Abstand aus dem 4-px-Raster","Text linksbündig, Etiketten auf der Mittelachse"].map(t=>`<p class="t-bl" style="border-top:1px solid var(--ink);padding-top:var(--s3)">${t}</p>`).join('')}</div>
- <div class="tile" style="gap:var(--s4)"><span class="t-label">Nein</span>${["Kein Kreis, kein Siegel, kein Stempelrund","Keine Fraktur, keine weiteren Schriften","Pink nie als Textfarbe","Nie mehr als ein verwischtes Wort","Keine Rundungen, keine Schatten auf Bedienelementen","Logo nie verzerren, nie in drei Zeilen"].map(t=>`<p class="t-bl" style="border-top:1px solid var(--pink);padding-top:var(--s3)">${t}</p>`).join('')}</div></div>
+ <div class="tile" style="gap:var(--s4)"><span class="t-label">Nein</span>${["Kein Kreis, kein Siegel, kein Stempelrund","Keine Fraktur, keine weiteren Schriften","Überdruck-Rahmen nie über Text oder Logo, immer mit Abstand","Nie mehr als ein verwischtes Wort","Keine Rundungen, keine Schatten auf Bedienelementen","Logo nie verzerren, nie in drei Zeilen"].map(t=>`<p class="t-bl" style="border-top:1px solid var(--pink);padding-top:var(--s3)">${t}</p>`).join('')}</div></div>
  <div class="ett crop open" style="aspect-ratio:auto;padding:48px 24px;max-width:560px;width:100%;align-self:center;background:transparent">${crop()}<div class="e-k" style="font-size:12px">( Nächster Schritt )</div><div class="sp2" style="height:16px"></div><div class="e-c" style="font-size:22px">Logo-Dateien, Favicon, Druckdaten,<br>CSS-Variablen und Styleguide</div><div class="sp2" style="height:16px"></div><div class="e-s" style="font-size:11px">→ Lieferpaket JVH–DS–02</div></div>`));
 
 /* ---------- render ---------- */

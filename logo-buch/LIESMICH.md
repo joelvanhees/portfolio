@@ -39,3 +39,8 @@ GitHub Mona Sans, Departure Mono. Alle unter SIL Open Font License.
 - `logo.html` – Neuanfang: Siegel ohne Stab („van“ oben), Stempel mit Umschrift, Wortmarken A–C, Anwendungen
 - `logo-artifact.html` – Fragment für claude.ai
 - Generator: `tools/logos_logo.py`, `tools/logo_page.html`, `tools/build_logo.py`
+
+## Designsystem (Ausgabe 08)
+- `designsystem.html` – komplettes System: Grundsätze, Logo, Konstruktion, Typo-Stufen, Abstände im Satz, 4-px-Raster, Farbe mit Kontrastwerten, Etikett-Grammatik, Komponenten mit Paddings, Etiketten, Plakate, Web & Print, Social & Merch, Regeln
+- `system-artifact.html` – Fragment für claude.ai
+- Generator: `tools/system.html`, `tools/build_system.py` (Logo-Daten aus `logo.js`)

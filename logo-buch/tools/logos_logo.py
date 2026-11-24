@@ -114,5 +114,10 @@ wb4 = wm2.bounds; sc4 = 220 / (wb4[3] - wb4[1]) * .9
 wml2 = move(wm2, 0, 0, sc4, sc4); b4 = wml2.bounds; wml2 = move(wml2, 150 - b4[0], -(b4[1] + b4[3]) / 2)
 L.update(s2m=pack([(s2m, "i")]), lockm=pack([(s2m, "i"), (wml2, "i")]))
 
+# ── design-system exports: plain JvH monogram + construction metrics of the two-line wordmark ──
+jvh = outline("JvH", MU, 300, track=-4)[0]
+L.update(jvh=pack([(jvh, "i")]),
+         meta=dict(capH=round(capH, 2), l2top=round(l2.bounds[1], 2), axis=round(v_top, 2), b=[round(v, 2) for v in wm2.bounds]))
+
 open(os.path.join(R, 'logo.js'), 'w').write('window.LOGO=' + json.dumps(L, separators=(',', ':')) + ';\n')
 print('logo.js', os.path.getsize(os.path.join(R, 'logo.js')) // 1024, 'KB')

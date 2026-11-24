@@ -1,0 +1,483 @@
+<title>Joel van Hees Designsystem</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+{{FONTS}}
+/* Layout: a swipeable spec book. Each page is one chapter of the system, scrolls vertically, and is built from the
+   same tokens it documents. Deliberate single look (paper, ink, press blue), so every colour is set explicitly. */
+:root{
+  /* colour */
+  --paper:#F1F0EC; --ink:#141414; --blue:#24398F; --stone:#6E6C66; --line:#D6D4CD; --pink:#FF4FA3; --card:#E9E7E1;
+  /* type */
+  --f-display:'JM Murmure',Impact,sans-serif; --f-lead:'JM Caslon Display',Georgia,serif;
+  --f-text:'JM Caslon Text',Georgia,serif; --f-ui:'JM Compagnon','Courier New',monospace;
+  /* spacing, 4 px base */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px; --s8:64px; --s9:96px; --s10:128px;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-text);overflow:hidden;-webkit-font-smoothing:antialiased}
+
+/* ---------- type scale (the same classes the spec documents) ---------- */
+.t-d1,.t-h1,.t-h2,.t-h3{font-family:var(--f-display);font-weight:400;text-transform:uppercase;letter-spacing:0;margin:0;filter:url(#ink);text-wrap:balance}
+.t-d1{font-size:clamp(72px,10vw,144px);line-height:.86}
+.t-h1{font-size:clamp(52px,6.2vw,88px);line-height:.9}
+.t-h2{font-size:clamp(38px,4vw,56px);line-height:.92}
+.t-h3{font-size:clamp(28px,2.6vw,36px);line-height:.95}
+.t-lead{font:400 clamp(21px,1.9vw,26px)/1.3 var(--f-lead);margin:0;max-width:34ch;text-wrap:pretty}
+.t-bl{font:400 clamp(18px,1.4vw,19px)/1.6 var(--f-text);margin:0;max-width:62ch}
+.t-body{font:400 clamp(16px,1.2vw,17px)/1.6 var(--f-text);margin:0;max-width:62ch}
+.t-small{font:400 14px/1.5 var(--f-text);margin:0}
+.t-label{font:400 clamp(11px,.9vw,12px)/1.3 var(--f-ui);letter-spacing:.16em;text-transform:uppercase;margin:0}
+.t-meta{font:400 clamp(10px,.8vw,10.5px)/1.4 var(--f-ui);letter-spacing:.08em;margin:0;color:var(--stone)}
+.mute{color:var(--stone)}
+.gr{filter:url(#ink)}
+svg.lg{display:block;width:100%;height:100%;overflow:visible}
+.i{fill:currentColor}
+
+/* ---------- magazine shell ---------- */
+.mag{height:100%;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;overscroll-behavior-x:contain}
+.mag::-webkit-scrollbar{display:none}
+.page{flex:0 0 100%;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow-y:auto;overflow-x:hidden;background:var(--paper) url(tex/paper.jpg) center/cover}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:var(--s7) 128px;display:flex;flex-direction:column;gap:var(--s7)}
+.ph{display:flex;flex-direction:column}
+.ph-meta{display:flex;gap:var(--s4);flex-wrap:wrap;justify-content:space-between;padding-bottom:var(--s3);border-bottom:1px solid var(--ink);margin-bottom:var(--s5)}
+.ph .t-h1{margin-bottom:var(--s5)}
+.sec{display:flex;flex-direction:column;gap:var(--s5)}
+.sec-h{display:flex;align-items:baseline;gap:var(--s3);border-top:1px solid var(--line);padding-top:var(--s3)}
+.grid{display:grid;gap:var(--s5)}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g12{grid-template-columns:7fr 5fr}
+.tile{display:flex;flex-direction:column;gap:var(--s2);min-width:0}
+.box{position:relative;display:flex;align-items:center;justify-content:center;padding:10%;background:rgba(255,255,255,.35);min-height:200px;color:var(--ink);overflow:hidden}
+.box.blue{background:var(--blue);color:var(--paper)}.box.ink{background:var(--ink);color:var(--paper)}
+.box svg.lg{max-height:220px}
+.nav{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:var(--s3);z-index:5;pointer-events:none;
+  padding:var(--s2) max(16px,env(safe-area-inset-right,0px)) calc(var(--s3) + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.nav>*{pointer-events:auto}
+.nav button{all:unset;pointer-events:auto;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--paper);color:var(--ink);border:1px solid var(--ink);font:400 18px/1 var(--f-ui)}
+.nav button:hover{background:var(--ink);color:var(--paper)}
+.nav button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.nav .mid{display:flex;gap:var(--s3);align-items:center;background:var(--paper);border:1px solid var(--ink);padding:0 var(--s4);height:48px}
+.nav .mid b{font:400 28px/.8 var(--f-display);filter:url(#ink)}
+.nav .mid span{font:400 11px/1 var(--f-ui);letter-spacing:.14em;text-transform:uppercase;max-width:40vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- label grammar (Etikett) ---------- */
+.crop{position:relative}
+.cm{position:absolute;width:14px;height:14px;border:0 solid currentColor;pointer-events:none}
+.cm.tl{top:-10px;left:-10px;border-top-width:1.5px;border-left-width:1.5px}
+.cm.tr{top:-10px;right:-10px;border-top-width:1.5px;border-right-width:1.5px}
+.cm.bl{bottom:-10px;left:-10px;border-bottom-width:1.5px;border-left-width:1.5px}
+.cm.br{bottom:-10px;right:-10px;border-bottom-width:1.5px;border-right-width:1.5px}
+.ett{container-type:inline-size;background:var(--paper) url(tex/paper.jpg) center/cover;color:var(--ink);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:12% 9%;position:relative;overflow:hidden;aspect-ratio:4/5}
+.ett>*:not(.cm):not(.over){position:relative;z-index:1}
+.ett>.cm.tl{top:12px;left:12px}.ett>.cm.tr{top:12px;right:12px;left:auto}.ett>.cm.bl{bottom:12px;left:12px;top:auto}.ett>.cm.br{bottom:12px;right:12px;left:auto;top:auto}
+.ett.open{overflow:visible}.ett.open>.cm.tl{top:-10px;left:-10px}.ett.open>.cm.tr{top:-10px;right:-10px}.ett.open>.cm.bl{bottom:-10px;left:-10px}.ett.open>.cm.br{bottom:-10px;right:-10px}
+.e-k{font:400 3.6cqw/1.3 var(--f-ui);letter-spacing:.18em;text-transform:uppercase}
+.e-s{font:400 3.2cqw/1.35 var(--f-ui);letter-spacing:.06em;text-transform:uppercase}
+.e-c{font:400 4.6cqw/1.3 var(--f-lead)}
+.e-big{font:400 21cqw/.84 var(--f-display);text-transform:uppercase;filter:url(#ink)}
+.e-flank{display:flex;align-items:center;justify-content:center;gap:6cqw;width:100%}
+.e-flank>span:not(.e-big){font:400 5cqw/1 var(--f-ui)}
+.e-logo{width:62%}
+.e-logo svg{color:var(--ink)}
+.bc{display:block;height:7cqw;width:46%;fill:currentColor}
+.sp1{height:2.4cqw}.sp2{height:4.8cqw}.sp3{height:8cqw}
+.over{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;mix-blend-mode:multiply;opacity:.9}
+.smear{filter:url(#smear)}
+
+/* ---------- spec helpers ---------- */
+.spec{width:100%;border-collapse:collapse;font:400 13px/1.45 var(--f-ui)}
+.spec th{font:400 10.5px/1.3 var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--stone);text-align:left;padding:var(--s2) var(--s3) var(--s2) 0;border-bottom:1px solid var(--ink);white-space:nowrap}
+.spec td{padding:var(--s3) var(--s3) var(--s3) 0;border-bottom:1px solid var(--line);vertical-align:baseline}
+.spec td:first-child{white-space:nowrap}
+.tbl{overflow-x:auto}
+.chip{display:inline-block;font:400 10.5px/1 var(--f-ui);letter-spacing:.06em;background:var(--pink);color:var(--ink);padding:3px 5px}
+.gapm{position:relative;display:flex;align-items:center}
+.gapm::before{content:"";position:absolute;left:-14px;top:0;bottom:0;border-left:1px solid var(--pink)}
+.gapm::after{content:"";position:absolute;left:-18px;width:9px;top:0;bottom:0;border-top:1px solid var(--pink);border-bottom:1px solid var(--pink)}
+.gapm span{position:absolute;left:-14px;transform:translateX(-100%);margin-left:-8px;font:400 10.5px/1 var(--f-ui);background:var(--pink);padding:2px 4px}
+.rlw{position:relative;display:inline-flex}
+.rl-pad{position:absolute;background:repeating-linear-gradient(45deg,rgba(255,79,163,.55) 0 2px,rgba(255,79,163,.18) 2px 5px);pointer-events:none}
+.rl-num{position:absolute;font:400 10px/1 var(--f-ui);background:var(--pink);color:var(--ink);padding:2px 3px;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none;z-index:2}
+.do,.dont{position:relative}
+.dont .box::after{content:"";position:absolute;inset:0;background:linear-gradient(to top right,transparent calc(50% - 1px),var(--pink) calc(50% - 1px),var(--pink) calc(50% + 1px),transparent calc(50% + 1px))}
+
+/* ---------- components (the real ones) ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 24px;font:400 14px/1 var(--f-ui);letter-spacing:.04em;background:var(--blue);color:var(--paper);border:1px solid var(--blue);white-space:nowrap}
+.btn.sec{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn.sm{height:36px;padding:0 16px;font-size:13px}
+.lnk{font:400 17px/1.4 var(--f-text);color:var(--ink);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.tag{display:inline-flex;align-items:center;height:28px;padding:0 10px;font:400 11px/1 var(--f-ui);letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--line)}
+.tag.on{background:var(--blue);color:var(--paper);border-color:var(--blue)}
+.fld{display:flex;flex-direction:column;gap:var(--s2);width:100%}
+.fld .t-label{color:var(--stone)}
+.fld .in{font:400 18px/1.3 var(--f-text);padding:12px 0;border-bottom:1.5px solid var(--ink)}
+.fld.focus .in{border-bottom:2px solid var(--blue)}
+.hdr{display:flex;align-items:center;gap:32px;height:80px;padding:0 64px;background:var(--paper);border-bottom:1px solid var(--line);font:400 16px/1 var(--f-text);min-width:0}
+.hdr .lg-w{height:20px;margin-right:auto;display:flex}
+.hdr .lg-w svg{height:20px;width:auto}
+.hdr .on{text-decoration:underline;text-decoration-color:var(--blue);text-decoration-thickness:2px;text-underline-offset:6px}
+.hdr-m{display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--line)}
+.hdr-m .lg-w svg{height:16px;width:auto;display:block}
+.card{display:flex;flex-direction:column;gap:12px;min-width:0}
+.card .im{aspect-ratio:4/5;background:var(--card);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.card .cmeta{display:flex;justify-content:space-between;font:400 11px/1 var(--f-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--stone)}
+.card .ct{font:400 22px/1.2 var(--f-lead);margin-top:-6px}
+.ftr{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:24px;padding:96px 64px;border-top:1px solid var(--ink);background:var(--paper)}
+.ftr .col{display:flex;flex-direction:column;gap:8px;font:400 12px/1.5 var(--f-ui);letter-spacing:.04em}
+.ftr .col b{font-weight:400;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);font-size:11px;margin-bottom:4px}
+
+/* ---------- applications ---------- */
+.poster{container-type:inline-size;aspect-ratio:1/1.414;position:relative;overflow:hidden;min-width:0}
+.p-blue{background:var(--blue);color:var(--paper);display:flex;flex-direction:column;justify-content:flex-end;padding:9%}
+.p-blue::after{content:"";position:absolute;inset:0;background:url(tex/paper.jpg) center/cover;mix-blend-mode:multiply;opacity:.55;pointer-events:none}
+.p-blue .pl{width:78%;color:var(--paper)}
+.p-blue .pi{font:400 3.4cqw/1.45 var(--f-ui);letter-spacing:.06em;margin-top:5cqw}
+.site{border:1px solid var(--ink);background:var(--paper);overflow:hidden}
+.site .bar{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--card)}
+.site .bar i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.hero2{display:grid;grid-template-columns:7fr 5fr;gap:24px;padding:96px 64px 96px}
+.hero2 .hl{display:flex;flex-direction:column}
+.hero2 .t-label{margin-bottom:16px}.hero2 .t-d1{margin-bottom:32px}.hero2 .t-lead{margin-bottom:32px}
+.work{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;padding:0 64px 96px}
+.bcard{aspect-ratio:85/55;container-type:inline-size;position:relative;box-shadow:0 1px 3px rgba(0,0,0,.18),0 12px 28px rgba(0,0,0,.12)}
+.bcard.f{background:var(--blue);color:var(--paper);padding:6% 7%;display:flex;align-items:flex-end}
+.bcard.f .pl{width:44%}
+.bcard.b{background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.6cqw;padding:6%}
+.bcard.b .k{font:400 2.8cqw/1 var(--f-ui);letter-spacing:.18em;text-transform:uppercase}
+.bcard.b .n{font:400 6.4cqw/1.1 var(--f-lead)}
+.bcard.b .s{font:400 2.6cqw/1.5 var(--f-ui);letter-spacing:.06em;color:var(--stone)}
+.a4{aspect-ratio:210/297;background:#FAF9F6;container-type:inline-size;position:relative;box-shadow:0 1px 3px rgba(0,0,0,.15),0 14px 34px rgba(0,0,0,.12);font-family:var(--f-text);min-width:0}
+.a4 .m{position:absolute;border:0 dashed var(--pink)}
+.post{container-type:inline-size;aspect-ratio:4/5;position:relative;overflow:hidden;min-width:0}
+.woven{background:var(--ink);color:var(--paper);aspect-ratio:3/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6%;position:relative;container-type:inline-size;padding:5%}
+.woven::before{content:"";position:absolute;inset:6px;border:1.5px dashed rgba(241,240,236,.45)}
+.woven .w{width:62%}
+.woven span{font:400 3.2cqw/1 var(--f-ui);letter-spacing:.2em;text-transform:uppercase}
+.tee{background:#22252a url(tex/cotton.jpg) center/cover;aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;container-type:inline-size;position:relative;overflow:hidden}
+.tee .pl{width:44%;color:#E9E5DC;margin-top:-18%}
+
+@media (max-width:1000px){
+  .g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}.g12{grid-template-columns:1fr}
+  .hero2{grid-template-columns:1fr;padding:56px 20px}.work{grid-template-columns:1fr 1fr;padding:0 20px 56px;gap:16px}
+  .hdr{padding:0 20px;gap:16px;height:60px;font-size:14px}.hdr .hide{display:none}
+  .ftr{grid-template-columns:1fr 1fr;padding:56px 20px}
+}
+@media (max-width:640px){
+  .g2,.g3,.g4{grid-template-columns:1fr}.work{grid-template-columns:1fr}
+  .gapm span{left:auto;right:0;transform:none}
+}
+@media (prefers-reduced-motion:reduce){.mag{scroll-behavior:auto}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="ink" x="-2%" y="-2%" width="104%" height="104%">
+    <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="4" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="9" result="n2"/>
+    <feColorMatrix in="n2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.2 2.1" result="sp"/>
+    <feComposite in="d" in2="sp" operator="in"/>
+  </filter>
+  <filter id="smear" x="-10%" y="-20%" width="120%" height="140%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="2.6" result="b"/>
+    <feComponentTransfer in="b" result="t"><feFuncA type="table" tableValues="0 0 .55 1 1"/></feComponentTransfer>
+    <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="7" result="w"/>
+    <feDisplacementMap in="t" in2="w" scale="7" result="m"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="2" result="n3"/>
+    <feColorMatrix in="n3" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.8 1.9" result="sp3"/>
+    <feComposite in="m" in2="sp3" operator="in"/>
+  </filter>
+  <filter id="riso" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="5" result="w"/>
+    <feDisplacementMap in="SourceGraphic" in2="w" scale="9" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" seed="3" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2 1.85" result="sp"/>
+    <feComposite in="d" in2="sp" operator="in"/>
+  </filter>
+</defs></svg>
+
+<main class="mag" id="mag" aria-label="Designsystem"></main>
+<nav class="nav" aria-label="Blättern">
+  <button id="prev" aria-label="Vorherige Seite">←</button>
+  <div class="mid"><b id="cur">01</b><span id="nm"></span></div>
+  <button id="next" aria-label="Nächste Seite">→</button>
+</nav>
+
+<script>window.LOGO={{LOGO}};</script>
+<script>
+const O=window.LOGO, pad=n=>String(n).padStart(2,'0');
+const S=(k,cls='lg')=>`<svg class="${cls}" viewBox="${O[k].vb.join(' ')}" role="img" aria-label="Joel van Hees"><g>${O[k].parts.map(([d])=>`<path class="i" d="${d}"/>`).join('')}</g></svg>`;
+const SG=(k)=>`<span class="gr" style="display:block;width:100%">${S(k)}</span>`;
+const crop=()=>`<i class="cm tl"></i><i class="cm tr"></i><i class="cm bl"></i><i class="cm br"></i>`;
+function barcode(seed,n=54){let h=2166136261;for(const c of seed)h=Math.imul(h^c.charCodeAt(0),16777619)>>>0;
+  const r=()=>{h^=h<<13;h>>>=0;h^=h>>>17;h^=h<<5;h>>>=0;return h/4294967296};
+  let x=0,b='<rect x="0" width="1" height="40"/><rect x="2" width="1" height="40"/>';x=4;
+  for(let i=0;i<n;i++){const w=1+Math.floor(r()*3.2);if(i%2===0)b+=`<rect x="${x}" width="${w}" height="40"/>`;x+=w}
+  b+=`<rect x="${x+1}" width="1" height="40"/><rect x="${x+3}" width="1" height="40"/>`;
+  return `<svg class="bc" viewBox="0 0 ${x+4} 40" preserveAspectRatio="none" aria-hidden="true">${b}</svg>`}
+const overRect=(rot=-2,inset='14% 9% 30% 9%')=>`<svg class="over" viewBox="0 0 100 125" preserveAspectRatio="none" aria-hidden="true"><rect x="8" y="22" width="84" height="64" fill="none" stroke="#FF4FA3" stroke-width="2.2" vector-effect="non-scaling-stroke" style="stroke-width:7px" transform="rotate(${rot} 50 54)" filter="url(#riso)"/></svg>`;
+const overFull=(rot=-1.5)=>`<svg class="over" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect x="2" y="3" width="96" height="94" fill="none" stroke="#FF4FA3" vector-effect="non-scaling-stroke" style="stroke-width:7px" transform="rotate(${rot} 50 50)" filter="url(#riso)"/></svg>`;
+const page=(name,inner,cls='')=>({name,html:`<div class="wrap ${cls}">${inner}</div>`});
+const ph=(no,chapter,title,lead)=>`<header class="ph"><div class="ph-meta"><span class="t-label">( ${no} )</span><span class="t-label">${chapter}</span><span class="t-label mute">JVH–DS–01</span></div><h2 class="t-h1">${title}</h2>${lead?`<p class="t-lead">${lead}</p>`:''}</header>`;
+const sh=(t,m='')=>`<div class="sec-h"><span class="t-label">${t}</span>${m?`<span class="t-meta">${m}</span>`:''}</div>`;
+const P=[];
+
+/* 01 · Cover ----------------------------------------------------------- */
+P.push({name:"Designsystem",cover:true,html:`<div class="wrap" style="min-height:100%;justify-content:center;align-items:center">
+ <div class="ett crop open" style="width:min(100%,560px);aspect-ratio:auto;padding:64px 36px;background:transparent">${crop()}
+  ${overFull(-1.5)}
+  <div class="e-k" style="font-size:12px">( Atelier &amp; Presse )</div><div class="sp1"></div>
+  <div class="e-s" style="font-size:12px">→ Designsystem 01 ©2026</div><div class="sp3" style="height:40px"></div>
+  <div class="e-logo gr" style="width:78%">${S('wm2')}</div><div class="sp3" style="height:32px"></div>
+  <div class="e-c" style="font-size:22px">Design, Code, KI und Kunst</div><div class="sp1"></div>
+  <div class="e-s" style="font-size:11px;color:var(--stone)">Schrift · Farbe · Abstand · Raster · Komponenten · Anwendung</div><div class="sp3" style="height:40px"></div>
+  <div class="e-s" style="font-size:11px">ID: JVH–DS–01 / 241126 · MEZ (UTC+1)</div><div class="sp1" style="height:12px"></div>
+  <div style="width:46%;height:34px">${barcode('JVH-DS-01')}</div>
+ </div></div>`});
+
+/* 02 · Principles ------------------------------------------------------- */
+const PR=[["Papier statt Weiß","Jede Fläche hat Papierton und eine leichte Faser. Reines Weiß und reines Schwarz kommen nicht vor."],
+ ["Druck statt Pixel","Le Murmure trägt immer Druckkorn. Logos und Titel sehen gedruckt aus, auch auf dem Bildschirm."],
+ ["Ein Blau","Presseblau markiert, was zählt: Aktionen, Highlights, große Flächen. Pro Fläche nur ein Akzent."],
+ ["Typo als Etikett","Kleine Angaben folgen einer festen Grammatik aus Klammern, Pfeilen, Nummern und Daten. Das ist die zweite Stimme der Marke."],
+ ["Raster trägt","Alles steht auf dem 4-px-Raster und in Spalten. Freiheit gibt es in der Komposition, nicht in den Maßen."]];
+P.push(page("Grundsätze",ph("01","Grundsätze","Fünf Grundsätze","Bevor es um Pixel geht, zählt die Haltung. Diese fünf Sätze entscheiden jeden Zweifelsfall.")+
+ `<div class="grid g3">${PR.map((p,i)=>`<div class="tile" style="border-top:1px solid var(--ink);padding-top:var(--s4);gap:var(--s3)"><span class="t-label">Nº ${pad(i+1)}</span><h3 class="t-h3">${p[0]}</h3><p class="t-body">${p[1]}</p></div>`).join('')}</div>`));
+
+/* 03 · Logo -------------------------------------------------------------- */
+P.push(page("Logo",ph("02","Logo","Das Logo","Joel van Hees in zwei Zeilen, kurz über lang. Das J läuft in das V. Das ist das einzige Detail, das wir am Schriftbild ändern, und es macht die Wortmarke eigen.")+
+ `<div class="grid g12"><div class="tile"><div class="box" style="min-height:clamp(320px,52vh,560px)"><span class="gr" style="width:70%;display:block">${S('wm2')}</span></div><span class="t-meta">Hauptlogo · Zweizeiler · Tinte auf Papier</span></div>
+  <div class="grid" style="grid-template-rows:1fr 1fr"><div class="tile"><div class="box blue" style="height:100%"><span class="gr" style="width:70%;display:block">${S('wm2')}</span></div><span class="t-meta">Papier auf Presseblau</span></div>
+  <div class="tile"><div class="box ink" style="height:100%"><span class="gr" style="width:70%;display:block">${S('wm2')}</span></div><span class="t-meta">Papier auf Tinte</span></div></div></div>
+ ${sh("Familie","Vier Formen, eine Schrift")}
+ <div class="grid g4">
+  <div class="tile"><div class="box"><span class="gr" style="width:80%;display:block">${S('wm2')}</span></div><span class="t-meta">A · Zweizeiler · überall, wo Platz ist</span></div>
+  <div class="tile"><div class="box"><span class="gr" style="width:92%;display:block">${S('w3')}</span></div><span class="t-meta">B · Einzeiler · Navigation, Fußzeile, Bauchbinde</span></div>
+  <div class="tile"><div class="box"><span class="gr" style="width:52%;display:block">${S('jvh')}</span></div><span class="t-meta">C · Monogramm · Profilbild, Stempel, Etikett</span></div>
+  <div class="tile"><div class="box"><div style="width:44%;aspect-ratio:1;background:var(--blue);color:var(--paper);display:flex;align-items:center;justify-content:center;padding:14%"><span class="gr" style="width:100%;display:block">${S('jvh')}</span></div></div><span class="t-meta">D · Favicon · JvH im blauen Quadrat</span></div>
+ </div>
+ ${sh("Die Ligatur","J und V teilen sich eine Kante")}
+ <div class="grid g2"><div class="box" style="min-height:280px"><svg class="lg gr" viewBox="-45 -15 190 375" style="max-height:320px"><g>${O.wm2.parts.map(([d])=>`<path class="i" d="${d}"/>`).join('')}</g><line x1="${O.meta.axis}" x2="${O.meta.axis}" y1="60" y2="320" stroke="#FF4FA3" stroke-width="1.5" stroke-dasharray="4 4"/></svg></div>
+ <div class="tile" style="justify-content:center;gap:var(--s4)"><p class="t-bl">Der Stamm des J steht exakt über der Kante des V. Sein Schwung läuft in die linke Spitze des V hinein, statt sie zu berühren oder abgeschnitten zu werden. So bleibt der Zeilenabstand eng wie auf einem Plakat.</p><p class="t-meta">Pinke Linie: gemeinsame Achse von J und V.</p></div></div>
+ ${sh("Nicht so","Was nicht passiert")}
+ <div class="grid g4">
+  <div class="tile dont"><div class="box"><span class="gr" style="width:62%;display:block">${S('s2m')}</span></div><span class="t-meta">Kein Kreis, kein Siegel</span></div>
+  <div class="tile dont"><div class="box"><span class="t-h2" style="text-align:center">Joel<br>van<br>Hees</span></div><span class="t-meta">Keine drei Zeilen</span></div>
+  <div class="tile dont"><div class="box"><span style="width:80%;display:block">${S('wm2')}</span></div><span class="t-meta">Nie glatt und tiefschwarz</span></div>
+  <div class="tile dont"><div class="box"><span class="gr" style="width:80%;display:block;transform:scaleX(1.5)">${S('wm2')}</span></div><span class="t-meta">Nie verzerren</span></div>
+ </div>`));
+
+/* 04 · Construction ------------------------------------------------------ */
+const M=O.meta, X=M.capH, b=M.b, half=X/2;
+const cx0=b[0]-half, cy0=b[1]-half, cw=b[2]-b[0]+X, chh=b[3]-b[1]+X, mg=X*.42;
+const conSvg=`<svg class="lg" viewBox="${cx0-mg} ${cy0-mg*.6} ${cw+mg*2} ${chh+mg*1.2}" style="max-height:520px">
+ <rect x="${cx0}" y="${cy0}" width="${cw}" height="${chh}" fill="none" stroke="#FF4FA3" stroke-width="2" stroke-dasharray="8 6"/>
+ <rect x="${b[0]}" y="${b[1]}" width="${b[2]-b[0]}" height="${b[3]-b[1]}" fill="rgba(255,79,163,.07)"/>
+ ${[0,X,M.l2top,M.l2top+X].map(y=>`<line x1="${cx0}" x2="${cx0+cw}" y1="${y}" y2="${y}" stroke="#24398F" stroke-width="1"/>`).join('')}
+ <line x1="${M.axis}" x2="${M.axis}" y1="${cy0}" y2="${cy0+chh}" stroke="#24398F" stroke-width="1" stroke-dasharray="3 4"/>
+ <g class="gr"><g>${O.wm2.parts.map(([d])=>`<path fill="#141414" d="${d}"/>`).join('')}</g></g>
+ <g style="font:400 15px 'JM Compagnon',monospace" fill="#141414">
+  <path d="M${b[2]+18} 0 h10 V${X} h-10" fill="none" stroke="#141414"/><text x="${b[2]+36}" y="${X/2+5}">X</text>
+  <path d="M${b[2]+18} ${M.l2top} h10 V${M.l2top+X} h-10" fill="none" stroke="#141414"/><text x="${b[2]+36}" y="${M.l2top+X/2+5}">X</text>
+  <text x="${b[2]+36}" y="${X+(M.l2top-X)/2+5}" fill="#24398F">0,045 X</text>
+  <text x="${cx0+8}" y="${cy0+22}" fill="#FF4FA3">½ X</text><text x="${b[0]-half/2-14}" y="${(b[1]+b[3])/2}" fill="#FF4FA3">½ X</text>
+  <text x="${M.axis+8}" y="${cy0+chh-10}" fill="#24398F">Achse J / V</text>
+ </g></svg>`;
+P.push(page("Konstruktion",ph("03","Konstruktion","Maß &amp; Schutzraum","Alles am Logo misst sich an X, der Versalhöhe einer Zeile. Wer X kennt, kann das Logo in jeder Größe richtig setzen.")+
+ `<div class="box" style="padding:5%;min-height:auto">${conSvg}</div>
+ <div class="tbl"><table class="spec"><tr><th>Regel</th><th>Wert</th><th>Hinweis</th></tr>
+ <tr><td>Einheit X</td><td>Versalhöhe einer Zeile</td><td>Bezugsgröße für alles Weitere</td></tr>
+ <tr><td>Zeilenabstand</td><td>0,045 X zwischen den Zeilen</td><td>So eng wie auf den Covern</td></tr>
+ <tr><td>Achse</td><td>Stamm J = Kante V</td><td>Der Schwung des J hängt links heraus</td></tr>
+ <tr><td>Schutzraum</td><td>½ X auf allen Seiten</td><td>Gilt ab dem äußersten Punkt, also dem Schwung des J</td></tr>
+ <tr><td>Mindestgröße A</td><td>18 mm Breite · 120 px</td><td>Darunter den Einzeiler B nutzen</td></tr>
+ <tr><td>Mindestgröße B</td><td>30 mm Breite · 160 px</td><td>Darunter das Monogramm C nutzen</td></tr>
+ <tr><td>Mindestgröße C</td><td>6 mm · 16 px</td><td>Als Favicon immer im blauen Quadrat D</td></tr>
+ <tr><td>Position</td><td>Oben links auf der Rasterkante</td><td>Auf Plakaten unten links, nie zentriert im Fließtext</td></tr></table></div>`));
+
+/* 05 · Typography -------------------------------------------------------- */
+const TS=[["Display","t-d1","Le Murmure","144 / 0,86 / 0","72 / 0,86 / 0","32 · 24","Bilder, Systeme"],
+ ["Headline 1","t-h1","Le Murmure","88 / 0,90 / 0","52 / 0,90 / 0","24 · 16","Werkschau 2027"],
+ ["Headline 2","t-h2","Le Murmure","56 / 0,92 / 0","38 / 0,92 / 0","16 · 12","Augen-Serie"],
+ ["Headline 3","t-h3","Le Murmure","36 / 0,95 / 0","28 / 0,95 / 0","12 · 8","Material und Methode"],
+ ["Subheader","t-lead","Libre Caslon Display","26 / 1,30 / 0","21 / 1,30 / 0","32 · 24","Wie aus einer Skizze im Browser eine Skulptur wird."],
+ ["Text groß","t-bl","Libre Caslon Text","19 / 1,60 / 0","18 / 1,60 / 0","16 · 16","Am Anfang steht fast nie ein Material, sondern eine Frage."],
+ ["Text","t-body","Libre Caslon Text","17 / 1,60 / 0","16 / 1,60 / 0","16 · 16","Die Maschine liefert Varianten, die Hand trifft die Entscheidung. Genauso entstehen Marken und Websites."],
+ ["Klein","t-small","Libre Caslon Text","14 / 1,50 / 0","14 / 1,50 / 0","8 · 8","Abbildung: Augen-Skulptur, Gips, 2026"],
+ ["Label","t-label","Compagnon","12 / 1,30 / +16 % · Versal","11 / 1,30 / +16 %","16 · 12","( Atelier &amp; Presse )"],
+ ["Meta","t-meta","Compagnon","10,5 / 1,40 / +8 %","10 / 1,40 / +8 %","4 · 4","JVH–026 / 241126 · MEZ (UTC+1)"],
+ ["Button","btn-t","Compagnon","14 / 1,00 / +4 %","14 / 1,00 / +4 %","–","Projekt anfragen"]];
+P.push(page("Typografie",ph("04","Typografie","Schriftsystem","Drei Familien, elf Stufen. Le Murmure spricht, Caslon erzählt, Compagnon beschriftet.")+
+ `<div class="grid g3">${[["Le Murmure","Titel und Logo. Immer Versal, immer mit Druckkorn.","Velvetyne · OFL","t-h2","Aa Jj Vv 0123"],["Libre Caslon","Display für Subheader, Text für alles Lesbare.","Google Fonts · OFL","t-lead","Aa Jj Vv 0123"],["Compagnon","Labels, Buttons, Meta, Etiketten.","Velvetyne · OFL","t-label","Aa Jj Vv 0123"]].map(f=>`<div class="tile" style="border-top:1px solid var(--ink);padding-top:var(--s4);gap:var(--s3)"><span class="t-label">${f[0]}</span><div class="${f[3]}" style="font-size:${f[3]==='t-label'?'28px':''}">${f[4]}</div><p class="t-small">${f[1]}</p><span class="t-meta">${f[2]}</span></div>`).join('')}</div>
+ ${sh("Stufen","Größe / Zeilenabstand / Laufweite · Desktop und Mobil · Abstand danach in px")}
+ <div class="tbl"><table class="spec"><tr><th>Stufe</th><th>Schrift</th><th>Desktop</th><th>Mobil</th><th>Abstand danach</th><th>Muster</th></tr>
+ ${TS.map(t=>`<tr><td>${t[0]}</td><td>${t[2]}</td><td>${t[3]}</td><td>${t[4]}</td><td>${t[5]}</td><td style="min-width:260px">${t[1]==='btn-t'?`<span class="btn">${t[6]}</span>`:`<div class="${t[1]}" style="${['t-d1','t-h1'].includes(t[1])?'font-size:clamp(40px,4.4vw,64px)':''}">${t[6]}</div>`}</td></tr>`).join('')}</table></div>
+ <p class="t-meta">Display und Headline 1 sind in der Tabelle verkleinert dargestellt. Die echten Größen zeigt die nächste Seite.</p>`));
+
+/* 06 · Hierarchy with redlines ------------------------------------------- */
+const gm=(px,lab)=>`<div class="gapm" style="height:${px}px"><span>${lab||px}</span></div>`;
+P.push(page("Hierarchie",ph("05","Hierarchie","Abstände im Satz","So stehen die Stufen untereinander. Die pinken Marken zeigen den Abstand in Pixeln. Auf Mobil gilt jeweils der zweite Wert.")+
+ `<div class="grid g12"><div style="padding-left:56px;display:flex;flex-direction:column">
+  <span class="t-label">( Werkstattbericht )</span>${gm(16,'16 · 12')}
+  <h3 class="t-d1">Augen, die zurück&shy;schauen</h3>${gm(32,'32 · 24')}
+  <p class="t-lead">Wie aus einer Skizze im Browser eine Skulptur aus Gips wird, und warum Code dabei hilft.</p>${gm(32,'32 · 24')}
+  <p class="t-bl">Am Anfang steht fast nie ein Material, sondern eine Frage. Für die Augen-Serie war es diese: Was passiert, wenn ein Objekt den Blick erwidert?</p>${gm(16)}
+  <p class="t-body">Die ersten Formen entstanden in einem Browserfenster, als Parameter, die sich so lange verschieben lassen, bis etwas zurückschaut. Danach wird es langsam: Schablonen, Gips, Schleifpapier.</p>${gm(64,'64 · 48')}
+  <h4 class="t-h2">Material und Methode</h4>${gm(16,'16 · 12')}
+  <p class="t-body">Die Maschine liefert Varianten, die Hand trifft die Entscheidung.</p>${gm(32,'32 · 24')}
+  <div><span class="btn">Projekt anfragen</span></div>${gm(12,'12 · 8')}
+  <span class="t-meta">Nº 014 — Augen-Skulptur, Gips, 2026</span>
+ </div>
+ <div class="tbl" style="align-self:start"><table class="spec"><tr><th>Von → nach</th><th>Desktop</th><th>Mobil</th></tr>
+  <tr><td>Label → Display</td><td>16</td><td>12</td></tr><tr><td>Display → Subheader</td><td>32</td><td>24</td></tr><tr><td>Subheader → Text</td><td>32</td><td>24</td></tr>
+  <tr><td>Absatz → Absatz</td><td>16</td><td>16</td></tr><tr><td>Text → Headline 2</td><td>64</td><td>48</td></tr><tr><td>Headline 2 → Text</td><td>16</td><td>12</td></tr>
+  <tr><td>Text → Button</td><td>32</td><td>24</td></tr><tr><td>Button → Meta</td><td>12</td><td>8</td></tr><tr><td>Abschnitt oben und unten</td><td>128</td><td>72</td></tr>
+  <tr><td>Textbreite</td><td colspan="2">max. 62 Zeichen, Subheader max. 34</td></tr></table></div></div>`));
+
+/* 07 · Spacing & grid ----------------------------------------------------- */
+const SP=[[1,4],[2,8],[3,12],[4,16],[5,24],[6,32],[7,48],[8,64],[9,96],[10,128]];
+const GR=[["Desktop","ab 1200 px",12,64,24,128,1440],["Tablet","768–1199 px",8,40,20,96,900],["Mobil","bis 767 px",4,20,16,72,390]];
+const gridViz=(c,m,g,w)=>{const cw=(w-2*m-(c-1)*g)/c;let r='';for(let i=0;i<c;i++)r+=`<rect x="${m+i*(cw+g)}" y="0" width="${cw}" height="100" fill="rgba(255,79,163,.28)"/>`;
+ return `<svg class="lg" viewBox="0 0 ${w} 100" preserveAspectRatio="none" style="height:120px;border:1px solid var(--ink);background:rgba(255,255,255,.4)">${r}</svg>`};
+P.push(page("Abstand & Raster",ph("06","Abstand &amp; Raster","4-px-Raster","Jeder Abstand ist ein Vielfaches von 4. Zehn Stufen reichen für alles, vom Tag bis zum Abschnitt.")+
+ `<div class="tbl"><table class="spec"><tr><th>Token</th><th>px</th><th>Einsatz</th><th style="width:50%">Maß</th></tr>
+ ${SP.map(([n,v])=>`<tr><td>s${n}</td><td>${v}</td><td>${['Icon-Abstand, feine Linien','Label zu Feld, Tag-Innenabstand','Kartenzeilen, Meta','Absätze, Label zu Titel','Spaltenabstand, Titel zu Subheader','Subheader zu Text, Button','Blöcke, Header-Höhe halb','Seitenrand Desktop, Abschnittswechsel','Abschnitt Tablet, Footer','Abschnitt Desktop'][n-1]}</td><td><span style="display:block;height:12px;width:${v*2}px;max-width:100%;background:var(--pink)"></span></td></tr>`).join('')}</table></div>
+ ${sh("Raster","Spalten · Rand · Spaltenabstand · Abschnitt")}
+ <div class="grid g3">${GR.map(g=>`<div class="tile" style="gap:var(--s3)">${gridViz(g[2],g[3],g[4],g[6])}<span class="t-label">${g[0]} · ${g[1]}</span><table class="spec"><tr><td>Spalten</td><td>${g[2]}</td></tr><tr><td>Rand</td><td>${g[3]} px</td></tr><tr><td>Spaltenabstand</td><td>${g[4]} px</td></tr><tr><td>Abschnitt oben/unten</td><td>${g[5]} px</td></tr></table></div>`).join('')}</div>
+ <p class="t-body">Inhalt läuft maximal 1312 px breit (1440 minus zweimal 64). Bilder dürfen bis an den Rand laufen, Text nie.</p>`));
+
+/* 08 · Colour -------------------------------------------------------------- */
+const CO=[["Papier","#F1F0EC","Flächen",60,"—"],["Tinte","#141414","Text, Logo, Linien",28,"16,2 : 1"],["Presseblau","#24398F","Aktionen, Highlights, große Flächen",8,"9,0 : 1"],["Stein","#6E6C66","Meta, Labels, Bildunterschriften",3,"4,6 : 1"],["Linie","#D6D4CD","Trennlinien, Rahmen",0.6,"—"],["Überdruck","#FF4FA3","Nur Stempel und Überdruck, nie Text",0.4,"2,7 : 1"]];
+P.push(page("Farbe",ph("07","Farbe","Papier, Tinte, Blau","Zwei Grundtöne, ein Akzent, ein Überdruck. Der Kontrastwert gilt jeweils auf Papier.")+
+ `<div class="grid g3">${CO.map(c=>`<div class="tile"><div style="height:140px;background:${c[1]};border:1px solid var(--line)"></div><span class="t-label">${c[0]}</span><span class="t-meta" style="color:var(--ink)">${c[1]} · Kontrast ${c[4]}</span><span class="t-small mute">${c[2]}</span></div>`).join('')}</div>
+ <div style="display:flex;height:18px;border:1px solid var(--ink)">${CO.map(c=>`<i style="display:block;width:${c[3]}%;background:${c[1]}"></i>`).join('')}</div><span class="t-meta">Flächenanteile auf einer typischen Seite</span>
+ ${sh("Kombinationen")}
+ <div class="grid g4">${[["Tinte auf Papier","var(--paper)","var(--ink)",1],["Papier auf Blau","var(--blue)","var(--paper)",1],["Blau auf Papier","var(--paper)","var(--blue)",1],["Pink als Text","var(--paper)","var(--pink)",0]].map(k=>`<div class="tile ${k[3]?'do':'dont'}"><div class="box" style="background:${k[1]};color:${k[2]};min-height:150px"><span class="t-h2">Werkschau</span></div><span class="t-meta">${k[3]?'Ja':'Nein'} · ${k[0]}</span></div>`).join('')}</div>`));
+
+/* 09 · Details (label grammar) ---------------------------------------------- */
+const DT=[["Klammer","( Atelier &amp; Presse )","Absender, Kategorie, Kapitel. Compagnon versal, Leerzeichen innen."],
+ ["Pfeil","→ 2026","Richtung, Datum, nächster Schritt. Immer vor der Angabe."],
+ ["Copyright","©2026","Direkt am Jahr, ohne Leerzeichen. Steht für eigene Arbeit."],
+ ["Nummer","Nº 014","Werke, Editionen, Seiten. Immer dreistellig."],
+ ["ID","JVH–026 / 241126","Kürzel, laufende Nummer, Datum als TTMMJJ."],
+ ["Zeit","MEZ (UTC+1)","Nur auf Etiketten und Plakaten, als Abschluss."]];
+P.push(page("Details",ph("08","Details","Etikett-Grammatik","Die zweite Stimme der Marke. Abgeleitet von Produktionsetiketten und Lieferscheinen, gesetzt in der Schreibmaschine.")+
+ `<div class="grid g3">${DT.map(d=>`<div class="tile" style="border-top:1px solid var(--ink);padding-top:var(--s4);gap:var(--s3)"><span class="t-label mute">${d[0]}</span><span style="font:400 26px/1.2 var(--f-ui);letter-spacing:.06em">${d[1]}</span><p class="t-small">${d[2]}</p></div>`).join('')}</div>
+ ${sh("Ornamente","Sparsam, jedes höchstens einmal pro Fläche")}
+ <div class="grid g4">
+  <div class="tile"><div class="box crop" style="margin:12px">${crop()}<span class="t-label">Schneidemarken</span></div><span class="t-meta">14 px Schenkel · 1,5 px · 10 px Abstand</span></div>
+  <div class="tile"><div class="box"><div style="width:70%;height:60px">${barcode('JVH-026')}</div></div><span class="t-meta">Strichcode · nur unten als Abschluss</span></div>
+  <div class="tile"><div class="box" style="position:relative">${overRect(-3)}<span class="t-h3" style="position:relative">Überdruck</span></div><span class="t-meta">Pinker Rahmen · −2 bis −3° · multipliziert</span></div>
+  <div class="tile"><div class="box"><span class="t-h1"><span class="smear">Ver</span>wischt</span></div><span class="t-meta">Genau ein verwischtes Wort pro Plakat</span></div>
+ </div>`));
+
+/* 10 · Components ------------------------------------------------------------ */
+P.push(page("Komponenten",ph("09","Komponenten","Bausteine","Jede Komponente mit ihren echten Maßen. Pink schraffiert ist der Innenabstand, die Zahl steht in Pixeln.")+
+ `${sh("Header","Desktop 80 px · Mobil 60 px")}
+ <div class="rlw" style="display:block"><div class="hdr" data-rl><span class="lg-w gr">${S('w3')}</span><span class="on">Arbeiten</span><span class="hide">Labor</span><span class="hide">Kunst</span><span>Über</span><span class="btn sm">Kontakt</span></div></div>
+ <div class="grid g2"><div class="rlw" style="display:block"><div class="hdr-m" data-rl><span class="lg-w gr">${S('w3')}</span><span class="t-label">Menü</span></div></div>
+ <table class="spec"><tr><td>Höhe</td><td>80 · 60 px</td></tr><tr><td>Innenabstand</td><td>0 64 · 0 20 px</td></tr><tr><td>Logo</td><td>Einzeiler, 20 · 16 px hoch</td></tr><tr><td>Navigation</td><td>Caslon Text 16 px, Abstand 32 px</td></tr><tr><td>Aktiv</td><td>2 px Blau, 6 px unter der Grundlinie</td></tr></table></div>
+ ${sh("Buttons","48 px hoch · klein 36 px")}
+ <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:center">
+  <span class="rlw"><span class="btn" data-rl>Projekt anfragen</span></span><span class="rlw"><span class="btn sec" data-rl>Arbeiten ansehen</span></span><span class="rlw"><span class="btn sm" data-rl>Kontakt</span></span><a class="lnk" href="#" onclick="return false">Mehr lesen →</a></div>
+ <table class="spec"><tr><td>Primär</td><td>Presseblau, Papier-Schrift, 0 24 px, Compagnon 14 px +4 %</td></tr><tr><td>Sekundär</td><td>1 px Tinte, gleiche Maße</td></tr><tr><td>Klein</td><td>36 px hoch, 0 16 px, 13 px</td></tr><tr><td>Link</td><td>Caslon Text, Unterstrich 1 px mit 4 px Abstand, Pfeil →</td></tr><tr><td>Hover</td><td>Fläche wird Tinte. Keine Rundungen, keine Schatten.</td></tr></table>
+ ${sh("Tags &amp; Formular")}
+ <div class="grid g2"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="rlw"><span class="tag on" data-rl>Marke</span></span><span class="tag">Website</span><span class="tag">KI</span><span class="tag">Skulptur</span></div>
+ <div style="display:flex;flex-direction:column;gap:24px"><div class="fld"><span class="t-label">E-Mail</span><span class="in">name@studio.de</span></div><div class="fld focus"><span class="t-label">Nachricht</span><span class="in">Wir planen eine neue Website …</span></div></div></div>
+ <table class="spec"><tr><td>Tag</td><td>28 px hoch, 0 10 px, Compagnon 11 px versal +14 %, aktiv in Blau</td></tr><tr><td>Feld</td><td>Label 11 px Stein, 8 px Abstand, Eingabe Caslon 18 px, 12 px oben und unten, Linie 1,5 px, Fokus 2 px Blau</td></tr></table>
+ ${sh("Projektkarte &amp; Footer")}
+ <div class="grid g3">${["Augen-Serie","Atelier &amp; Presse","Bildersystem"].map((t,i)=>`<div class="card"><div class="im">${i===1?`<span class="gr" style="width:56%;display:block">${S('wm2')}</span>`:i===0?`<span class="gr" style="width:40%;display:block">${S('jvh')}</span>`:`<span class="t-h1">${pad(i+12)}</span>`}</div><div class="cmeta"><span>Nº ${pad(14+i)}</span><span>2026</span></div><div class="ct">${t}</div></div>`).join('')}</div>
+ <table class="spec"><tr><td>Karte</td><td>Bild 4:5, 12 px zur Meta-Zeile, Titel Caslon Display 22 px</td></tr><tr><td>Footer</td><td>96 64 px Innenabstand, 1 px Tinte oben, vier Spalten</td></tr></table>
+ <div class="ftr"><div class="gr" style="width:min(220px,100%)">${S('wm2')}</div><div class="col"><b>Studio</b><span>Arbeiten</span><span>Labor</span><span>Kunst</span></div><div class="col"><b>Kontakt</b><span>@joelvanhees</span><span>Projekt anfragen</span></div><div class="col"><b>( Etikett )</b><span>©2026</span><span>JVH–000 / 241126</span><span>MEZ (UTC+1)</span></div></div>`));
+
+/* 11 · Labels ------------------------------------------------------------------ */
+const ettA=`<div class="ett crop">${crop()}<div class="e-k">( Atelier &amp; Presse )</div><div class="sp1"></div><div class="e-s">→ Design · Code · KI · Kunst</div><div class="sp3"></div>
+ <div class="e-logo gr">${S('wm2')}</div><div class="sp3"></div><div class="e-c">Marken, Websites, Modelle<br>und Objekte aus einer Hand</div><div class="sp3"></div><div class="e-s" style="color:var(--stone)">JVH–000 / 241126 · MEZ (UTC+1)</div></div>`;
+const ettB=`<div class="ett crop">${crop()}<div class="e-k">( Edition )</div><div class="sp1"></div><div class="e-s">Nº 003 / 025</div><div class="sp2"></div>
+ <div class="e-big" style="font-size:17cqw">Augen-<br>Serie</div><div class="sp2"></div><div class="e-c">Gips, Pigment · 32 × 24 cm</div><div class="e-s">signiert, datiert, nummeriert</div><div class="sp3"></div><div class="e-s">©2026 Joel van Hees</div><div class="sp1"></div>${barcode('EDITION-003')}</div>`;
+const ettC=`<div class="ett crop">${crop()}${overRect(-2)}<div class="e-k">( Presse )</div><div class="sp1"></div><div class="e-s">→ Drop 01 ©2026</div><div class="sp3"></div>
+ <div class="gr" style="width:34%">${S('jvh')}</div><div class="sp3"></div><div class="e-c">100 % Baumwolle · Siebdruck</div><div class="e-s">Größe M</div><div class="sp3"></div><div class="e-s">Prod: 24/11/2026</div><div class="sp1"></div>${barcode('DROP-01-M')}</div>`;
+P.push(page("Etiketten",ph("10","Etiketten","Drei Etiketten","Das Etikett ersetzt das Siegel. Zentriert, gestapelt, mit Schneidemarken. Es steht dort, wo früher ein Stempel gewesen wäre.")+
+ `<div class="grid g3"><div class="tile">${ettA}<span class="t-meta">A · Studio · Website, Angebot, Rechnung</span></div><div class="tile">${ettB}<span class="t-meta">B · Edition · Rückseite von Werken und Drucken</span></div><div class="tile">${ettC}<span class="t-meta">C · Produkt · Anhänger, Verpackung, Merch</span></div></div>
+ <table class="spec"><tr><td>Satz</td><td>Mittelachse, Zeilen in Compagnon versal, eine Zeile Caslon Display, maximal ein Logo oder Titel</td></tr><tr><td>Rhythmus</td><td>kleine Abstände 2,4 % · mittlere 4,8 % · große 8 % der Etikettbreite</td></tr><tr><td>Abschluss</td><td>ID oder Datum, darunter optional Strichcode</td></tr></table>`));
+
+/* 12 · Posters --------------------------------------------------------------------- */
+const pA=`<div class="poster p-blue"><div class="pl gr" style="position:relative;z-index:1">${S('wm2')}</div><div class="pi" style="position:relative;z-index:1">( Atelier &amp; Presse )<br>Bilder, Code und Objekte<br>©2026</div></div>`;
+const pB=`<div class="poster ett" style="aspect-ratio:1/1.414;padding:14% 8%"><div class="e-k" style="font-size:7cqw;letter-spacing:.42em">Atelier</div><div class="sp1"></div><div class="e-s" style="font-size:3.4cqw">( Werkschau )</div><div class="sp3"></div>
+ <div class="e-s">Bilder, Code und Objekte</div><div class="e-s">aus einem Atelier</div><div class="sp2"></div>
+ <div class="e-flank"><span>20</span><span class="e-big" style="font-size:16cqw;white-space:nowrap">van Hees</span><span>27</span></div><div class="sp2"></div>
+ <div class="e-s">Eröffnung 14.05. // Eintritt frei</div><div class="e-s">Alles neu, nichts fertig</div><div class="sp2"></div><div class="e-k" style="font-size:4.4cqw">ID: 014 – 05 / 140527</div><div class="e-k" style="font-size:4.4cqw">MEZ (UTC+1)</div></div>`;
+const pC=`<div class="poster ett crop" style="aspect-ratio:1/1.414;padding:12% 8%">${overRect(-3)}<div class="e-big" style="font-size:9cqw;letter-spacing:.02em">( Aus dem Labor )</div><div class="e-big" style="font-size:9cqw">→ <span class="smear">2026</span>©</div><div class="sp2"></div>
+ <div class="e-c">Experimentelle Arbeit</div><div class="sp2"></div><div class="e-big" style="font-size:15cqw">Bilder Systeme</div><div class="sp3"></div>
+ <div style="border:1.5px solid currentColor;padding:3cqw 6cqw;display:flex;flex-direction:column;align-items:center;gap:1cqw"><span class="gr" style="width:16cqw;display:block">${S('jvh')}</span><span class="e-s">Nov 26</span></div><div class="sp3"></div>
+ <div class="e-s">Prod: 24/11/2026</div><div class="sp1"></div>${barcode('LABOR-2026')}</div>`;
+P.push(page("Plakate",ph("11","Anwendung","Plakate","Drei Formate aus denselben Bausteinen: die blaue Fläche, der Etikett-Stapel und der Überdruck.")+
+ `<div class="grid g3"><div class="tile">${pA}<span class="t-meta">Blaufeld · Logo unten links, ½ X Schutzraum</span></div><div class="tile">${pB}<span class="t-meta">Etikett-Stapel · Mittelachse, flankierte Jahreszahl</span></div><div class="tile">${pC}<span class="t-meta">Überdruck · Rahmen, ein verwischtes Wort, Strichcode</span></div></div>`));
+
+/* 13 · Web, card, letter ----------------------------------------------------------- */
+P.push(page("Web &amp; Print",ph("12","Anwendung","Website &amp; Papier","Die Startseite in echten Maßen, dazu Visitenkarte und Briefbogen mit ihren Rändern.")+
+ `<div class="site"><div class="bar"><i></i><i></i><i></i></div>
+  <div class="hdr"><span class="lg-w gr">${S('w3')}</span><span class="on">Arbeiten</span><span class="hide">Labor</span><span class="hide">Kunst</span><span>Über</span><span class="btn sm">Kontakt</span></div>
+  <div class="hero2"><div class="hl"><span class="t-label">( Design · Code · KI · Kunst )</span><h3 class="t-d1">Bilder, Systeme, Skulpturen.</h3><p class="t-lead">Joel van Hees entwirft Marken, baut Websites und trainiert Modelle. Im Atelier entstehen Skulpturen.</p><div style="display:flex;gap:16px;flex-wrap:wrap"><span class="btn">Projekte ansehen</span><span class="btn sec">Kontakt</span></div></div>
+  <div style="align-self:end">${ettA}</div></div>
+  <div class="work">${["Augen-Serie","Atelier &amp; Presse","Bildersystem"].map((t,i)=>`<div class="card"><div class="im" style="aspect-ratio:4/3">${i===0?`<span class="gr" style="width:30%;display:block">${S('jvh')}</span>`:i===1?`<span class="gr" style="width:46%;display:block">${S('wm2')}</span>`:`<span class="t-h1">${pad(16)}</span>`}</div><div class="cmeta"><span>Nº ${pad(14+i)}</span><span>2026</span></div><div class="ct">${t}</div></div>`).join('')}</div>
+ </div>
+ ${sh("Visitenkarte","85 × 55 mm · 5 mm Rand · 400 g Naturpapier")}
+ <div class="grid g2"><div class="bcard f"><div class="pl gr">${S('wm2')}</div></div><div class="bcard b crop">${crop()}<span class="k">( Atelier &amp; Presse )</span><span class="n">Joel van Hees</span><span class="s">Design · Code · KI · Kunst<br>@joelvanhees</span><span class="s">JVH–001</span></div></div>
+ ${sh("Briefbogen","DIN A4 · Rand links 25 mm, rechts 20 mm · Logo 20 mm vom oberen Rand")}
+ <div class="grid g2"><div class="a4">
+  <div class="m" style="left:11.9%;top:0;bottom:0;border-left-width:1px"></div><div class="m" style="right:9.5%;top:0;bottom:0;border-right-width:1px"></div><div class="m" style="left:0;right:0;top:6.7%;border-top-width:1px"></div>
+  <div style="position:absolute;left:11.9%;top:6.7%;width:24%" class="gr">${S('wm2')}</div>
+  <div style="position:absolute;left:11.9%;top:22%;font:400 1.7cqw/1.5 var(--f-ui);letter-spacing:.06em;color:var(--stone)">Joel van Hees · Atelier &amp; Presse</div>
+  <div style="position:absolute;left:11.9%;top:25.5%;font:400 2.3cqw/1.45 var(--f-text)">Studio Beispiel GmbH<br>z. Hd. Frau Muster<br>Musterstraße 1<br>00000 Musterstadt</div>
+  <div style="position:absolute;right:9.5%;top:38%;font:400 1.8cqw/1 var(--f-ui);color:var(--stone)">→ 24.11.2026</div>
+  <div style="position:absolute;left:11.9%;right:9.5%;top:42%;display:flex;flex-direction:column;gap:2cqw"><span style="font:400 3.2cqw/1.2 var(--f-lead)">Angebot: Markenauftritt und Website</span><span style="font:400 2.3cqw/1.6 var(--f-text)">Sehr geehrte Frau Muster, vielen Dank für das gute Gespräch. Anbei mein Vorschlag für den neuen Auftritt: ein Zeichen, ein System und eine Website, die mit Ihnen wächst.</span><span style="font:400 2.3cqw/1.6 var(--f-text)">Herzliche Grüße<br>Joel van Hees</span></div>
+  <div style="position:absolute;left:11.9%;right:9.5%;bottom:5%;display:flex;justify-content:space-between;font:400 1.6cqw/1.4 var(--f-ui);letter-spacing:.06em;color:var(--stone);border-top:1px solid var(--line);padding-top:1.4cqw"><span>( Atelier &amp; Presse )</span><span>@joelvanhees</span><span>JVH–Brief / 241126</span></div>
+ </div><table class="spec" style="align-self:start"><tr><td>Logo</td><td>Zweizeiler, 50 mm breit</td></tr><tr><td>Absender</td><td>Compagnon 7 pt, Stein</td></tr><tr><td>Anschrift</td><td>Caslon Text 9,5 pt, Fensterposition DIN 5008</td></tr><tr><td>Betreff</td><td>Caslon Display 13 pt</td></tr><tr><td>Text</td><td>Caslon Text 9,5 / 15 pt</td></tr><tr><td>Fußzeile</td><td>Etikett-Grammatik, Compagnon 6,5 pt</td></tr><tr><td>Pink gestrichelt</td><td>Ränder, nicht gedruckt</td></tr></table></div>`));
+
+/* 14 · Social & merch ------------------------------------------------------------------ */
+const post1=`<div class="post" style="background:var(--blue);color:var(--paper);display:flex;flex-direction:column;justify-content:space-between;padding:8%"><span style="font:400 3.4cqw/1.3 var(--f-ui);letter-spacing:.16em;text-transform:uppercase;position:relative;z-index:1">( Neue Arbeit ) → Nº 014</span><div class="gr" style="width:72%;position:relative;z-index:1">${S('wm2')}</div></div>`;
+const post2=`<div class="post ett" style="aspect-ratio:4/5"><div class="e-k">( Notiz )</div><div class="sp2"></div><div class="e-c" style="font-size:7cqw;line-height:1.2">„Die Maschine liefert Varianten, die Hand trifft die Entscheidung.“</div><div class="sp3"></div><div class="e-s" style="color:var(--stone)">JVH–026 / 241126</div></div>`;
+const post3=`<div class="post ett crop" style="aspect-ratio:4/5">${crop()}${overRect(-2.5)}<div class="e-k">( Werkschau )</div><div class="sp2"></div><div class="e-big" style="font-size:24cqw">2027</div><div class="sp2"></div><div class="e-s">14.05. // Atelier</div></div>`;
+P.push(page("Social &amp; Merch",ph("13","Anwendung","Social &amp; Merch","Drei Beitragstypen im Wechsel und eine kleine Merch-Linie. Das Etikett hält beides zusammen.")+
+ `<div class="grid g3"><div class="tile">${post1}<span class="t-meta">Typ 1 · Blaufeld · neue Arbeit</span></div><div class="tile">${post2}<span class="t-meta">Typ 2 · Notiz · Zitat in Caslon Display</span></div><div class="tile">${post3}<span class="t-meta">Typ 3 · Ankündigung · Überdruck</span></div></div>
+ ${sh("Merch")}
+ <div class="grid g3"><div class="tile"><div class="tee"><div class="pl gr">${S('wm2')}</div></div><span class="t-meta">Shirt · Siebdruck Papierweiß · Brust 24 cm</span></div>
+  <div class="tile" style="justify-content:center;gap:var(--s5)"><div class="woven"><div class="w gr">${S('w3')}</div><span>( Atelier &amp; Presse ) ©2026</span></div><span class="t-meta">Webetikett · Nacken · 60 × 20 mm</span></div>
+  <div class="tile">${ettC}<span class="t-meta">Anhänger · Produkt-Etikett C</span></div></div>`));
+
+/* 15 · Rules ---------------------------------------------------------------------------- */
+P.push(page("Regeln",ph("14","Regeln","Kurz und verbindlich","Wenn du nur eine Seite liest, dann diese.")+
+ `<div class="grid g2"><div class="tile" style="gap:var(--s4)"><span class="t-label">Ja</span>${["Le Murmure immer versal und mit Druckkorn","Zweizeiler, wo Platz ist, sonst Einzeiler, sonst Monogramm","Papier als Grund, Blau als einziger Akzent","Etikett-Grammatik für alle kleinen Angaben","Jeder Abstand aus dem 4-px-Raster","Text linksbündig, Etiketten auf der Mittelachse"].map(t=>`<p class="t-bl" style="border-top:1px solid var(--ink);padding-top:var(--s3)">${t}</p>`).join('')}</div>
+ <div class="tile" style="gap:var(--s4)"><span class="t-label">Nein</span>${["Kein Kreis, kein Siegel, kein Stempelrund","Keine Fraktur, keine weiteren Schriften","Pink nie als Textfarbe","Nie mehr als ein verwischtes Wort","Keine Rundungen, keine Schatten auf Bedienelementen","Logo nie verzerren, nie in drei Zeilen"].map(t=>`<p class="t-bl" style="border-top:1px solid var(--pink);padding-top:var(--s3)">${t}</p>`).join('')}</div></div>
+ <div class="ett crop open" style="aspect-ratio:auto;padding:48px 24px;max-width:560px;width:100%;align-self:center;background:transparent">${crop()}<div class="e-k" style="font-size:12px">( Nächster Schritt )</div><div class="sp2" style="height:16px"></div><div class="e-c" style="font-size:22px">Logo-Dateien, Favicon, Druckdaten,<br>CSS-Variablen und Styleguide</div><div class="sp2" style="height:16px"></div><div class="e-s" style="font-size:11px">→ Lieferpaket JVH–DS–02</div></div>`));
+
+/* ---------- render ---------- */
+const mag=document.getElementById('mag');
+mag.innerHTML=P.map((p,i)=>`<section class="page" id="seite-${i+1}" data-name="${p.name.replace(/&amp;/g,'&')}">${p.html}</section>`).join('');
+
+/* redlines: hatch the padding of every [data-rl] element and label it */
+function redlines(){document.querySelectorAll('.rl-pad,.rl-num').forEach(n=>n.remove());
+ document.querySelectorAll('[data-rl]').forEach(el=>{const w=el.parentElement;const cs=getComputedStyle(el);
+  const pt=parseFloat(cs.paddingTop),pr=parseFloat(cs.paddingRight),pb=parseFloat(cs.paddingBottom),pl=parseFloat(cs.paddingLeft);
+  const W=el.offsetWidth,H=el.offsetHeight,x=el.offsetLeft,y=el.offsetTop;
+  const add=(l,t,wd,ht,val,lx,ly)=>{if(val<1)return;const d=document.createElement('div');d.className='rl-pad';Object.assign(d.style,{left:l+'px',top:t+'px',width:wd+'px',height:ht+'px'});w.appendChild(d);
+   const n=document.createElement('div');n.className='rl-num';n.textContent=Math.round(val);Object.assign(n.style,{left:lx+'px',top:ly+'px'});w.appendChild(n)};
+  add(x,y,pl,H,pl,x+pl/2,y+H/2);add(x+W-pr,y,pr,H,pr,x+W-pr/2,y+H/2);add(x,y,W,pt,pt,x+W/2,y+pt/2);add(x,y+H-pb,W,pb,pb,x+W/2,y+H-pb/2);
+  const lab=document.createElement('div');lab.className='rl-num';lab.textContent='H '+Math.round(H);Object.assign(lab.style,{left:(x+W-2)+'px',top:(y-2)+'px',transform:'translate(-100%,-100%)'});w.appendChild(lab)})}
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>{redlines();setTimeout(redlines,500)});
+addEventListener('resize',()=>setTimeout(redlines,100));
+
+/* ---------- navigation (state-based; the hash is read once on load only) ---------- */
+const pages=[...mag.children],tot=pages.length,cur=document.getElementById('cur'),nm=document.getElementById('nm');
+let at=0,settle=null;
+function upd(){cur.textContent=pad(at+1);nm.textContent=pages[at]?.dataset.name||''}
+const go=n=>{n=Math.max(0,Math.min(tot-1,n));at=n;upd();mag.scrollTo({left:n*mag.clientWidth})};
+mag.addEventListener('scroll',()=>{clearTimeout(settle);settle=setTimeout(()=>{at=Math.round(mag.scrollLeft/mag.clientWidth);upd()},90)},{passive:true});
+document.getElementById('prev').onclick=()=>go(at-1);
+document.getElementById('next').onclick=()=>go(at+1);
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();go(at+1)}if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(at-1)}});
+addEventListener('resize',()=>{mag.style.scrollBehavior='auto';mag.scrollLeft=at*mag.clientWidth;mag.style.scrollBehavior=''});
+(()=>{const m=location.hash.match(/^#seite-(\d+)$/);if(m){at=Math.max(0,Math.min(tot-1,+m[1]-1));mag.style.scrollBehavior='auto';mag.scrollLeft=at*mag.clientWidth;mag.style.scrollBehavior=''}upd()})();
+</script>
